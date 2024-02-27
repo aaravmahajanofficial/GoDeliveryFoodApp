@@ -1,4 +1,4 @@
-package com.example.zomatoclone.data.repository
+package com.example.godeliveryapp.data.repository
 
 import com.example.zomatoclone.domain.model.RestaurantItem
 import com.example.zomatoclone.domain.repository.Repository

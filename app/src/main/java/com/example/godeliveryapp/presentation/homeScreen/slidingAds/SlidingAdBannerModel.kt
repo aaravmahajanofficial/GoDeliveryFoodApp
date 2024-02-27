@@ -1,10 +1,10 @@
-package com.example.zomatoclone.presentation.homeScreen.OfferAds
+package com.example.godeliveryapp.presentation.homeScreen.slidingAds
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.example.godeliveryapp.R
 
-data class OfferAd(
+data class SlidingAdBanner(
 
     val title: String,
     @ColorRes var background: Int,
@@ -12,21 +12,21 @@ data class OfferAd(
     @DrawableRes val imageId: Int
 )
 
-val OfferAds = listOf<OfferAd>(
+val SlidingAdBanners = listOf(
 
-    OfferAd(
+    SlidingAdBanner(
         "Get up to 25% on all food orders",
         buttonColor = R.color.orderNowButtonColor,
         background = R.color.offerAD1Color,
         imageId = R.drawable.foodoffer
     ),
-    OfferAd(
+    SlidingAdBanner(
         "Get up to 35% on all desserts.",
         buttonColor = R.color.orderNowButtonColor,
         background = R.color.offerAD2Color,
         imageId = R.drawable.mart2
     ),
-    OfferAd(
+    SlidingAdBanner(
         "Get up to 40% on all coffee orders",
         buttonColor = R.color.orderNowButtonColor,
         background = R.color.offerAD3Color,

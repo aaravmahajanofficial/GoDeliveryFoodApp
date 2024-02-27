@@ -20,7 +20,7 @@ fun SetupNavGraph(navController: NavHostController) {
 
             val viewModel: HomeScreenViewModel = hiltViewModel()
             val restaurants = viewModel.restaurants
-            HomeScreen(navController, restaurants)
+            HomeScreen(navController = navController)
 
         }
 
