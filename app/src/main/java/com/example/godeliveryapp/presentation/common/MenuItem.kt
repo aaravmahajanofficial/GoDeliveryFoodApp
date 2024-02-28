@@ -1,135 +1,150 @@
-package com.example.godeliveryapp.presentation.common
-
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountBox
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.go_deliver.presentation.common.BestsellerTag
 import com.example.godeliveryapp.R
-import com.example.zomatoclone.presentation.Dimens.ExtraSmallPadding2
-import com.example.zomatoclone.presentation.Dimens.ExtraSmallPadding3
-import com.example.zomatoclone.presentation.Dimens.MediumPadding1
+import com.example.godeliveryapp.presentation.Dimens
 
 @Composable
 fun MenuItem(modifier: Modifier = Modifier) {
 
-    Row(
+    Card(
         modifier = Modifier
-            .height(200.dp)
-            .padding(top = MediumPadding1, start = MediumPadding1),
-        verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.SpaceEvenly
-
+            .height(180.dp)
+            .fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(0.dp),
+        colors = CardDefaults.cardColors(Color.Transparent),
     ) {
-
-        Column {
-            Row(modifier = Modifier) {
-                Icon(
-                    imageVector = Icons.Rounded.AccountBox,
-                    tint = colorResource(id = R.color.primaryColor),
-                    contentDescription = null
-                )
-
-                Spacer(modifier = Modifier.width(ExtraSmallPadding2))
-
-                BestsellerTag()
-            }
-
-            Spacer(modifier = Modifier.height(ExtraSmallPadding3))
-
-            Text(
-                text = "Blueberry Cheese Cake",
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Spacer(modifier = Modifier.height(ExtraSmallPadding2))
-
-            Text(
-                text = "₹155",
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-
         Box(
             modifier = Modifier
-                .fillMaxWidth(1f)
-                .padding(end = MediumPadding1),
-            contentAlignment = Alignment.BottomEnd
-
+                .fillMaxSize()
+                .padding(Dimens.NormalPadding)
         ) {
-            Image(
+            Column(
                 modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .size(160.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                painter = painterResource(id = R.drawable.ic_launcher_background),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-
-                )
-
-            OutlinedButton(
-                modifier = Modifier
-                    .width(120.dp)
-                    .height(40.dp)
-                    .offset(y = 16.dp)
-                    .offset(x = (-(22).dp)),
-                onClick = { /*TODO*/ },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.primaryColor),
-                ),
-                shape = RoundedCornerShape(12.dp),
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = colorResource(id = R.color.primaryColor)
-                )
-
+                    .fillMaxHeight()
+                    .width(180.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    "ADD +", style = MaterialTheme.typography.titleMedium
-
+                    text = "Lazeez Bhina Murgh Chicken Dum Pizza",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                    color = colorResource(
+                        id = R.color.black
+                    ),
+                    maxLines = 2,
+                    overflow = TextOverflow.Visible,
+                    modifier = Modifier.fillMaxWidth()
                 )
 
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Boneless, Served with 1 Gulab Jamun & Mint Raita",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(Dimens.MediumPadding1))
+
+                Text(
+                    text = "₹ 365",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                    color = colorResource(id = R.color.black),
+                )
+
+
+            }
+
+            Column(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .fillMaxHeight()
+                    .padding(bottom = 5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .height(120.dp)
+                        .width(118.dp)
+                        .background(Color.Transparent, shape = RoundedCornerShape(12.dp))
+                        .clip(
+                            RoundedCornerShape(12.dp)
+                        ), contentAlignment = Alignment.Center
+                ) {
+
+                    //            restaurantListingCard.imageId?.let { painterResource(id = it) }?.let {
+
+                    Image(
+                        painter = painterResource(id = R.drawable.restaurant2),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop
+                    )
+                    //            }
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(12.dp)
+                            .background(color = Color.White, shape = CircleShape)
+                            .size(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Add,
+                            contentDescription = null,
+                            tint = colorResource(id = R.color.black),
+                            modifier = Modifier.scale(1f)
+                        )
+                    }
+
+                }
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(
+                    text = "Customisable",
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
+                    color = colorResource(
+                        id = R.color.gray
+                    )
+                )
             }
         }
-
 
     }
 
 
 }
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun PreviewPage() {
-//
-//    ZomatoCloneTheme {
-//        MenuItem()
-//    }
-//
-//}

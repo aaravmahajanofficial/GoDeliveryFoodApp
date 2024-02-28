@@ -1,10 +1,10 @@
-package com.example.zomatoclone.domain.repository
+package com.example.godeliveryapp.domain.repository
 
-import com.example.zomatoclone.domain.model.RestaurantItem
+import com.example.godeliveryapp.domain.model.RestaurantListingCard
 
 interface Repository {
 
-    suspend fun getRestaurants(): List<RestaurantItem>
+    suspend fun getRestaurants(): List<RestaurantListingCard>
 
 
 }

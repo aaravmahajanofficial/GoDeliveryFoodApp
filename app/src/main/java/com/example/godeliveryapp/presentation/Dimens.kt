@@ -1,4 +1,4 @@
-package com.example.zomatoclone.presentation
+package com.example.godeliveryapp.presentation
 
 import androidx.compose.ui.unit.dp
 

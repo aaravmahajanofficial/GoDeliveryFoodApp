@@ -32,7 +32,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.godeliveryapp.R
-import com.example.zomatoclone.presentation.Dimens.MediumPadding1
+import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.example.zomatoclone.presentation.common
+package com.example.godeliveryapp.presentation.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -16,15 +16,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.zomatoclone.presentation.Dimens.ExtraSmallPadding1
+import com.example.godeliveryapp.R
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
+import com.example.zomatoclone.ui.theme.GoDeliveryApp
 
 @Composable
 fun FoodOptions(
 
     title: String,
-    imageID: Int
-) {
+
+    ) {
 
     Column(
         modifier = Modifier,
@@ -32,11 +35,11 @@ fun FoodOptions(
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(id = imageID),
+            painterResource(id = R.drawable.restaurant1),
             contentDescription = null,
             modifier = Modifier
                 .clip(CircleShape)
-                .size(100.dp), contentScale = ContentScale.Crop
+                .size(120.dp), contentScale = ContentScale.Crop
 
         )
 
@@ -51,3 +54,10 @@ fun FoodOptions(
 
 }
 
+//@Composable
+//@Preview(showBackground = true)
+//fun PreviewShow() {
+//    GoDeliveryApp {
+//        FoodOptions(title = "Pizza")
+//    }
+//}

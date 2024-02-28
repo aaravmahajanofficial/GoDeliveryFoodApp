@@ -1,4 +1,4 @@
-package com.example.zomatoclone.presentation.common
+package com.example.godeliveryapp.presentation.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.zomatoclone.presentation.Dimens.ExtraSmallPadding1
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 
 @Composable
 fun FoodCard(

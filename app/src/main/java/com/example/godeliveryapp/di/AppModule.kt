@@ -1,7 +1,7 @@
 package com.example.zomatoclone.di
 
 import com.example.godeliveryapp.data.repository.RepositoryImplementation
-import com.example.zomatoclone.domain.repository.Repository
+import com.example.godeliveryapp.domain.repository.Repository
 import com.example.zomatoclone.utils.Constants
 import dagger.Module
 import dagger.Provides

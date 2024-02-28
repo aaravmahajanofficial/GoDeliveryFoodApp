@@ -2,12 +2,13 @@
 <resources>
     <color name="black">#030401</color>
     <color name="gray">#676A6C</color>
-    <color name="secondaryColor">#CAE97C</color>
     <color name="primaryColor">#70B943</color>
     <color name="lightGray">#F2F2F3</color>
     <color name="offerAD1Color">#FFECC8</color>
     <color name="offerAD2Color">#EBE8FF</color>
     <color name="offerAD3Color">#B2CAFF</color>
     <color name="orderNowButtonColor">#1E2849</color>
+    <color name="orange">#ee9c00</color>
+    <color name="green">#008000</color>
 
 </resources>

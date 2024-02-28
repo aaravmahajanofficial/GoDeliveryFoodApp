@@ -26,12 +26,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.godeliveryapp.R
-import com.example.zomatoclone.presentation.Dimens.ExtraSmallPadding1
-import com.example.zomatoclone.presentation.Dimens.ExtraSmallPadding2
-import com.example.zomatoclone.presentation.Dimens.ExtraSmallPadding3
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 
 @Composable
 fun RestaurantCard() {

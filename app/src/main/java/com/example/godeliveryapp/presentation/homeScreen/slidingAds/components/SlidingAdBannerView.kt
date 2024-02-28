@@ -34,7 +34,7 @@ fun SlidingAdBannerView(modifier: Modifier = Modifier, slidingAdBanner: SlidingA
 
     Card(
         modifier = Modifier
-            .height(150.dp)
+            .height(140.dp)
             .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(0.dp),
         shape = RoundedCornerShape(16.dp),
@@ -48,7 +48,7 @@ fun SlidingAdBannerView(modifier: Modifier = Modifier, slidingAdBanner: SlidingA
         ) {
             Column(
                 modifier = Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Box(
                     modifier = Modifier
@@ -56,7 +56,7 @@ fun SlidingAdBannerView(modifier: Modifier = Modifier, slidingAdBanner: SlidingA
                 ) {
                     Text(
                         text = slidingAdBanner.title,
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Normal),
+                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Normal),
                         color = colorResource(
                             id = slidingAdBanner.buttonColor
                         ),
@@ -68,7 +68,6 @@ fun SlidingAdBannerView(modifier: Modifier = Modifier, slidingAdBanner: SlidingA
 
                 Box(
                     modifier = Modifier
-                        .fillMaxHeight()
                         .background(
                             color = colorResource(id = slidingAdBanner.buttonColor),
                             shape = RoundedCornerShape(8.dp)
@@ -78,7 +77,7 @@ fun SlidingAdBannerView(modifier: Modifier = Modifier, slidingAdBanner: SlidingA
 
                     Text(
                         text = "Order now",
-                        style = MaterialTheme.typography.titleMedium.copy(color = Color.White)
+                        style = MaterialTheme.typography.titleSmall.copy(color = Color.White)
                     )
 
                 }

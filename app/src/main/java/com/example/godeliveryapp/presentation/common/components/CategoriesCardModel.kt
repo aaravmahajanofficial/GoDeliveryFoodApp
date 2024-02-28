@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.homeScreen.categories
+package com.example.godeliveryapp.presentation.common.components
 
 import com.example.godeliveryapp.R
 
@@ -6,7 +6,7 @@ data class CategoryCard(
     val title: String, val description: String, val imageId: Int
 )
 
-val CategoryCards = listOf(
+val CategoryCardList = listOf(
 
     CategoryCard(
         title = "Food",
