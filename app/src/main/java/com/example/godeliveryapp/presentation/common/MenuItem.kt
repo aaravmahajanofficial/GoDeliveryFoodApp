@@ -1,5 +1,6 @@
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,7 +37,10 @@ import com.example.godeliveryapp.R
 import com.example.godeliveryapp.presentation.Dimens
 
 @Composable
-fun MenuItem(modifier: Modifier = Modifier) {
+fun MenuItem(
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null
+) {
 
     Card(
         modifier = Modifier
@@ -128,7 +132,9 @@ fun MenuItem(modifier: Modifier = Modifier) {
                             imageVector = Icons.Outlined.Add,
                             contentDescription = null,
                             tint = colorResource(id = R.color.black),
-                            modifier = Modifier.scale(1f)
+                            modifier = Modifier
+                                .scale(1f)
+                                .clickable { onClick?.invoke() }
                         )
                     }
 
