@@ -14,7 +14,7 @@ data class RestaurantListingCard(
 //    @DrawableRes val imageId: Int?,
     val restaurantName: String,
     val address: String,
-    val cuisine: List<String>,
+    val cuisine: List<String>?,
     val rating: String,
     val distance: String?,
     val restaurantId: Int,
@@ -25,7 +25,7 @@ val Restaurants = listOf(
 
     RestaurantListingCard(
 //        imageId = R.drawable.restaurant1,
-        restaurantName = "Momoz",
+        restaurantName = "Momo",
         cuisine = listOf("Chinese", "Thai", "Seafood"),
         rating = "4.2",
         distance = "0.5",

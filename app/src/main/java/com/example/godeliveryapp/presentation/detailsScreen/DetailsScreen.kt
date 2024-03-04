@@ -68,7 +68,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun DetailsScreen(
     modifier: Modifier = Modifier,
-    navigateUp: () -> Unit,
+    navigateUp: (() -> Unit)? = null,
     restaurantListingCard: RestaurantListingCard
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
@@ -104,12 +104,14 @@ fun DetailsScreen(
                 Box(
                     modifier = Modifier
                         .height((screenHeight / 3).dp)
+                        .fillMaxWidth()
                         .background(Color.Transparent, shape = RoundedCornerShape(12.dp))
                 ) {
 //            restaurantListingCard.imageId?.let { painterResource(id = it) }?.let {
                     Image(
                         painter = painterResource(id = R.drawable.restaurant3),
                         contentDescription = null,
+                        modifier = Modifier.fillMaxWidth(),
                         contentScale = ContentScale.Crop
                     )
 
@@ -127,6 +129,7 @@ fun DetailsScreen(
                     ) {
                         Box(
                             modifier = Modifier
+                                .clickable { navigateUp?.invoke() }
                                 .background(color = Color.White, shape = CircleShape)
                                 .size(42.dp), contentAlignment = Alignment.Center
                         ) {
@@ -192,15 +195,15 @@ fun DetailsScreen(
 
                     Spacer(modifier = Modifier.height(5.dp))
 
-                    val items: List<String> = restaurantListingCard.cuisine
-                    val formattedString = items.joinToString(" | ")
+                    val items: List<String>? = restaurantListingCard.cuisine
+                    val formattedString = items?.joinToString(" | ")
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
+                        if (formattedString != null) Text(
                             text = formattedString,
                             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Normal),
                             color = colorResource(id = R.color.black),
@@ -275,8 +278,8 @@ fun DetailsScreen(
                             checked = checked,
                             onCheckedChange = { checked = it },
                             thumbContent = {
-                                if (checked) {
-                                } else null
+//                                if (checked) {
+//                                } else null
                             },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = Color.White,
@@ -346,6 +349,7 @@ fun DetailsScreen(
                                 Image(
                                     painter = painterResource(id = R.drawable.restaurant2),
                                     contentDescription = null,
+                                    modifier = Modifier.fillMaxWidth(),
                                     contentScale = ContentScale.Crop
                                 )
                                 //            }

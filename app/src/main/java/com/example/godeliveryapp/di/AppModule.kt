@@ -1,4 +1,4 @@
-package com.example.zomatoclone.di
+package com.example.godeliveryapp.di
 
 import com.example.godeliveryapp.data.repository.RepositoryImplementation
 import com.example.godeliveryapp.domain.repository.Repository
@@ -11,6 +11,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.gotrue.Auth
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.postgrest.postgrest
 import javax.inject.Singleton
 
 @Module
@@ -32,9 +33,21 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesRestaurant(supabaseClient: SupabaseClient): Repository {
+    fun provideSupabaseDatabase(client: SupabaseClient): Postgrest {
+        return client.postgrest
+    }
+//
+//    @Provides
+//    @Singleton
+//    fun provideSupabaseStorage(client: SupabaseClient): Storage {
+//        return client.storage
+//    }
 
-        return RepositoryImplementation(supabaseClient)
+    @Provides
+    @Singleton
+    fun providesRestaurant(postgrest: Postgrest): Repository {
+
+        return RepositoryImplementation(postgrest = postgrest)
     }
 
 

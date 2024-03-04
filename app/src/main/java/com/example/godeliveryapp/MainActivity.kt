@@ -8,8 +8,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
-import com.example.godeliveryapp.domain.model.Restaurants
-import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
+import androidx.navigation.compose.rememberNavController
+import com.example.godeliveryapp.presentation.navigation.SetupNavGraph
 import com.example.zomatoclone.ui.theme.GoDeliveryApp
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,10 +30,13 @@ class MainActivity : ComponentActivity() {
                     color = Color.White
                 ) {
 
-//                    navController = rememberNavController()
-//                    SetupNavGraph(navController = navController)
+                    navController = rememberNavController()
+                    SetupNavGraph(navController = navController)
 
-                    DetailsScreen(navigateUp = { /*TODO*/ }, restaurantListingCard = Restaurants[0])
+//                    DetailsScreen(
+//                        navigateUp = { navController.navigateUp() },
+//                        restaurantListingCard = Restaurants[0]
+//                    )
 
 
                 }
