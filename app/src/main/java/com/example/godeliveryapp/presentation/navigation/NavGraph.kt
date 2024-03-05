@@ -1,14 +1,12 @@
 package com.example.godeliveryapp.presentation.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.godeliveryapp.domain.model.RestaurantListingCard
 import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreen
-import com.example.godeliveryapp.presentation.homeScreen.HomeScreenViewModel
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -20,11 +18,8 @@ fun SetupNavGraph(navController: NavHostController) {
 
         composable(route = Route.HomeScreen.route) {
 
-            val viewModel: HomeScreenViewModel = hiltViewModel()
-            val restaurants = viewModel.restaurants
             HomeScreen(
                 navController = navController,
-                restaurants = restaurants,
                 navigateToDetails = { restaurantListingCard ->
                     navigateToDetailsScreen(
                         navController,

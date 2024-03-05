@@ -1,8 +1,8 @@
 package com.example.godeliveryapp.data.repository
 
-import com.example.godeliveryapp.domain.model.CuisineModel
-import com.example.godeliveryapp.domain.model.RestaurantListingCard
-import com.example.godeliveryapp.domain.model.RestaurantModel
+import RestaurantDto
+import com.example.godeliveryapp.data.remote.dataTransferObject.CuisineDto
+import com.example.godeliveryapp.domain.model.RestaurantWithCuisines
 import com.example.godeliveryapp.domain.repository.Repository
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.Dispatchers
@@ -11,36 +11,24 @@ import kotlinx.coroutines.withContext
 class RepositoryImplementation(private val postgrest: Postgrest) :
     Repository {
 
-    override suspend fun getRestaurants(): List<RestaurantListingCard> {
+    override suspend fun getRestaurants(): List<RestaurantWithCuisines> {
 
         return withContext(Dispatchers.IO) {
 
             val restaurants =
-                postgrest.from("Restaurants").select().decodeList<RestaurantModel>()
+                postgrest.from("Restaurants").select().decodeList<RestaurantDto>()
 
             val restaurantCuisines =
-                postgrest.from("Cuisines").select().decodeList<CuisineModel>()
+                postgrest.from("Cuisines").select().decodeList<CuisineDto>()
 
-            val restaurantListingCards = restaurants.map { restaurant ->
-                val cuisines =
-                    restaurantCuisines.filter { restaurant.restaurantId == it.restaurantId }
+            val restaurantWithCuisines = restaurants.map { restaurant: RestaurantDto ->
+                val cuisinesList: List<String> =
+                    restaurantCuisines.filter { it.restaurantId == restaurant.restaurantId }
                         .map { it.name }
-
-                RestaurantListingCard(
-                    restaurantName = restaurant.restaurantName,
-                    address = restaurant.address,
-                    cuisine = cuisines,
-                    rating = restaurant.rating,
-                    distance = restaurant.distance,
-                    restaurantId = restaurant.restaurantId,
-                    time = restaurant.time
-
-                )
-
+                RestaurantWithCuisines(restaurant, cuisinesList)
             }
 
-
-            restaurantListingCards
+            restaurantWithCuisines
         }
     }
 

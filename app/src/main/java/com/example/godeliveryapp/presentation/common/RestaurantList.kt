@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
 import com.example.godeliveryapp.domain.model.RestaurantListingCard
 import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.homeScreen.listings.components.RestaurantListingCardView
@@ -17,7 +16,7 @@ import com.example.godeliveryapp.presentation.homeScreen.listings.components.Res
 @Composable
 fun RestaurantList(
     modifier: Modifier = Modifier,
-    restaurants: LiveData<List<RestaurantListingCard>>,
+    restaurants: List<RestaurantListingCard>?,
     onClick: (RestaurantListingCard) -> Unit,
 ) {
 
@@ -26,8 +25,8 @@ fun RestaurantList(
         contentPadding = PaddingValues(Dimens.NormalPadding),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        this.items(restaurants.value?.size ?: 0) { index ->
-            val result = restaurants.value?.get(index)
+        this.items(restaurants?.size ?: 0) { index ->
+            val result = restaurants?.get(index)
             if (result != null) {
                 RestaurantListingCardView(
                     restaurantListingCard = result,

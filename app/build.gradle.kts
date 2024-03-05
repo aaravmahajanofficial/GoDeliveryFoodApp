@@ -82,6 +82,7 @@ dependencies {
 
     implementation(platform("io.github.jan-tennert.supabase:bom:2.1.5"))
     implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    implementation ("androidx.core:core-splashscreen:1.0.1")
 
 
     implementation("io.ktor:ktor-client-android:2.3.8")

@@ -22,6 +22,5 @@ data class MenuItemsDto(
     val quantity: Int,
 
     @SerialName("description")
-    val description: String,
-
-    )
+    val description: String
+)
