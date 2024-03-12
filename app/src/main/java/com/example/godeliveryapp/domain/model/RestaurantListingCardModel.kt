@@ -2,13 +2,6 @@ package com.example.godeliveryapp.domain.model
 
 import kotlinx.serialization.Serializable
 
-// val Address: String,
-//    val Cuisine: String,
-//    val Name: String,
-//    val Opening_Hours: String,
-//    val Rating: Int,
-//    val RestaurantID: Int
-
 @Serializable
 data class RestaurantListingCard(
 //    @DrawableRes val imageId: Int?,

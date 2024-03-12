@@ -11,8 +11,8 @@ import com.example.godeliveryapp.R
 val monasans = FontFamily(
     Font(R.font.monasans_regular, FontWeight.Normal),
     Font(R.font.monasans_medium, FontWeight.Medium),
+    Font(R.font.monasans_semibold, FontWeight.SemiBold),
     Font(R.font.monasans_bold, FontWeight.Bold),
-    Font(R.font.monasans_semibold, FontWeight.SemiBold)
 )
 
 internal val Typography = Typography(

@@ -1,6 +1,7 @@
 package com.example.godeliveryapp.data.repository
 
 import RestaurantDto
+import com.example.godeliveryapp.data.remote.dataTransferObject.CartDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.CuisineDto
 import com.example.godeliveryapp.domain.model.RestaurantWithCuisines
 import com.example.godeliveryapp.domain.repository.Repository
@@ -31,6 +32,19 @@ class RepositoryImplementation(private val postgrest: Postgrest) :
             restaurantWithCuisines
         }
     }
+
+    override suspend fun getCartItems(userId: Int): List<CartDto> {
+        return withContext(Dispatchers.IO) {
+
+            val response = postgrest.from("Cart").select {
+                filter { eq("userId", userId) }
+            }.decodeList<CartDto>()
+
+            response
+
+        }
+    }
+
 
 }
 

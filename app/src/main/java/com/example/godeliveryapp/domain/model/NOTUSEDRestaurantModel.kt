@@ -3,7 +3,7 @@ package com.example.godeliveryapp.domain.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RestaurantModel(
+data class NOTUSEDRestaurantModel(
     val restaurantId: Int,
     val restaurantName: String,
     val address: String,

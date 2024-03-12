@@ -26,11 +26,11 @@ fun RestaurantList(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         this.items(restaurants?.size ?: 0) { index ->
-            val result = restaurants?.get(index)
-            if (result != null) {
+            val restaurantIndex = restaurants?.get(index)
+            if (restaurantIndex != null) {
                 RestaurantListingCardView(
-                    restaurantListingCard = result,
-                    onClick = { onClick(result) })
+                    restaurantListingCard = restaurantIndex,
+                    onClick = { onClick(restaurantIndex) })
             }
             Spacer(modifier = Modifier.width(12.dp))
         }

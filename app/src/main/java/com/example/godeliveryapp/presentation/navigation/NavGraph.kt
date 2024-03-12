@@ -21,6 +21,7 @@ fun SetupNavGraph(navController: NavHostController) {
             HomeScreen(
                 navController = navController,
                 navigateToDetails = { restaurantListingCard ->
+                    //sending this whole function
                     navigateToDetailsScreen(
                         navController,
                         restaurantListingCard = restaurantListingCard
@@ -54,13 +55,17 @@ fun SetupNavGraph(navController: NavHostController) {
 }
 
 //this savedStateHandle is used in a fragment to access data, that was saved in some other fragment
-//Fragment A: Displays a list of articles and allows the user to select one.
-//Fragment B: Displays the details of the selected article.
+//Fragment A: Displays a list of listingCard and allows the user to select one.
+//Fragment B: Displays the details of the selected listingCard.
 
 //When the user navigates from Fragment A to Fragment B,
-//Fragment A might save the selected article as an ListingCard object in its savedStateHandle using the key "listingCard".
+//Fragment A might save the selected listingCard as an ListingCard object in its savedStateHandle using the key "listingCard".
 //Then, in Fragment B, you could use the code snippet provided to retrieve the selected article and display its details.
 
+
+//simple way to understand this, is when we click a card in the Restaurant List, it stores that particular card in the string named "restaurantListingCard" and this is saved inside a stack.
+//This value is then used in DetailsScreen Route, in which we extract this saved string(which contains the selected card in string format) from the stack
+// and this card is then given to the details screen to show the details of the selected card
 private fun navigateToDetailsScreen(
     navController: NavHostController,
     restaurantListingCard: RestaurantListingCard
