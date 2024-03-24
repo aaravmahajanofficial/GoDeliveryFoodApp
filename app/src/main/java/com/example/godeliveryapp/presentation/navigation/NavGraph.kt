@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.godeliveryapp.domain.model.RestaurantListingCard
+import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreen
 import kotlinx.serialization.encodeToString
@@ -24,7 +24,7 @@ fun SetupNavGraph(navController: NavHostController) {
                     //sending this whole function
                     navigateToDetailsScreen(
                         navController,
-                        restaurantListingCard = restaurantListingCard
+                        restaurantListingCardModel = restaurantListingCard
                     )
                 }
             )
@@ -34,16 +34,16 @@ fun SetupNavGraph(navController: NavHostController) {
         composable(route = Route.DetailsScreen.route) {
             val serializedRestaurantListingCard =
                 navController.previousBackStackEntry?.savedStateHandle?.get<String>("restaurantListingCard")
-            val restaurantListingCard =
+            val restaurantListingCardModel =
                 serializedRestaurantListingCard?.let { it1 ->
-                    Json.decodeFromString<RestaurantListingCard>(
+                    Json.decodeFromString<RestaurantListingCardModel>(
                         it1
                     )
                 }
-            if (restaurantListingCard != null) {
+            if (restaurantListingCardModel != null) {
                 DetailsScreen(
                     navigateUp = { navController.navigateUp() },
-                    restaurantListingCard = restaurantListingCard
+                    restaurantListingCardModel = restaurantListingCardModel
                 )
             }
         }
@@ -68,9 +68,9 @@ fun SetupNavGraph(navController: NavHostController) {
 // and this card is then given to the details screen to show the details of the selected card
 private fun navigateToDetailsScreen(
     navController: NavHostController,
-    restaurantListingCard: RestaurantListingCard
+    restaurantListingCardModel: RestaurantListingCardModel
 ) {
-    val serializedRestaurantListingCard = Json.encodeToString(restaurantListingCard)
+    val serializedRestaurantListingCard = Json.encodeToString(restaurantListingCardModel)
     navController.currentBackStackEntry?.savedStateHandle?.set(
         "restaurantListingCard",
         serializedRestaurantListingCard

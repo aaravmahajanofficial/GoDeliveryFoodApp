@@ -4,11 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CartDto(
+data class CartOrderItemDto(
+
     @SerialName("cartId")
     val cartId: Int,
+    @SerialName("itemId")
+    val itemId: Int,
+    @SerialName("quantity")
+    val quantity: Int,
 
-    @SerialName("userId")
-    val userId: Int,
-
-)
+    )

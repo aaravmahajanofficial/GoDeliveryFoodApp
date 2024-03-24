@@ -34,13 +34,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.godeliveryapp.R
-import com.example.godeliveryapp.domain.model.RestaurantListingCard
+import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 
 @Composable
 fun RestaurantListingCardView(
     modifier: Modifier = Modifier,
-    restaurantListingCard: RestaurantListingCard,
+    restaurantListingCardModel: RestaurantListingCardModel,
     onClick: (() -> Unit)? = null,
 ) {
 
@@ -86,7 +86,7 @@ fun RestaurantListingCardView(
         }
         Spacer(modifier = Modifier.height(12.dp))
         Text(
-            text = restaurantListingCard.restaurantName,
+            text = restaurantListingCardModel.restaurantName,
             style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
             color = colorResource(
                 id = R.color.black
@@ -97,7 +97,7 @@ fun RestaurantListingCardView(
 
         )
         Spacer(modifier = Modifier.height(5.dp))
-        val items: List<String>? = restaurantListingCard.cuisine
+        val items: List<String>? = restaurantListingCardModel.cuisine
         val formattedString = items?.joinToString(" | ")
 
         if (formattedString != null) {
@@ -126,9 +126,9 @@ fun RestaurantListingCardView(
             Spacer(modifier = Modifier.width(2.dp))
 
             val parameters = listOfNotNull(
-                restaurantListingCard.rating,
-                "${restaurantListingCard.distance}Km",
-                restaurantListingCard.time?.let { "$it Mins" },
+                restaurantListingCardModel.rating,
+                "${restaurantListingCardModel.distance}Km",
+                restaurantListingCardModel.time?.let { "$it Mins" },
             ).joinToString(" | ")
 
             Text(

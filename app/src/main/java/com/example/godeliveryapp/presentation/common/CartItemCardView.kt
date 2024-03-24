@@ -33,21 +33,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.godeliveryapp.R
-import com.example.godeliveryapp.presentation.Dimens
+import com.example.godeliveryapp.domain.model.CartItemCardModel
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
+import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 
 @Composable
-fun CartItemCard(modifier: Modifier = Modifier) {
+fun CartItemCardView(modifier: Modifier = Modifier, cartItemCardModel: CartItemCardModel) {
 
     Card(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(bottom = NormalPadding),
         elevation = CardDefaults.cardElevation(0.dp),
         colors = CardDefaults.cardColors(Color.Transparent),
     ) {
         Row(
             modifier = Modifier
-                .padding(NormalPadding)
                 .fillMaxSize(),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
@@ -72,33 +74,27 @@ fun CartItemCard(modifier: Modifier = Modifier) {
 
             }
 
-
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(
-                        start = Dimens.ExtraSmallPadding3,
-                        top = Dimens.ExtraSmallPadding2,
-
-                        )
+                    .padding(start = ExtraSmallPadding3)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.Start,
             ) {
 
                 Text(
-                    text = "Lazeez Bhina Murgh Chicken Dum Pizza",
+                    text = cartItemCardModel.itemName,
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                     color = colorResource(
                         id = R.color.black
                     ),
                     maxLines = 2,
                 )
-
-                Spacer(modifier = Modifier.height(NormalPadding))
+                Spacer(modifier = Modifier.height(MediumPadding2))
 
                 Text(
-                    text = "Rs 599",
+                    text = cartItemCardModel.price.toString(),
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
                     color = colorResource(id = R.color.gray)
                 )
@@ -129,7 +125,7 @@ fun CartItemCard(modifier: Modifier = Modifier) {
                         )
                     )
                     Text(
-                        text = "1",
+                        text = cartItemCardModel.quantity.toString(),
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
                     )
                     Icon(

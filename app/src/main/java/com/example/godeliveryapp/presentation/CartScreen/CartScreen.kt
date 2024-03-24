@@ -6,15 +6,19 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -28,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -39,6 +44,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
@@ -46,23 +52,25 @@ import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.common.CartDeliveryOptions
-import com.example.godeliveryapp.presentation.common.CartItemCard
+import com.example.godeliveryapp.presentation.common.CartItemCardView
 import com.example.godeliveryapp.presentation.common.CartPaymentDetailsCard
 
 
 @Composable
-fun CartScreen(modifier: Modifier = Modifier) {
+fun CartScreen(modifier: Modifier = Modifier, viewModel: CartScreenViewModel = hiltViewModel()) {
+
+    val scrollState = rememberScrollState()
+    val cartItemsCards = viewModel.cartItems.collectAsState(initial = listOf()).value
 
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
 
     ) {
-
         val (content, button) = createRefs()
+
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
                 .constrainAs(content) {
                     top.linkTo(parent.top)
                     bottom.linkTo(button.top)
@@ -70,14 +78,19 @@ fun CartScreen(modifier: Modifier = Modifier) {
                     end.linkTo(parent.end)
                     height = Dimension.fillToConstraints
                     width = Dimension.fillToConstraints
-                },
-            horizontalAlignment = Alignment.Start,
+                }
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.Start
         ) {
             item {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = NormalPadding, start = NormalPadding, end = NormalPadding)
+                        .padding(
+                            top = NormalPadding,
+                            start = NormalPadding,
+                            end = NormalPadding
+                        )
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
@@ -198,8 +211,23 @@ fun CartScreen(modifier: Modifier = Modifier) {
 
                 Spacer(modifier = Modifier.height(ExtraSmallPadding3))
 
-                CartItemCard()
-                CartItemCard()
+                //List of Items in the Cart ->
+
+                LazyColumn(
+                    userScrollEnabled = false,
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(NormalPadding),
+                ) {
+                    this.items(cartItemsCards?.size ?: 0) { index ->
+                        val cartItemCardIndex = cartItemsCards?.get(index)
+                        if (cartItemCardIndex != null) {
+                            CartItemCardView(cartItemCardModel = cartItemCardIndex)
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
+
+                }
+
 
                 Box(modifier = Modifier.padding(start = NormalPadding, top = NormalPadding)) {
                     Text(
@@ -380,6 +408,7 @@ fun CartScreen(modifier: Modifier = Modifier) {
 
 
         }
+
 
         Box(
             modifier = Modifier

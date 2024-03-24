@@ -16,10 +16,7 @@ data class MenuItemsDto(
     val menuId: Int,
 
     @SerialName("price")
-    val price: Int,
-
-    @SerialName("quantity")
-    val quantity: Int,
+    val price: Float,
 
     @SerialName("description")
     val description: String

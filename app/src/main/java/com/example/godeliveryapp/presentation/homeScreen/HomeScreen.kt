@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
-import com.example.godeliveryapp.domain.model.RestaurantListingCard
+import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
@@ -66,7 +66,7 @@ import com.example.zomatoclone.presentation.homeScreen.OfferAds.components.PageI
 fun HomeScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    navigateToDetails: (RestaurantListingCard) -> Unit,
+    navigateToDetails: (RestaurantListingCardModel) -> Unit,
     viewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
 

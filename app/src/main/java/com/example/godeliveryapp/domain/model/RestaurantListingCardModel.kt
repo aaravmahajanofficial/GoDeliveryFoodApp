@@ -3,7 +3,7 @@ package com.example.godeliveryapp.domain.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RestaurantListingCard(
+data class RestaurantListingCardModel(
 //    @DrawableRes val imageId: Int?,
     val restaurantName: String,
     val address: String,
@@ -16,7 +16,7 @@ data class RestaurantListingCard(
 
 val Restaurants = listOf(
 
-    RestaurantListingCard(
+    RestaurantListingCardModel(
 //        imageId = R.drawable.restaurant1,
         restaurantName = "Momo",
         cuisine = listOf("Chinese", "Thai", "Seafood"),

@@ -9,15 +9,15 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.godeliveryapp.domain.model.RestaurantListingCard
+import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.homeScreen.listings.components.RestaurantListingCardView
 
 @Composable
 fun RestaurantList(
     modifier: Modifier = Modifier,
-    restaurants: List<RestaurantListingCard>?,
-    onClick: (RestaurantListingCard) -> Unit,
+    restaurants: List<RestaurantListingCardModel>?,
+    onClick: (RestaurantListingCardModel) -> Unit,
 ) {
 
     LazyRow(
@@ -29,7 +29,7 @@ fun RestaurantList(
             val restaurantIndex = restaurants?.get(index)
             if (restaurantIndex != null) {
                 RestaurantListingCardView(
-                    restaurantListingCard = restaurantIndex,
+                    restaurantListingCardModel = restaurantIndex,
                     onClick = { onClick(restaurantIndex) })
             }
             Spacer(modifier = Modifier.width(12.dp))

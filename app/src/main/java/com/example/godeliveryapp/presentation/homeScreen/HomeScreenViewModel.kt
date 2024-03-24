@@ -2,7 +2,7 @@ package com.example.godeliveryapp.presentation.homeScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.godeliveryapp.domain.model.RestaurantListingCard
+import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.domain.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -13,8 +13,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
-    private val _restaurants = MutableStateFlow<List<RestaurantListingCard>?>(listOf())
-    val restaurants: Flow<List<RestaurantListingCard>?> get() = _restaurants
+    private val _restaurants = MutableStateFlow<List<RestaurantListingCardModel>?>(listOf())
+    val restaurants: Flow<List<RestaurantListingCardModel>?> get() = _restaurants
 
     private var _isLoading = MutableStateFlow(true)
 
@@ -27,11 +27,11 @@ class HomeScreenViewModel @Inject constructor(private val repository: Repository
     private fun fetchRestaurants() {
         viewModelScope.launch {
             val restaurantWithCuisines = repository.getRestaurants()
-            val restaurantListingCard = restaurantWithCuisines?.map { resCui ->
+            val restaurantListingCards = restaurantWithCuisines?.map { resCui ->
                 val restaurantDto = resCui.restaurantDto
                 val cuisinesList = resCui.cuisines
 
-                RestaurantListingCard(
+                RestaurantListingCardModel(
                     restaurantName = restaurantDto.restaurantName,
                     address = restaurantDto.address,
                     restaurantId = restaurantDto.restaurantId,
@@ -43,7 +43,7 @@ class HomeScreenViewModel @Inject constructor(private val repository: Repository
                 )
             }
 
-            _restaurants.emit(restaurantListingCard)
+            _restaurants.emit(restaurantListingCards)
             _isLoading.value = false
 
         }
