@@ -23,7 +23,7 @@ class AppModule {
     fun provideSupabaseClient(): SupabaseClient {
         return createSupabaseClient(
             supabaseUrl = Constants.BASE_URL,
-            supabaseKey = Constants.supabaseKey
+            supabaseKey = Constants.SUPABASE_KEY
         ) {
             install(Auth)
             install(Postgrest)

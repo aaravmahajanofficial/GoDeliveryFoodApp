@@ -2,7 +2,8 @@ package com.example.godeliveryapp.presentation.CartScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.godeliveryapp.domain.model.CartItemCardModel
+import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
+import com.example.godeliveryapp.domain.model.CartOrderItemModel
 import com.example.godeliveryapp.domain.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -14,8 +15,11 @@ import javax.inject.Inject
 class CartScreenViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
     //    collection of individual card of _cartItems, or _cartItemsCard
-    private val _cartItems = MutableStateFlow<List<CartItemCardModel>?>(listOf())
-    val cartItems: Flow<List<CartItemCardModel>?> get() = _cartItems
+    private val _cartItems = MutableStateFlow<List<CartOrderItemModel>?>(listOf())
+    val cartItems: Flow<List<CartOrderItemModel>?> get() = _cartItems
+
+    private val _cartSubTotal = MutableStateFlow(0.0)
+    val cartSubTotal: Flow<Double> get() = _cartSubTotal
 
     init {
         getItems()
@@ -28,18 +32,46 @@ class CartScreenViewModel @Inject constructor(private val repository: Repository
             val cartItems = repository.getCartItems(1)
 
             val cartItemsCardList = cartItems?.map { item ->
-                CartItemCardModel(
-                    price = item.cartItem.price,
-                    itemName = item.cartItem.itemName,
-                    quantity = item.quantity
+                CartOrderItemModel(
+                    cartId = item.cartId,
+                    price = item.menuItem.price,
+                    itemName = item.menuItem.itemName,
+                    quantity = item.quantity,
+                    itemId = item.menuItem.itemId
                 )
             }
 
-            _cartItems.value = cartItemsCardList
+            _cartItems.emit(cartItemsCardList)
+            calculateCartValue()
 
         }
 
+    }
 
+    private fun calculateCartValue() {
+
+        val items = _cartItems.value ?: emptyList()
+        val sum = items.sumOf { (it.quantity * it.price) }
+        _cartSubTotal.value = sum
+
+    }
+
+    fun updateCartItem(cartItem: CartOrderItemDto) {
+
+        viewModelScope.launch {
+
+            repository.updateCartItem(cartItem)
+            getItems()
+
+        }
+
+    }
+
+    fun deleteCartItem(cartItem: CartOrderItemDto) {
+        viewModelScope.launch {
+            repository.deleteCartItem(cartItem)
+            getItems()
+        }
     }
 
 

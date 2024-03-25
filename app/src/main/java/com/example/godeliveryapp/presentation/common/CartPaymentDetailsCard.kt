@@ -21,9 +21,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.presentation.Dimens
+import com.example.zomatoclone.utils.Constants.DELIVERY_FEE
+import com.example.zomatoclone.utils.Constants.PROMOCODE
+import com.example.zomatoclone.utils.Constants.TAX
 
 @Composable
-fun CartPaymentDetailsCard(modifier: Modifier = Modifier) {
+fun CartPaymentDetailsCard(modifier: Modifier = Modifier, cartSubTotal: String) {
 
     Card(
         modifier = Modifier
@@ -52,7 +55,7 @@ fun CartPaymentDetailsCard(modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = "₹ 1077",
+                    text = cartSubTotal,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                     color = colorResource(id = R.color.black)
                 )
@@ -75,7 +78,7 @@ fun CartPaymentDetailsCard(modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = "- ₹ 85",
+                    text = "- ₹ $PROMOCODE",
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                     color = colorResource(id = R.color.secondaryColor)
                 )
@@ -95,7 +98,7 @@ fun CartPaymentDetailsCard(modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = "₹ 28",
+                    text = "₹ $DELIVERY_FEE",
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                     color = colorResource(id = R.color.black)
                 )
@@ -116,7 +119,7 @@ fun CartPaymentDetailsCard(modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = "₹ 40",
+                    text = "₹ $TAX",
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                     color = colorResource(id = R.color.black)
                 )

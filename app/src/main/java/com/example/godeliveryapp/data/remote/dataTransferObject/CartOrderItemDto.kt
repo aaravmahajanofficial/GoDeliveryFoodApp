@@ -12,5 +12,4 @@ data class CartOrderItemDto(
     val itemId: Int,
     @SerialName("quantity")
     val quantity: Int,
-
     )

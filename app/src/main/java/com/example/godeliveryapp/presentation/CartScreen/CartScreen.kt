@@ -6,14 +6,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -46,6 +43,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.godeliveryapp.R
+import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
@@ -54,6 +52,11 @@ import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.common.CartDeliveryOptions
 import com.example.godeliveryapp.presentation.common.CartItemCardView
 import com.example.godeliveryapp.presentation.common.CartPaymentDetailsCard
+import com.example.zomatoclone.utils.Constants.DELIVERY_FEE
+import com.example.zomatoclone.utils.Constants.PROMOCODE
+import com.example.zomatoclone.utils.Constants.TAX
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 
 @Composable
@@ -61,6 +64,16 @@ fun CartScreen(modifier: Modifier = Modifier, viewModel: CartScreenViewModel = h
 
     val scrollState = rememberScrollState()
     val cartItemsCards = viewModel.cartItems.collectAsState(initial = listOf()).value
+    val cartSubTotal = viewModel.cartSubTotal.collectAsState(initial = 0.0).value
+    val cartTotal = cartSubTotal - PROMOCODE + DELIVERY_FEE + TAX
+
+    fun updateCart(cartOrderItemDto: CartOrderItemDto) {
+        viewModel.updateCartItem(cartOrderItemDto)
+    }
+
+    fun deleteItem(cartOrderItemDto: CartOrderItemDto) {
+        viewModel.deleteCartItem(cartOrderItemDto)
+    }
 
     ConstraintLayout(
         modifier = Modifier
@@ -207,27 +220,25 @@ fun CartScreen(modifier: Modifier = Modifier, viewModel: CartScreenViewModel = h
                         )
 
                     }
-                }
 
+                }
                 Spacer(modifier = Modifier.height(ExtraSmallPadding3))
+            }
 
-                //List of Items in the Cart ->
-
-                LazyColumn(
-                    userScrollEnabled = false,
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(NormalPadding),
-                ) {
-                    this.items(cartItemsCards?.size ?: 0) { index ->
-                        val cartItemCardIndex = cartItemsCards?.get(index)
-                        if (cartItemCardIndex != null) {
-                            CartItemCardView(cartItemCardModel = cartItemCardIndex)
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                    }
-
+            items(cartItemsCards?.size ?: 0) {
+                //List of Items in the Cart
+                    index ->
+                val cartItemCardIndex = cartItemsCards?.get(index)
+                if (cartItemCardIndex != null) {
+                    CartItemCardView(
+                        cartOrderItemModel = cartItemCardIndex,
+                        updateItem = { cartOrderItemDto -> updateCart(cartOrderItemDto) },
+                        deleteItem = { cartOrderItemDto -> deleteItem(cartOrderItemDto) })
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
+            }
 
+            item {
 
                 Box(modifier = Modifier.padding(start = NormalPadding, top = NormalPadding)) {
                     Text(
@@ -401,14 +412,12 @@ fun CartScreen(modifier: Modifier = Modifier, viewModel: CartScreenViewModel = h
                     )
                 }
 
-                CartPaymentDetailsCard()
+                CartPaymentDetailsCard(cartSubTotal = cartTotalRoundOff(cartSubTotal))
 
 
             }
 
-
         }
-
 
         Box(
             modifier = Modifier
@@ -445,7 +454,7 @@ fun CartScreen(modifier: Modifier = Modifier, viewModel: CartScreenViewModel = h
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                     )
                     Text(
-                        text = "₹ 1060",
+                        text = cartTotalRoundOff(cartTotal),
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(id = R.color.black)
                     )
@@ -480,4 +489,10 @@ fun CartScreen(modifier: Modifier = Modifier, viewModel: CartScreenViewModel = h
         }
     }
 
+}
+
+private fun cartTotalRoundOff(cartTotal: Double): String {
+    val df = DecimalFormat("#.##")
+    df.roundingMode = RoundingMode.CEILING
+    return df.format(cartTotal)
 }

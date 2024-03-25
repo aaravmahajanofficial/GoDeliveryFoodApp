@@ -5,7 +5,7 @@ data class NOTUSEDMenuItemsModel(
     val itemId: Int,
     val itemName: String,
     val menuId: Int,
-    val price: Int,
+    val price: Double,
     val description: String
 
 )

@@ -40,13 +40,13 @@ class RepositoryImplementation(private val postgrest: Postgrest) :
         return withContext(Dispatchers.IO) {
 
             //get the cartId, of the user and then traverse the orderItems table, to get the cartItems of the user
-            val cart = postgrest.from("Cart").select {
+            val cartDetails = postgrest.from("Cart").select {
                 filter { eq("userId", userId) }
             }.decodeSingle<CartDto>()
 
             //create a list of orderItems, with cartId
             val cartOrderItems = postgrest.from("OrderItems").select {
-                filter { eq("cartId", cart.cartId) }
+                filter { eq("cartId", cartDetails.cartId) }
             }.decodeList<CartOrderItemDto>()
 
             //need to match the itemId to MenuItems Table to fetch the desired food item details from the MenuItems Table
@@ -58,13 +58,75 @@ class RepositoryImplementation(private val postgrest: Postgrest) :
                     filter { eq("itemId", cartOrderItem.itemId) }
                 }.decodeSingle<MenuItemsDto>()
 
-                CartItemModel(quantity = cartOrderItem.quantity, menuItem)
+                CartItemModel(
+                    cartId = cartDetails.cartId,
+                    quantity = cartOrderItem.quantity,
+                    menuItem = menuItem,
+                )
 
             }
 
             cartItems
 
         }
+    }
+
+    override suspend fun addCartItem(cartItem: CartItemModel): Boolean {
+
+        return try {
+
+            withContext(Dispatchers.IO) {
+
+                val cartOrderItemDto = CartOrderItemDto(
+                    cartId = cartItem.cartId,
+                    quantity = cartItem.quantity,
+                    itemId = cartItem.menuItem.itemId
+                )
+                postgrest.from("OrderItems").insert(cartOrderItemDto)
+                true
+            }
+
+        } catch (e: java.lang.Exception) {
+            throw e
+        }
+
+    }
+
+    override suspend fun deleteCartItem(cartItem: CartOrderItemDto) {
+        withContext(Dispatchers.IO) {
+            postgrest.from("OrderItems").delete {
+                filter {
+                    eq("itemId", cartItem.itemId)
+                }
+            }
+        }
+    }
+
+    override suspend fun updateCartItem(cartItem: CartOrderItemDto) {
+
+        withContext(Dispatchers.IO) {
+
+            postgrest.from("OrderItems").update({
+                set("quantity", cartItem.quantity)
+            }) {
+                filter { eq("itemId", cartItem.itemId) }
+            }
+
+        }
+
+    }
+
+    override suspend fun getMenu(restaurantId: Int): List<MenuItemsDto> {
+
+        return withContext(Dispatchers.IO) {
+
+            val menuItems =
+                postgrest.from("MenuItems").select { filter { eq("restaurantId", restaurantId) } }
+                    .decodeList<MenuItemsDto>()
+
+            menuItems
+        }
+
     }
 
 

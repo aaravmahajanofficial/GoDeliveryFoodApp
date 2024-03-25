@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
+import com.example.godeliveryapp.presentation.CartScreen.CartScreen
 import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreen
 import kotlinx.serialization.encodeToString
@@ -31,6 +32,10 @@ fun SetupNavGraph(navController: NavHostController) {
 
         }
 
+        composable(route = Route.CartScreen.route) {
+            CartScreen()
+        }
+
         composable(route = Route.DetailsScreen.route) {
             val serializedRestaurantListingCard =
                 navController.previousBackStackEntry?.savedStateHandle?.get<String>("restaurantListingCard")
@@ -42,8 +47,10 @@ fun SetupNavGraph(navController: NavHostController) {
                 }
             if (restaurantListingCardModel != null) {
                 DetailsScreen(
-                    navigateUp = { navController.navigateUp() },
-                    restaurantListingCardModel = restaurantListingCardModel
+                    navigateUp = {
+                        navController.navigateUp()
+                    },
+                    navController = navController,
                 )
             }
         }

@@ -12,11 +12,11 @@ data class MenuItemsDto(
     @SerialName("itemName")
     val itemName: String,
 
-    @SerialName("menuId")
-    val menuId: Int,
+    @SerialName("restaurantId")
+    val restaurantId: Int,
 
     @SerialName("price")
-    val price: Float,
+    val price: Double,
 
     @SerialName("description")
     val description: String

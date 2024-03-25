@@ -2,6 +2,7 @@ package com.example.godeliveryapp.presentation.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,18 +34,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.godeliveryapp.R
-import com.example.godeliveryapp.domain.model.CartItemCardModel
+import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
+import com.example.godeliveryapp.domain.model.CartOrderItemModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 
 @Composable
-fun CartItemCardView(modifier: Modifier = Modifier, cartItemCardModel: CartItemCardModel) {
+fun CartItemCardView(
+    modifier: Modifier = Modifier,
+    cartOrderItemModel: CartOrderItemModel,
+    updateItem: (CartOrderItemDto) -> Unit,
+    deleteItem: (CartOrderItemDto) -> Unit
+) {
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = NormalPadding),
+            .padding(
+                start = NormalPadding, end = NormalPadding, top = NormalPadding
+            ),
         elevation = CardDefaults.cardElevation(0.dp),
         colors = CardDefaults.cardColors(Color.Transparent),
     ) {
@@ -63,7 +72,6 @@ fun CartItemCardView(modifier: Modifier = Modifier, cartItemCardModel: CartItemC
                         RoundedCornerShape(12.dp)
                     ), contentAlignment = Alignment.Center
             ) {
-
                 //            restaurantListingCard.imageId?.let { painterResource(id = it) }?.let {
 
                 Image(
@@ -84,7 +92,7 @@ fun CartItemCardView(modifier: Modifier = Modifier, cartItemCardModel: CartItemC
             ) {
 
                 Text(
-                    text = cartItemCardModel.itemName,
+                    text = cartOrderItemModel.itemName,
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                     color = colorResource(
                         id = R.color.black
@@ -94,7 +102,7 @@ fun CartItemCardView(modifier: Modifier = Modifier, cartItemCardModel: CartItemC
                 Spacer(modifier = Modifier.height(MediumPadding2))
 
                 Text(
-                    text = cartItemCardModel.price.toString(),
+                    text = cartOrderItemModel.price.toString(),
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
                     color = colorResource(id = R.color.gray)
                 )
@@ -119,19 +127,46 @@ fun CartItemCardView(modifier: Modifier = Modifier, cartItemCardModel: CartItemC
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Remove,
-                        contentDescription = null, modifier = Modifier.scale(0.8f),
+                        contentDescription = null, modifier = Modifier
+                            .scale(0.8f)
+                            .clickable {
+
+                                val cartOrderItemDto = CartOrderItemDto(
+                                    itemId = cartOrderItemModel.itemId,
+                                    cartId = cartOrderItemModel.cartId,
+                                    quantity = (cartOrderItemModel.quantity) - 1
+                                )
+                                if (cartOrderItemDto.quantity >= 1) {
+                                    updateItem(cartOrderItemDto)
+                                } else {
+
+                                    deleteItem(cartOrderItemDto)
+
+                                }
+
+                            },
                         tint = colorResource(
                             id = R.color.black
                         )
                     )
                     Text(
-                        text = cartItemCardModel.quantity.toString(),
+                        text = cartOrderItemModel.quantity.toString(),
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
                     )
                     Icon(
                         imageVector = Icons.Rounded.Add,
                         contentDescription = null,
-                        modifier = Modifier.scale(0.8f),
+                        modifier = Modifier
+                            .scale(0.8f)
+                            .clickable {
+                                val cartOrderItemDto = CartOrderItemDto(
+                                    itemId = cartOrderItemModel.itemId,
+                                    cartId = cartOrderItemModel.cartId,
+                                    quantity = (cartOrderItemModel.quantity) + 1
+                                )
+
+                                updateItem(cartOrderItemDto)
+                            },
                         tint = colorResource(
                             id = R.color.black
                         )
