@@ -8,6 +8,7 @@ import com.example.godeliveryapp.data.remote.dataTransferObject.MenuItemsDto
 import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.domain.model.RestaurantWithCuisines
 import com.example.godeliveryapp.domain.repository.Repository
+import com.example.zomatoclone.utils.Constants.CART_ID
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -71,18 +72,27 @@ class RepositoryImplementation(private val postgrest: Postgrest) :
         }
     }
 
-    override suspend fun addCartItem(cartItem: CartItemModel): Boolean {
+    override suspend fun existsInCart(itemId: Int): CartItemModel? {
+        return withContext(Dispatchers.IO) {
+
+            val existingItem = postgrest.from("OrderItems").select {
+                filter {
+                    eq("itemId", itemId)
+                }
+            }.decodeSingleOrNull<CartItemModel>()
+
+            existingItem
+
+        }
+    }
+
+    override suspend fun addCartItem(cartItem: CartOrderItemDto): Boolean {
 
         return try {
 
             withContext(Dispatchers.IO) {
 
-                val cartOrderItemDto = CartOrderItemDto(
-                    cartId = cartItem.cartId,
-                    quantity = cartItem.quantity,
-                    itemId = cartItem.menuItem.itemId
-                )
-                postgrest.from("OrderItems").insert(cartOrderItemDto)
+                postgrest.from("OrderItems").insert(cartItem)
                 true
             }
 
@@ -105,11 +115,14 @@ class RepositoryImplementation(private val postgrest: Postgrest) :
     override suspend fun updateCartItem(cartItem: CartOrderItemDto) {
 
         withContext(Dispatchers.IO) {
-
             postgrest.from("OrderItems").update({
+
                 set("quantity", cartItem.quantity)
+
             }) {
-                filter { eq("itemId", cartItem.itemId) }
+                filter {
+                    eq("itemId", cartItem.itemId)
+                }
             }
 
         }

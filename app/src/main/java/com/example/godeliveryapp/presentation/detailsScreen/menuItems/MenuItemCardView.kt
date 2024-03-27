@@ -21,7 +21,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -33,6 +35,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,8 +53,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.godeliveryapp.R
+import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
+import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.Dimens
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemCardModel
 import kotlinx.coroutines.launch
@@ -60,14 +67,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun MenuItemCardView(
     modifier: Modifier = Modifier,
-    menuItemCardModel: MenuItemCardModel
+    menuItemCardModel: MenuItemCardModel,
+    viewModel: CartScreenViewModel = hiltViewModel()
 ) {
+    val cartItems = viewModel.cartItems.collectAsState(initial = listOf()).value
     val screenHeight = LocalConfiguration.current.screenHeightDp
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember {
         mutableStateOf(false)
     }
     val scope = rememberCoroutineScope()
+
     fun onClick() {
         scope.launch { sheetState.hide() }.invokeOnCompletion {
             if (!sheetState.isVisible) {
@@ -75,6 +85,9 @@ fun MenuItemCardView(
             }
         }
     }
+
+    val existingItem =
+        cartItems?.firstOrNull { it.itemId == menuItemCardModel.itemId }
 
     Card(
         modifier = Modifier
@@ -156,23 +169,102 @@ fun MenuItemCardView(
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(12.dp)
-                            .background(color = Color.White, shape = CircleShape)
-                            .size(32.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Add,
-                            contentDescription = null,
-                            tint = colorResource(id = R.color.black),
+                    if (existingItem != null) {
+                        Box(
                             modifier = Modifier
-                                .scale(1f)
-                                .clickable { onClick() }
-                        )
+                                .padding(bottom = ExtraSmallPadding3)
+                                .align(Alignment.BottomCenter)
+                                .background(
+                                    color = colorResource(id = R.color.lightGray),
+                                    shape = RoundedCornerShape(18.dp)
+                                )
+                                .height(35.dp)
+                                .width(80.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalArrangement = Arrangement.SpaceEvenly,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Remove,
+                                    contentDescription = null, modifier = Modifier
+                                        .scale(0.8f)
+                                        .clickable {
+
+                                            val cartOrderItemDto = CartOrderItemDto(
+                                                cartId = 1,
+                                                itemId = menuItemCardModel.itemId,
+                                                quantity = existingItem.quantity
+                                            )
+
+                                            if (existingItem.quantity > 1) {
+                                                viewModel.updateCartItem(
+                                                    cartOrderItemDto.copy(
+                                                        quantity = cartOrderItemDto.quantity - 1
+                                                    )
+                                                )
+                                            } else {
+                                                viewModel.deleteCartItem(cartOrderItemDto)
+                                            }
+
+                                        },
+                                    tint = colorResource(
+                                        id = R.color.black
+                                    )
+                                )
+                                Text(
+                                    text = "${existingItem.quantity}",
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
+                                )
+                                Icon(
+                                    imageVector = Icons.Rounded.Add,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .scale(0.8f)
+                                        .clickable {
+
+                                            val cartOrderItemDto = CartOrderItemDto(
+                                                cartId = 1,
+                                                itemId = menuItemCardModel.itemId,
+                                                quantity = existingItem.quantity
+                                            )
+
+                                            viewModel.updateCartItem(
+                                                cartOrderItemDto.copy(
+                                                    quantity = cartOrderItemDto.quantity + 1
+                                                )
+                                            )
+
+                                        },
+                                    tint = colorResource(
+                                        id = R.color.black
+                                    )
+                                )
+
+                            }
+                        }
+                    } else {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(ExtraSmallPadding3)
+                                .background(color = Color.White, shape = CircleShape)
+                                .size(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Add,
+                                contentDescription = null,
+                                tint = colorResource(id = R.color.black),
+                                modifier = Modifier
+                                    .scale(1f)
+                                    .clickable { onClick() }
+                            )
+                        }
                     }
+
 
                 }
                 Spacer(modifier = Modifier.height(5.dp))
@@ -216,7 +308,7 @@ fun MenuItemCardView(
                             )
                             Box(modifier = Modifier
                                 .align(Alignment.TopEnd)
-                                .padding(Dimens.NormalPadding)
+                                .padding(NormalPadding)
                                 .clickable {
                                     showBottomSheet = false
                                 }
@@ -297,7 +389,20 @@ fun MenuItemCardView(
 
 
                             OutlinedButton(
-                                onClick = {},
+                                onClick = {
+
+                                    val cartOrderItemDto = CartOrderItemDto(
+                                        cartId = 1,
+                                        itemId = menuItemCardModel.itemId,
+                                        quantity = 1
+                                    )
+
+                                    viewModel.createItem(
+                                        cartOrderItemDto
+                                    )
+                                    showBottomSheet = false
+
+                                },
                                 shape = RoundedCornerShape(5.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = colorResource(

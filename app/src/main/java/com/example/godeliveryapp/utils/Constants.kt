@@ -8,4 +8,5 @@ object Constants {
     const val DELIVERY_FEE = 28
     const val TAX = 40
     const val PROMOCODE = 85
+    var CART_ID = 1
 }

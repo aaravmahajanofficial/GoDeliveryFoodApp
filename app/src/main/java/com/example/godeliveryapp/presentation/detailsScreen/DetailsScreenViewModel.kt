@@ -3,6 +3,7 @@ package com.example.godeliveryapp.presentation.detailsScreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
+import com.example.godeliveryapp.domain.model.CartOrderItemModel
 import com.example.godeliveryapp.domain.repository.Repository
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemCardModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,12 +18,8 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Reposit
     private val _menuItems = MutableStateFlow<List<MenuItemCardModel>>(listOf())
     val menuItems: Flow<List<MenuItemCardModel>> get() = _menuItems
 
-    private val _cartItems = MutableStateFlow<List<Map<Int, Int>>?>(listOf())
-    val cartItems: Flow<List<Map<Int, Int>>?> get() = _cartItems
-
     init {
         getMenu()
-        getCartItems()
     }
 
     private fun getMenu() {
@@ -38,48 +35,13 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Reposit
                     itemDescription = menuItem.description,
                     itemPrice = menuItem.price,
                 )
+
             }
 
             _menuItems.emit(menuItemCard)
 
         }
 
-    }
-
-    private fun getCartItems() {
-
-        viewModelScope.launch {
-            //list of cartItems
-
-            val cartItems = repository.getCartItems(1)
-            val itemsInCart = cartItems?.map { item ->
-
-                mapOf(pair = Pair(item.menuItem.itemId, item.quantity))
-
-            }
-
-            _cartItems.emit(itemsInCart)
-
-
-        }
-
-
-    }
-
-    fun updateCartItem(cartItem: CartOrderItemDto) {
-
-        viewModelScope.launch {
-
-            repository.updateCartItem(cartItem)
-
-        }
-
-    }
-
-    fun deleteCartItem(cartItem: CartOrderItemDto) {
-        viewModelScope.launch {
-            repository.deleteCartItem(cartItem)
-        }
     }
 
 }

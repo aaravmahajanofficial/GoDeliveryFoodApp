@@ -8,5 +8,4 @@ data class MenuItemCardModel(
     val itemPrice: Double,
     val itemDescription: String,
     val itemImageId: Int? = R.drawable.restaurant1,
-    val itemQuantity : Int? = 0
 )

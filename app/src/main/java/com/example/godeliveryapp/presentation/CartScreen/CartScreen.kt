@@ -232,8 +232,7 @@ fun CartScreen(modifier: Modifier = Modifier, viewModel: CartScreenViewModel = h
                 if (cartItemCardIndex != null) {
                     CartItemCardView(
                         cartOrderItemModel = cartItemCardIndex,
-                        updateItem = { cartOrderItemDto -> updateCart(cartOrderItemDto) },
-                        deleteItem = { cartOrderItemDto -> deleteItem(cartOrderItemDto) })
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }

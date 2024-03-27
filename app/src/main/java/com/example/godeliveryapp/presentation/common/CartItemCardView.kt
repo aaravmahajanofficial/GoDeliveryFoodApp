@@ -33,9 +33,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
 import com.example.godeliveryapp.domain.model.CartOrderItemModel
+import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
@@ -44,8 +46,7 @@ import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 fun CartItemCardView(
     modifier: Modifier = Modifier,
     cartOrderItemModel: CartOrderItemModel,
-    updateItem: (CartOrderItemDto) -> Unit,
-    deleteItem: (CartOrderItemDto) -> Unit
+    viewModel: CartScreenViewModel = hiltViewModel()
 ) {
 
     Card(
@@ -137,10 +138,10 @@ fun CartItemCardView(
                                     quantity = (cartOrderItemModel.quantity) - 1
                                 )
                                 if (cartOrderItemDto.quantity >= 1) {
-                                    updateItem(cartOrderItemDto)
+                                    viewModel.updateCartItem(cartOrderItemDto)
                                 } else {
 
-                                    deleteItem(cartOrderItemDto)
+                                    viewModel.deleteCartItem(cartOrderItemDto)
 
                                 }
 
@@ -165,7 +166,7 @@ fun CartItemCardView(
                                     quantity = (cartOrderItemModel.quantity) + 1
                                 )
 
-                                updateItem(cartOrderItemDto)
+                                viewModel.updateCartItem(cartOrderItemDto)
                             },
                         tint = colorResource(
                             id = R.color.black

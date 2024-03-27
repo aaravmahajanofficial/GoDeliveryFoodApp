@@ -69,7 +69,6 @@ fun DetailsScreen(
 ) {
 
     val menuItemsCards = viewModel.menuItems.collectAsState(initial = listOf()).value
-    val cartItems = viewModel.cartItems.collectAsState(initial = listOf()).value
     val screenHeight = LocalConfiguration.current.screenHeightDp
     var checked by remember { mutableStateOf(false) }
 
@@ -313,7 +312,9 @@ fun DetailsScreen(
             items(menuItemsCards.size ?: 0) { index ->
                 val menuItemCardModel = menuItemsCards[index]
 
-                MenuItemCardView(menuItemCardModel = menuItemCardModel)
+                MenuItemCardView(
+                    menuItemCardModel = menuItemCardModel
+                )
 
                 Spacer(
                     modifier = Modifier

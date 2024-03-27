@@ -6,10 +6,13 @@ import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.domain.model.RestaurantWithCuisines
 
 interface Repository {
+
     suspend fun getRestaurants(): List<RestaurantWithCuisines>?
     suspend fun getCartItems(userId: Int): List<CartItemModel>?
 
-    suspend fun addCartItem(cartItem: CartItemModel): Boolean
+    suspend fun existsInCart(itemId : Int) : CartItemModel?
+
+    suspend fun addCartItem(cartItem: CartOrderItemDto): Boolean
 
     suspend fun deleteCartItem(cartItem: CartOrderItemDto)
 
