@@ -17,7 +17,7 @@ import com.example.godeliveryapp.presentation.homeScreen.listings.components.Res
 fun RestaurantList(
     modifier: Modifier = Modifier,
     restaurants: List<RestaurantListingCardModel>?,
-    onClick: (RestaurantListingCardModel) -> Unit,
+    navigateToDetails: (RestaurantListingCardModel) -> Unit,
 ) {
 
     LazyRow(
@@ -30,7 +30,7 @@ fun RestaurantList(
             if (restaurantIndex != null) {
                 RestaurantListingCardView(
                     restaurantListingCardModel = restaurantIndex,
-                    onClick = { onClick(restaurantIndex) })
+                    navigateToDetails = { navigateToDetails(restaurantIndex) })
             }
             Spacer(modifier = Modifier.width(12.dp))
         }

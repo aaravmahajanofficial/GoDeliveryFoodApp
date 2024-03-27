@@ -21,11 +21,11 @@ fun SetupNavGraph(navController: NavHostController) {
 
             HomeScreen(
                 navController = navController,
-                navigateToDetails = { restaurantListingCard ->
+                navigateToDetails = { restaurantListingCardModel ->
                     //sending this whole function
                     navigateToDetailsScreen(
                         navController,
-                        restaurantListingCardModel = restaurantListingCard
+                        restaurantListingCardModel = restaurantListingCardModel
                     )
                 }
             )
@@ -33,7 +33,7 @@ fun SetupNavGraph(navController: NavHostController) {
         }
 
         composable(route = Route.CartScreen.route) {
-            CartScreen()
+            CartScreen(navController = navController)
         }
 
         composable(route = Route.DetailsScreen.route) {
@@ -51,6 +51,7 @@ fun SetupNavGraph(navController: NavHostController) {
                         navController.navigateUp()
                     },
                     navController = navController,
+                    restaurantListingCardModel = restaurantListingCardModel
                 )
             }
         }

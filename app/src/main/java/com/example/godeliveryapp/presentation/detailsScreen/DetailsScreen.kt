@@ -56,6 +56,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
+import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.navigation.Route
 
@@ -65,7 +66,8 @@ fun DetailsScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
     navigateUp: (() -> Unit)? = null,
-    viewModel: DetailsScreenViewModel = hiltViewModel()
+    viewModel: DetailsScreenViewModel = hiltViewModel(),
+    restaurantListingCardModel: RestaurantListingCardModel
 ) {
 
     val menuItemsCards = viewModel.menuItems.collectAsState(initial = listOf()).value
@@ -175,7 +177,7 @@ fun DetailsScreen(
                 ) {
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "restaurantListingCardModel.restaurantName",
+                        text = restaurantListingCardModel.restaurantName,
                         style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(
                             id = R.color.black
@@ -188,7 +190,7 @@ fun DetailsScreen(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    val items: List<String>? = listOf("restaurantListingCardModel.cuisine")
+                    val items: List<String>? = restaurantListingCardModel.cuisine
                     val formattedString = items?.joinToString(" | ")
 
                     Row(
@@ -216,8 +218,7 @@ fun DetailsScreen(
                                 tint = colorResource(id = R.color.orange)
                             )
 
-//                            val ratings: List<String> = listOf(restaurantListingCardModel.rating)
-                            val ratings = listOf("Delicious, Mango")
+                            val ratings: List<String> = listOf(restaurantListingCardModel.rating)
                             val rating = ratings.joinToString(" ")
                             Text(
                                 text = "${rating}(7.4k Ratings)",
@@ -239,9 +240,9 @@ fun DetailsScreen(
 //
 
                         val parameters = listOfNotNull(
-                            "restaurantListingCardModel.address",
-                            "restaurantListingCardModel.distanceKm",
-                            " restaurantListingCardModel.time?.let { it_Mins_Delivery },"
+                            restaurantListingCardModel.address,
+                            "${restaurantListingCardModel.distance}Km",
+                            restaurantListingCardModel.time?.let { "$it Mins Delivery" },
                         ).joinToString(" | ")
 
                         Text(

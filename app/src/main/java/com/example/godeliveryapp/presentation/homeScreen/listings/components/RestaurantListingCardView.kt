@@ -41,13 +41,13 @@ import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 fun RestaurantListingCardView(
     modifier: Modifier = Modifier,
     restaurantListingCardModel: RestaurantListingCardModel,
-    onClick: (() -> Unit)? = null,
+    navigateToDetails: (() -> Unit)? = null,
 ) {
 
     Column(
         modifier = Modifier
             .width(160.dp)
-            .clickable { onClick?.invoke() },
+            .clickable { navigateToDetails?.invoke() },
         horizontalAlignment = Alignment.Start
     ) {
         Box(

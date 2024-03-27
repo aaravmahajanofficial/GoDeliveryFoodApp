@@ -3,6 +3,7 @@ package com.example.godeliveryapp.presentation.CartScreen
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -42,8 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.godeliveryapp.R
-import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
@@ -60,20 +60,15 @@ import java.text.DecimalFormat
 
 
 @Composable
-fun CartScreen(modifier: Modifier = Modifier, viewModel: CartScreenViewModel = hiltViewModel()) {
+fun CartScreen(
+    modifier: Modifier = Modifier,
+    viewModel: CartScreenViewModel = hiltViewModel(),
+    navController: NavController
+) {
 
-    val scrollState = rememberScrollState()
     val cartItemsCards = viewModel.cartItems.collectAsState(initial = listOf()).value
     val cartSubTotal = viewModel.cartSubTotal.collectAsState(initial = 0.0).value
     val cartTotal = cartSubTotal - PROMOCODE + DELIVERY_FEE + TAX
-
-    fun updateCart(cartOrderItemDto: CartOrderItemDto) {
-        viewModel.updateCartItem(cartOrderItemDto)
-    }
-
-    fun deleteItem(cartOrderItemDto: CartOrderItemDto) {
-        viewModel.deleteCartItem(cartOrderItemDto)
-    }
 
     ConstraintLayout(
         modifier = Modifier
@@ -109,7 +104,11 @@ fun CartScreen(modifier: Modifier = Modifier, viewModel: CartScreenViewModel = h
                         imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                         contentDescription = null,
                         tint = colorResource(id = R.color.black),
-                        modifier = Modifier.scale(1.2f)
+                        modifier = Modifier
+                            .scale(1.2f)
+                            .clickable {
+                                navController.navigateUp()
+                            }
 
                     )
                 }
