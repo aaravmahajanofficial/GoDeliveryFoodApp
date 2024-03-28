@@ -8,7 +8,6 @@ import com.example.godeliveryapp.data.remote.dataTransferObject.MenuItemsDto
 import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.domain.model.RestaurantWithCuisines
 import com.example.godeliveryapp.domain.repository.Repository
-import com.example.zomatoclone.utils.Constants.CART_ID
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -102,11 +101,11 @@ class RepositoryImplementation(private val postgrest: Postgrest) :
 
     }
 
-    override suspend fun deleteCartItem(cartItem: CartOrderItemDto) {
+    override suspend fun deleteCartItem(itemId: Int) {
         withContext(Dispatchers.IO) {
             postgrest.from("OrderItems").delete {
                 filter {
-                    eq("itemId", cartItem.itemId)
+                    eq("itemId", itemId)
                 }
             }
         }

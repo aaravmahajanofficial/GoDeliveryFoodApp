@@ -11,8 +11,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.godeliveryapp.presentation.CartScreen.CartScreen
-import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
 import com.example.godeliveryapp.presentation.navigation.SetupNavGraph
 import com.example.zomatoclone.ui.theme.GoDeliveryApp
 import dagger.hilt.android.AndroidEntryPoint

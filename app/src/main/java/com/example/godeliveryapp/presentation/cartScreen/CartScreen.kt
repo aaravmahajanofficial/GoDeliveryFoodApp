@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.CartScreen
+package com.example.godeliveryapp.presentation.cartScreen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

@@ -58,6 +58,7 @@ import androidx.navigation.NavController
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
+import com.example.godeliveryapp.presentation.cartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.navigation.Route
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,10 +68,12 @@ fun DetailsScreen(
     navController: NavController,
     navigateUp: (() -> Unit)? = null,
     viewModel: DetailsScreenViewModel = hiltViewModel(),
+    cartScreenViewModel: CartScreenViewModel = hiltViewModel(),
     restaurantListingCardModel: RestaurantListingCardModel
 ) {
 
     val menuItemsCards = viewModel.menuItems.collectAsState(initial = listOf()).value
+    val cartItems = cartScreenViewModel.cartItems.collectAsState(initial = listOf()).value
     val screenHeight = LocalConfiguration.current.screenHeightDp
     var checked by remember { mutableStateOf(false) }
 
@@ -328,54 +331,58 @@ fun DetailsScreen(
             }
 
         }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding()
-                .constrainAs(button) {
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    height = Dimension.fillToConstraints
-                }
-                .background(Color.White)
-        ) {
-            OutlinedButton(
-                onClick = {
-                    navController.navigate(Route.CartScreen.route)
-                },
-                shape = RoundedCornerShape(5.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(
-                        id = R.color.black
-                    ),
-                ),
-                border = BorderStroke(0.dp, Color.Transparent),
+        if (cartItems != null) {
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(
-                        start = NormalPadding,
-                        bottom = 12.dp,
-                        top = 12.dp,
-                        end = NormalPadding
-                    )
-                    .height(50.dp)
+                    .navigationBarsPadding()
+                    .constrainAs(button) {
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        height = Dimension.fillToConstraints
+                    }
+                    .background(Color.White)
             ) {
+                OutlinedButton(
+                    onClick = {
+                        navController.navigate(Route.CartScreen.route)
+                    },
+                    shape = RoundedCornerShape(5.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(
+                            id = R.color.black
+                        ),
+                    ),
+                    border = BorderStroke(0.dp, Color.Transparent),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = NormalPadding,
+                            bottom = 12.dp,
+                            top = 12.dp,
+                            end = NormalPadding
+                        )
+                        .height(50.dp)
+                ) {
 
-                Icon(
-                    imageVector = Icons.Rounded.ShoppingCart,
-                    contentDescription = null,
-                    tint = Color.White
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    "View Cart",
-                    color = Color.White,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
-                )
+                    Icon(
+                        imageVector = Icons.Rounded.ShoppingCart,
+                        contentDescription = null,
+                        tint = Color.White
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
 
+                    Text(
+                        text = "View Cart (${cartItems.size} Items)",
+                        color = Color.White,
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
+                    )
+
+
+                }
             }
         }
+
     }
 }

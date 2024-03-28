@@ -261,8 +261,11 @@ fun HomeScreen(
                 ) {
                     HorizontalPager(
                         state = pageState,
-                        pageSpacing = 10.dp,
-                        contentPadding = PaddingValues(start = NormalPadding, end = NormalPadding)
+                        pageSpacing = 8.dp,
+                        contentPadding = PaddingValues(
+                            start = NormalPadding,
+                            end = NormalPadding
+                        )
                     ) { index ->
                         SlidingAdBannerView(slidingAdBanner = SlidingAdBanners[index])
                     }

@@ -37,10 +37,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
 import com.example.godeliveryapp.domain.model.CartOrderItemModel
-import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
+import com.example.godeliveryapp.presentation.cartScreen.CartScreenViewModel
 
 @Composable
 fun CartItemCardView(
@@ -141,7 +141,7 @@ fun CartItemCardView(
                                     viewModel.updateCartItem(cartOrderItemDto)
                                 } else {
 
-                                    viewModel.deleteCartItem(cartOrderItemDto)
+                                    viewModel.deleteCartItem(cartOrderItemModel.itemId)
 
                                 }
 

@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.CartScreen
+package com.example.godeliveryapp.presentation.cartScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,7 +8,6 @@ import com.example.godeliveryapp.domain.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -76,9 +75,9 @@ class CartScreenViewModel @Inject constructor(private val repository: Repository
         }
     }
 
-    fun deleteCartItem(cartItem: CartOrderItemDto) {
+    fun deleteCartItem(itemId: Int) {
         viewModelScope.launch {
-            repository.deleteCartItem(cartItem)
+            repository.deleteCartItem(itemId)
             getItems()
         }
     }
