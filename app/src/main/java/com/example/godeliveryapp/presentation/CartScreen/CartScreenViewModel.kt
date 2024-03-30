@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.cartScreen
+package com.example.godeliveryapp.presentation.CartScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

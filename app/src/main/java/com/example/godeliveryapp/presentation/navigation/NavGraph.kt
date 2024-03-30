@@ -5,7 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
-import com.example.godeliveryapp.presentation.cartScreen.CartScreen
+import com.example.godeliveryapp.presentation.CartScreen.CartScreen
 import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreen
 import kotlinx.serialization.encodeToString

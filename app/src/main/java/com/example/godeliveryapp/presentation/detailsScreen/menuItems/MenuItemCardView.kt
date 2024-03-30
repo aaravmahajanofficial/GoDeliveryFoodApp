@@ -56,10 +56,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
+import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
-import com.example.godeliveryapp.presentation.cartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemCardModel
 import kotlinx.coroutines.launch
 

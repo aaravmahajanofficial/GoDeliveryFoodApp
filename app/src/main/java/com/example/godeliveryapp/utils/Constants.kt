@@ -8,5 +8,8 @@ object Constants {
     const val DELIVERY_FEE = 28
     const val TAX = 40
     const val PROMOCODE = 85
-    var CART_ID = 1
+
+    const val BASE_API_URL = "https://revgeocode.search.hereapi.com/v1/"
+    const val LANGUAGE = "en-US"
+    const val API_KEY = "L4txdku1vAPdtUKz60quhMOLJh0dEDJkPze5v0X4k5I"
 }

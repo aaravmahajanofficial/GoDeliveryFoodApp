@@ -57,8 +57,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
+import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
-import com.example.godeliveryapp.presentation.cartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.navigation.Route
 
 @OptIn(ExperimentalMaterial3Api::class)

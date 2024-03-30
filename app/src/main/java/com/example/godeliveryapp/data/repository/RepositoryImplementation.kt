@@ -1,10 +1,12 @@
 package com.example.godeliveryapp.data.repository
 
 import RestaurantDto
+import com.example.godeliveryapp.data.remote.RetrofitAPI
 import com.example.godeliveryapp.data.remote.dataTransferObject.CartDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.CuisineDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.MenuItemsDto
+import com.example.godeliveryapp.domain.model.APIMODEL.Item
 import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.domain.model.RestaurantWithCuisines
 import com.example.godeliveryapp.domain.repository.Repository
@@ -12,7 +14,10 @@ import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class RepositoryImplementation(private val postgrest: Postgrest) :
+class RepositoryImplementation(
+    private val postgrest: Postgrest,
+    private val retrofitAPI: RetrofitAPI
+) :
     Repository {
 
     override suspend fun getRestaurants(): List<RestaurantWithCuisines> {
@@ -137,6 +142,17 @@ class RepositoryImplementation(private val postgrest: Postgrest) :
                     .decodeList<MenuItemsDto>()
 
             menuItems
+        }
+
+    }
+
+    override suspend fun getNearbyLocations(coordinates: String): List<Item> {
+        return withContext(Dispatchers.IO) {
+
+            val apiResponse = retrofitAPI.getNearbyLocations(coordinates = coordinates)
+
+            apiResponse.items
+
         }
 
     }
