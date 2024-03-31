@@ -24,7 +24,8 @@ fun CustomTextButton(
     textColorId: Int,
     buttonColorId: Int,
     fontWeight: FontWeight,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
+    isFilled: Boolean = true
 ) {
 
     Box(
@@ -33,6 +34,7 @@ fun CustomTextButton(
             .background(Color.White)
     ) {
         OutlinedButton(
+            enabled = isFilled,
             onClick = {
                 onClick?.invoke()
             },
@@ -41,11 +43,12 @@ fun CustomTextButton(
                 containerColor = colorResource(
                     id = buttonColorId
                 ),
+                disabledContainerColor = Color.LightGray
             ),
             border = BorderStroke(0.dp, Color.Transparent),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(50.dp),
         ) {
 
             Text(

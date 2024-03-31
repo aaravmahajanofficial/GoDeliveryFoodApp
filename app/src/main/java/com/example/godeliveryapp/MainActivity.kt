@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
-import com.example.godeliveryapp.presentation.location.AddDetails
+import com.example.godeliveryapp.presentation.AddressDetails.AddDetails
 import com.example.zomatoclone.ui.theme.GoDeliveryApp
 import dagger.hilt.android.AndroidEntryPoint
 

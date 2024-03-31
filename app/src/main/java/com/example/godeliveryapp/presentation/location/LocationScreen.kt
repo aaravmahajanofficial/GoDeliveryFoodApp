@@ -98,7 +98,6 @@ fun LocationScreen(
         mutableStateOf(LocationDetails(0.toDouble(), 0.toDouble()))
     }
 
-
     var filteredLocations by remember {
         mutableStateOf(listOf<LocationCardModel>())
     }
