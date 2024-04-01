@@ -1,14 +1,12 @@
 package com.example.godeliveryapp.data.repository
 
-import RestaurantDto
+import com.example.godeliveryapp.data.remote.RestaurantDto
 import com.example.godeliveryapp.data.remote.RetrofitAPI
 import com.example.godeliveryapp.data.remote.dataTransferObject.CartDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
-import com.example.godeliveryapp.data.remote.dataTransferObject.CuisineDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.MenuItemsDto
 import com.example.godeliveryapp.domain.model.APIMODEL.Item
 import com.example.godeliveryapp.domain.model.CartItemModel
-import com.example.godeliveryapp.domain.model.RestaurantWithCuisines
 import com.example.godeliveryapp.domain.repository.Repository
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.Dispatchers
@@ -20,24 +18,14 @@ class RepositoryImplementation(
 ) :
     Repository {
 
-    override suspend fun getRestaurants(): List<RestaurantWithCuisines> {
+    override suspend fun getRestaurants(): List<RestaurantDto> {
 
         return withContext(Dispatchers.IO) {
 
             val restaurants =
                 postgrest.from("Restaurants").select().decodeList<RestaurantDto>()
 
-            val restaurantCuisines =
-                postgrest.from("Cuisines").select().decodeList<CuisineDto>()
-
-            val restaurantWithCuisines = restaurants.map { restaurant: RestaurantDto ->
-                val cuisinesList: List<String> =
-                    restaurantCuisines.filter { it.restaurantId == restaurant.restaurantId }
-                        .map { it.name }
-                RestaurantWithCuisines(restaurant, cuisinesList)
-            }
-
-            restaurantWithCuisines
+            restaurants
         }
     }
 

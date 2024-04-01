@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,12 +30,13 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 
 @Composable
@@ -46,7 +48,7 @@ fun RestaurantListingCardView(
 
     Column(
         modifier = Modifier
-            .width(160.dp)
+            .width(175.dp)
             .clickable { navigateToDetails?.invoke() },
         horizontalAlignment = Alignment.Start
     ) {
@@ -59,14 +61,13 @@ fun RestaurantListingCardView(
                 )
         ) {
 
-//            restaurantListingCard.imageId?.let { painterResource(id = it) }?.let {
+
             Image(
-                painter = painterResource(id = R.drawable.restaurant2),
+                modifier = Modifier.fillMaxSize(),
+                painter = rememberAsyncImagePainter(restaurantListingCardModel.imageURL),
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )
-//            }
-
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -84,10 +85,10 @@ fun RestaurantListingCardView(
             }
 
         }
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = restaurantListingCardModel.restaurantName,
-            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+            text = restaurantListingCardModel.name,
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             color = colorResource(
                 id = R.color.black
             ),
@@ -97,19 +98,17 @@ fun RestaurantListingCardView(
 
         )
         Spacer(modifier = Modifier.height(5.dp))
-        val items: List<String>? = restaurantListingCardModel.cuisine
-        val formattedString = items?.joinToString(" | ")
+        val items: List<String> = restaurantListingCardModel.cuisines
+        val formattedString = items.joinToString(" | ")
 
-        if (formattedString != null) {
-            Text(
-                text = formattedString,
-                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
-                color = colorResource(id = R.color.gray),
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+        Text(
+            text = formattedString,
+            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
+            color = colorResource(id = R.color.gray),
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Spacer(modifier = Modifier.height(5.dp))
 
@@ -118,17 +117,17 @@ fun RestaurantListingCardView(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                modifier = Modifier.size(12.dp),
+                modifier = Modifier.size(16.dp),
                 imageVector = Icons.Filled.StarRate,
                 contentDescription = null,
                 tint = colorResource(id = R.color.orange)
             )
-            Spacer(modifier = Modifier.width(2.dp))
+            Spacer(modifier = Modifier.width(ExtraSmallPadding1))
 
             val parameters = listOfNotNull(
                 restaurantListingCardModel.rating,
                 "${restaurantListingCardModel.distance}Km",
-                restaurantListingCardModel.time?.let { "$it Mins" },
+                12.let { "$it Mins" },
             ).joinToString(" | ")
 
             Text(

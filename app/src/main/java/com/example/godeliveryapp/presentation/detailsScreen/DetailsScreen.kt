@@ -47,17 +47,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.navigation.Route
 
@@ -103,13 +105,14 @@ fun DetailsScreen(
                     modifier = Modifier
                         .height((screenHeight / 3).dp)
                         .fillMaxWidth()
-                        .background(Color.Transparent, shape = RoundedCornerShape(12.dp))
+                        .background(Color.Transparent, shape = RoundedCornerShape(12.dp)),
                 ) {
 //            restaurantListingCard.imageId?.let { painterResource(id = it) }?.let {
+
                     Image(
-                        painter = painterResource(id = R.drawable.restaurant3),
+                        modifier = Modifier.fillMaxSize(),
+                        painter = rememberAsyncImagePainter(restaurantListingCardModel.imageURL),
                         contentDescription = null,
-                        modifier = Modifier.fillMaxWidth(),
                         contentScale = ContentScale.Crop
                     )
 
@@ -176,11 +179,13 @@ fun DetailsScreen(
                 Column(
                     modifier
                         .fillMaxWidth()
-                        .padding(start = NormalPadding, end = NormalPadding)
+                        .padding(start = NormalPadding, end = NormalPadding),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = restaurantListingCardModel.restaurantName,
+                        text = restaurantListingCardModel.name,
                         style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(
                             id = R.color.black
@@ -193,15 +198,15 @@ fun DetailsScreen(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    val items: List<String>? = restaurantListingCardModel.cuisine
-                    val formattedString = items?.joinToString(" | ")
+                    val items: List<String> = restaurantListingCardModel.cuisines
+                    val formattedString = items.joinToString(" | ")
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (formattedString != null) Text(
+                        Text(
                             text = formattedString,
                             style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Normal),
                             color = colorResource(id = R.color.black),
@@ -225,39 +230,56 @@ fun DetailsScreen(
                             val rating = ratings.joinToString(" ")
                             Text(
                                 text = "${rating}(7.4k Ratings)",
-                                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
                                 color = colorResource(id = R.color.black),
                                 overflow = TextOverflow.Ellipsis,
-                                maxLines = 1,
+                                maxLines = 1
 
-                                )
+                            )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        horizontalAlignment = Alignment.Start
                     ) {
-//
-
-                        val parameters = listOfNotNull(
-                            restaurantListingCardModel.address,
-                            "${restaurantListingCardModel.distance}Km",
-                            restaurantListingCardModel.time?.let { "$it Mins Delivery" },
-                        ).joinToString(" | ")
 
                         Text(
-                            text = parameters,
+                            text = restaurantListingCardModel.streetAddress,
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray,
                             overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Start,
                             maxLines = 1,
                         )
+
+                        Spacer(modifier = Modifier.height(ExtraSmallPadding1))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+
+                            val parameters = listOfNotNull(
+                                "${restaurantListingCardModel.distance}Km",
+                                12.let { "$it Mins Delivery" },
+                            ).joinToString(" | ")
+
+                            Text(
+                                text = parameters,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray,
+                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Start
+                            )
+                        }
                     }
 
-                    Spacer(modifier = Modifier.height(30.dp))
+                    Spacer(modifier = Modifier.height(28.dp))
 
                     Spacer(
                         modifier = Modifier
@@ -276,8 +298,6 @@ fun DetailsScreen(
                             checked = checked,
                             onCheckedChange = { checked = it },
                             thumbContent = {
-//                                if (checked) {
-//                                } else null
                             },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = Color.White,
@@ -313,7 +333,7 @@ fun DetailsScreen(
 
             }
 
-            items(menuItemsCards.size ?: 0) { index ->
+            items(menuItemsCards.size) { index ->
                 val menuItemCardModel = menuItemsCards[index]
 
                 MenuItemCardView(

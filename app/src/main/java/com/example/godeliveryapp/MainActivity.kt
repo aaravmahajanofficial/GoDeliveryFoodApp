@@ -10,7 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
-import com.example.godeliveryapp.presentation.AddressDetails.AddDetails
+import androidx.navigation.compose.rememberNavController
+import com.example.godeliveryapp.presentation.navigation.SetupNavGraph
 import com.example.zomatoclone.ui.theme.GoDeliveryApp
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -36,10 +37,10 @@ class MainActivity : ComponentActivity() {
                     color = Color.White
                 ) {
 
-//                    navController = rememberNavController()
-//                    SetupNavGraph(navController = navController)
+                    navController = rememberNavController()
+                    SetupNavGraph(navController = navController)
 
-                    AddDetails()
+//                    AddDetails()
 
                 }
             }

@@ -85,6 +85,9 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:postgrest-kt")
     implementation("androidx.core:core-splashscreen:1.0.1")
 
+    //coil
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
 
     implementation("io.ktor:ktor-client-android:2.3.8")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")

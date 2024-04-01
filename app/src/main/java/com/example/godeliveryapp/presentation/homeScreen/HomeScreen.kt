@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -51,10 +52,10 @@ import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
-import com.example.godeliveryapp.presentation.common.RestaurantList
 import com.example.godeliveryapp.presentation.common.components.CategoryCardList
 import com.example.godeliveryapp.presentation.common.components.CategoryCardView
 import com.example.godeliveryapp.presentation.common.components.OfferCardView
+import com.example.godeliveryapp.presentation.homeScreen.listings.components.RestaurantListingCardView
 import com.example.godeliveryapp.presentation.homeScreen.slidingAds.SlidingAdBanners
 import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.zomatoclone.presentation.common.RestaurantCard
@@ -285,7 +286,21 @@ fun HomeScreen(
                     )
                 }
 
-                RestaurantList(restaurants = itemsList) { navigateToDetails(it) }
+                //Popular Restaurants
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(NormalPadding),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    this.items(itemsList.size) { index ->
+                        val restaurantIndex = itemsList[index]
+                        RestaurantListingCardView(
+                            restaurantListingCardModel = restaurantIndex,
+                            navigateToDetails = { navigateToDetails(restaurantIndex) })
+                        Spacer(modifier = Modifier.width(14.dp))
+                    }
+
+                }
 
                 Spacer(modifier = Modifier.height(MediumPadding1))
 
@@ -295,7 +310,20 @@ fun HomeScreen(
                     )
                 }
 
-                RestaurantList(restaurants = itemsList) { navigateToDetails(it) }
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(NormalPadding),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    this.items(itemsList.size) { index ->
+                        val restaurantIndex = itemsList[index]
+                        RestaurantListingCardView(
+                            restaurantListingCardModel = restaurantIndex,
+                            navigateToDetails = { navigateToDetails(restaurantIndex) })
+                        Spacer(modifier = Modifier.width(14.dp))
+                    }
+
+                }
 
                 RestaurantCard()
 
@@ -307,15 +335,4 @@ fun HomeScreen(
     }
 
 }
-
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun PreviewClass() {
-//
-//    GoDeliveryApp {
-//
-//        HomeScreen(navController = rememberNavController())
-//
-//    }
-//}
 

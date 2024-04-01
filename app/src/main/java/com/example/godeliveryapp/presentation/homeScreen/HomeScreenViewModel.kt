@@ -26,21 +26,27 @@ class HomeScreenViewModel @Inject constructor(private val repository: Repository
 
     private fun fetchRestaurants() {
         viewModelScope.launch {
-            val restaurantWithCuisines = repository.getRestaurants()
-            val restaurantListingCards = restaurantWithCuisines?.map { resCui ->
-                val restaurantDto = resCui.restaurantDto
-                val cuisinesList = resCui.cuisines
-
+            val restaurantDetails = repository.getRestaurants()
+            val restaurantListingCards = restaurantDetails?.map { item ->
                 RestaurantListingCardModel(
-                    restaurantName = restaurantDto.restaurantName,
-                    address = restaurantDto.address,
-                    restaurantId = restaurantDto.restaurantId,
-                    distance = restaurantDto.distance,
-                    rating = restaurantDto.rating,
-                    time = restaurantDto.time,
-                    cuisine = cuisinesList
-
+                    about = item.about,
+                    city = item.city,
+                    country = item.country,
+                    cuisines = item.cuisines,
+                    distance = item.distance,
+                    features = item.features,
+                    isNonVeg = item.isNonVeg,
+                    meals = item.meals,
+                    name = item.name,
+                    postalCode = item.postalCode,
+                    priceRange = item.priceRange,
+                    rating = item.rating,
+                    restaurantId = item.restaurantId,
+                    schedule = item.schedule,
+                    streetAddress = item.streetAddress,
+                    imageURL = item.imageURL
                 )
+
             }
 
             _restaurants.emit(restaurantListingCards)
@@ -50,23 +56,3 @@ class HomeScreenViewModel @Inject constructor(private val repository: Repository
     }
 
 }
-
-
-//private fun fetchRestaurants() {
-//        viewModelScope.launch {
-//            val restaurantsDTOs = repository.getRestaurants()
-//            _restaurants.emit(restaurantsDTOs?.map { it -> it.asDomainModel() })
-//        }
-//    }
-//
-//    private fun RestaurantDto.asDomainModel(): RestaurantListingCard {
-//        return RestaurantListingCard(
-//            restaurantName = this.restaurantName,
-//            address = this.address,
-//            restaurantId = this.restaurantId,
-//            distance = this.distance,
-//            rating = this.rating,
-//            time = this.time,
-//            cuisine = listOf() // Initialize as empty list
-//        )
-//    }
