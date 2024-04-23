@@ -35,6 +35,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -86,13 +87,20 @@ fun MenuItemCardView(
         }
     }
 
-    val existingItem =
+    var existingItem =
         cartItems?.firstOrNull { it.itemId == menuItemCardModel.itemId }
+
+    LaunchedEffect(viewModel.cartItems) {
+
+        existingItem =
+            cartItems?.firstOrNull { it.itemId == menuItemCardModel.itemId }
+
+    }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(180.dp),
+            .height(160.dp),
         elevation = CardDefaults.cardElevation(0.dp),
         colors = CardDefaults.cardColors(Color.Transparent)
     ) {
@@ -111,8 +119,8 @@ fun MenuItemCardView(
                 horizontalAlignment = Alignment.Start
             ) {
                 Column(
-                    modifier = Modifier,
-                    verticalArrangement = Arrangement.Top,
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
@@ -156,8 +164,8 @@ fun MenuItemCardView(
             ) {
                 Box(
                     modifier = Modifier
-                        .height(120.dp)
-                        .width(118.dp)
+                        .height(110.dp)
+                        .width(108.dp)
                         .background(Color.Transparent, shape = RoundedCornerShape(12.dp))
                         .clip(
                             RoundedCornerShape(12.dp)
@@ -196,10 +204,10 @@ fun MenuItemCardView(
                                             val cartOrderItemDto = CartOrderItemDto(
                                                 cartId = 1,
                                                 itemId = menuItemCardModel.itemId,
-                                                quantity = existingItem.quantity
+                                                quantity = existingItem!!.quantity
                                             )
 
-                                            if (existingItem.quantity > 1) {
+                                            if (existingItem!!.quantity > 1) {
                                                 viewModel.updateCartItem(
                                                     cartOrderItemDto.copy(
                                                         quantity = cartOrderItemDto.quantity - 1
@@ -215,7 +223,7 @@ fun MenuItemCardView(
                                     )
                                 )
                                 Text(
-                                    text = "${existingItem.quantity}",
+                                    text = "${existingItem!!.quantity}",
                                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
                                 )
                                 Icon(
@@ -228,7 +236,7 @@ fun MenuItemCardView(
                                             val cartOrderItemDto = CartOrderItemDto(
                                                 cartId = 1,
                                                 itemId = menuItemCardModel.itemId,
-                                                quantity = existingItem.quantity
+                                                quantity = existingItem!!.quantity
                                             )
 
                                             viewModel.updateCartItem(

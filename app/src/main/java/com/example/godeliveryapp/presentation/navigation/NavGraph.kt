@@ -7,6 +7,8 @@ import androidx.navigation.compose.composable
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.CartScreen.CartScreen
 import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
+import com.example.godeliveryapp.presentation.foodScreen.FoodScreenView
+import com.example.godeliveryapp.presentation.foodScreen.foodCategoryScreen.PizzaScreen
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreen
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -15,11 +17,32 @@ import kotlinx.serialization.json.Json
 fun SetupNavGraph(navController: NavHostController) {
 
     //when app first starts, shows up this screen
-    NavHost(navController = navController, startDestination = Route.HomeScreen.route) {
+    NavHost(navController = navController, startDestination = Route.FoodScreen.route) {
 
         composable(route = Route.HomeScreen.route) {
 
             HomeScreen(
+                navController = navController,
+                navigateToDetails = { restaurantListingCardModel ->
+                    //sending this whole function
+                    navigateToDetailsScreen(
+                        navController,
+                        restaurantListingCardModel = restaurantListingCardModel
+                    )
+                }
+            )
+
+        }
+
+        composable(route = Route.PizzaScreen.route) {
+
+            PizzaScreen()
+
+        }
+
+        composable(route = Route.FoodScreen.route) {
+
+            FoodScreenView(
                 navController = navController,
                 navigateToDetails = { restaurantListingCardModel ->
                     //sending this whole function

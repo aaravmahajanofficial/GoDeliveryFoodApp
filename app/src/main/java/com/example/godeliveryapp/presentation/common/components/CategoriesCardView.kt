@@ -1,6 +1,7 @@
 package com.example.godeliveryapp.presentation.common.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -22,15 +23,17 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.godeliveryapp.R
 
 @Composable
 fun CategoryCardView(
     modifier: Modifier = Modifier,
+    navController: NavController,
     categoryCard: CategoryCard
 ) {
     Card(
-        modifier = Modifier
+        modifier = Modifier.clickable { categoryCard.route?.let { navController.navigate(route = it) } }
             .height(140.dp)
             .fillMaxWidth()
             .padding(start = 5.dp, end = 5.dp, top = 5.dp, bottom = 5.dp),

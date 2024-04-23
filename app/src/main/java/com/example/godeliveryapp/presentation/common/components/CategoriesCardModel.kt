@@ -1,9 +1,10 @@
 package com.example.godeliveryapp.presentation.common.components
 
 import com.example.godeliveryapp.R
+import com.example.godeliveryapp.presentation.navigation.Route
 
 data class CategoryCard(
-    val title: String, val description: String, val imageId: Int
+    val title: String, val description: String, val imageId: Int, val route: String? = null
 )
 
 val CategoryCardList = listOf(
@@ -11,7 +12,8 @@ val CategoryCardList = listOf(
     CategoryCard(
         title = "Food",
         description = "25 mins",
-        imageId = R.drawable.fastfood
+        imageId = R.drawable.fastfood,
+        route = Route.FoodScreen.route
     ),
 
     CategoryCard(
