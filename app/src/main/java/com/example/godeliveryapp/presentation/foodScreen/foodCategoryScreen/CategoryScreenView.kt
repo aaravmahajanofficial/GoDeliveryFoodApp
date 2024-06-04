@@ -1,11 +1,13 @@
 package com.example.godeliveryapp.presentation.foodScreen.foodCategoryScreen
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,8 +20,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.filled.StarRate
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.Icon
@@ -28,22 +33,32 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.godeliveryapp.R
+import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
+import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 
 @Composable
-fun PizzaScreen(modifier: Modifier = Modifier) {
+fun CategoryScreenView(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    categoryDto: CategoryDto
+) {
 
     val screenHeight = LocalConfiguration.current.screenHeightDp
-    val screenWidth = LocalConfiguration.current.screenWidthDp
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.Start,
@@ -54,9 +69,9 @@ fun PizzaScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        top = Dimens.NormalPadding,
-                        start = Dimens.NormalPadding,
-                        end = Dimens.NormalPadding
+                        top = NormalPadding,
+                        start = NormalPadding,
+                        end = NormalPadding
                     )
             ) {
                 Icon(
@@ -66,6 +81,7 @@ fun PizzaScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .scale(1.2f)
                         .clickable {
+                            navController.navigateUp()
 
                         }
 
@@ -74,17 +90,12 @@ fun PizzaScreen(modifier: Modifier = Modifier) {
 
             Spacer(modifier = Modifier.height(MediumPadding1))
 
-            Box(
-                modifier = Modifier.padding(
-                    start = NormalPadding
-                )
-            ) {
-                Text(
-                    text = "Pizza",
-                    color = colorResource(id = R.color.black),
-                    style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.SemiBold)
-                )
-            }
+            Text(
+                text = categoryDto.name,
+                color = colorResource(id = R.color.black),
+                style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.SemiBold),
+                modifier = Modifier.padding(start = NormalPadding)
+            )
 
             Spacer(modifier = Modifier.height(NormalPadding))
 
@@ -203,9 +214,143 @@ fun PizzaScreen(modifier: Modifier = Modifier) {
 
                 }
             }
+
+            Spacer(modifier = Modifier.height(MediumPadding2))
+
+            Text(
+                text = "Popular Restaurants",
+                color = colorResource(id = R.color.black),
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(start = NormalPadding)
+            )
+
+            FoodCard(categoryDto = categoryDto)
+
+
         }
 
     }
 
 
+}
+
+@Composable
+private fun FoodCard(categoryDto: CategoryDto) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(NormalPadding),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Box(
+            modifier = Modifier
+                .height(180.dp)
+                .background(Color.Transparent, shape = RoundedCornerShape(12.dp))
+                .clip(
+                    RoundedCornerShape(12.dp)
+                )
+        ) {
+
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = rememberAsyncImagePainter(model = categoryDto.imageUrl),
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(NormalPadding)
+                    .background(color = Color.White, shape = CircleShape)
+                    .size(42.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.FavoriteBorder,
+                    contentDescription = null,
+                    tint = colorResource(id = R.color.black),
+                    modifier = Modifier.scale(1f)
+                )
+            }
+
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(
+                    text = "Hello Dhaba!",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = colorResource(
+                        id = R.color.black
+                    ),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth()
+
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+                val items: List<String> = listOf("American", "Italian", "Indian")
+                val formattedString = items.joinToString(" | ")
+
+                Text(
+                    text = formattedString,
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
+                    color = colorResource(id = R.color.gray),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                )
+            }
+
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        modifier = Modifier.size(16.dp),
+                        imageVector = Icons.Filled.StarRate,
+                        contentDescription = null,
+                        tint = colorResource(id = R.color.orange)
+                    )
+                    Spacer(modifier = Modifier.width(Dimens.ExtraSmallPadding1))
+
+                    Text(
+                        text = "4.1",
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                        color = colorResource(id = R.color.black),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                val parameters = listOfNotNull(
+                    "4Km",
+                    12.let { "$it Mins" },
+                ).joinToString(" | ")
+
+                Text(
+                    text = parameters,
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
+                    color = Color.Gray,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                )
+            }
+        }
+    }
 }

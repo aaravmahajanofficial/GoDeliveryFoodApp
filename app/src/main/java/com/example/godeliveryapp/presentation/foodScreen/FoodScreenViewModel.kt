@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.homeScreen
+package com.example.godeliveryapp.presentation.foodScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,19 +12,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeScreenViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
+class FoodScreenViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
     private val _restaurants = MutableStateFlow<List<RestaurantListingCardModel>?>(listOf())
     val restaurants: Flow<List<RestaurantListingCardModel>?> get() = _restaurants
 
+    private val _categories = MutableStateFlow<List<CategoryDto>?>(listOf())
 
+    val categories: Flow<List<CategoryDto>?> get() = _categories
 
-    private var _isLoading = MutableStateFlow(true)
-
-    val isLoading: Flow<Boolean> = _isLoading
 
     init {
         fetchRestaurants()
+        getCategories()
     }
 
     private fun fetchRestaurants() {
@@ -53,12 +53,22 @@ class HomeScreenViewModel @Inject constructor(private val repository: Repository
             }
 
             _restaurants.emit(restaurantListingCards)
-            _isLoading.value = false
 
         }
     }
 
+    private fun getCategories() {
+
+        viewModelScope.launch {
+
+            val categoryList = repository.getCategories()
+
+            _categories.emit(categoryList)
 
 
+        }
+
+
+    }
 
 }

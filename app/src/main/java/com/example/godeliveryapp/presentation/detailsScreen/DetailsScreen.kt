@@ -135,7 +135,7 @@ fun DetailsScreen(
                     ) {
                         Box(
                             modifier = Modifier
-                                .clickable { navigateUp?.invoke() }
+                                .clickable { navController.navigateUp() }
                                 .background(color = Color.White, shape = CircleShape)
                                 .size(42.dp), contentAlignment = Alignment.Center
                         ) {

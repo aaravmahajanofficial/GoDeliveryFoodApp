@@ -48,13 +48,13 @@ fun RestaurantListingCardView(
 
     Column(
         modifier = Modifier
-            .width(175.dp)
+            .width(170.dp)
             .clickable { navigateToDetails?.invoke() },
         horizontalAlignment = Alignment.Start
     ) {
         Box(
             modifier = Modifier
-                .height(180.dp)
+                .height(175.dp)
                 .background(Color.Transparent, shape = RoundedCornerShape(12.dp))
                 .clip(
                     RoundedCornerShape(12.dp)

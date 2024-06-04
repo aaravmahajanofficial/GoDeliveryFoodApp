@@ -4,11 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.CartScreen.CartScreen
 import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
 import com.example.godeliveryapp.presentation.foodScreen.FoodScreenView
-import com.example.godeliveryapp.presentation.foodScreen.foodCategoryScreen.PizzaScreen
+import com.example.godeliveryapp.presentation.foodScreen.foodCategoryScreen.CategoryScreenView
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreen
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -34,12 +35,6 @@ fun SetupNavGraph(navController: NavHostController) {
 
         }
 
-        composable(route = Route.PizzaScreen.route) {
-
-            PizzaScreen()
-
-        }
-
         composable(route = Route.FoodScreen.route) {
 
             FoodScreenView(
@@ -50,7 +45,15 @@ fun SetupNavGraph(navController: NavHostController) {
                         navController,
                         restaurantListingCardModel = restaurantListingCardModel
                     )
+                },
+                navigateToCategory = { categoryIndex ->
+                    navigateToCategoryScreen(
+                        navController = navController,
+                        categoryDto = categoryIndex
+                    )
                 }
+
+
             )
 
         }
@@ -58,6 +61,27 @@ fun SetupNavGraph(navController: NavHostController) {
         composable(route = Route.CartScreen.route) {
             CartScreen(navController = navController)
         }
+
+        composable(route = Route.CategoryScreen.route) {
+
+            val serializedCategory =
+                navController.previousBackStackEntry?.savedStateHandle?.get<String>("category")
+
+            val categoryDto = serializedCategory?.let { it1 ->
+                Json.decodeFromString<CategoryDto>(
+                    it1
+                )
+            }
+
+            if (categoryDto != null) {
+
+                CategoryScreenView(navController = navController, categoryDto = categoryDto)
+
+            }
+
+
+        }
+
 
         composable(route = Route.DetailsScreen.route) {
             val serializedRestaurantListingCard =
@@ -70,9 +94,9 @@ fun SetupNavGraph(navController: NavHostController) {
                 }
             if (restaurantListingCardModel != null) {
                 DetailsScreen(
-                    navigateUp = {
-                        navController.navigateUp()
-                    },
+//                    navigateUp = {
+//                        navController.navigateUp()
+//                    },
                     navController = navController,
                     restaurantListingCardModel = restaurantListingCardModel
                 )
@@ -108,4 +132,13 @@ private fun navigateToDetailsScreen(
     )
     navController.navigate(route = Route.DetailsScreen.route)
 
+}
+
+private fun navigateToCategoryScreen(navController: NavHostController, categoryDto: CategoryDto) {
+    val serializedCategory = Json.encodeToString(categoryDto)
+    navController.currentBackStackEntry?.savedStateHandle?.set(
+        "category",
+        serializedCategory
+    )
+    navController.navigate(route = Route.CategoryScreen.route)
 }

@@ -44,13 +44,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
+import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
-import com.example.godeliveryapp.presentation.common.DishCategoryButton
-import com.example.godeliveryapp.presentation.homeScreen.HomeScreenViewModel
+import com.example.godeliveryapp.presentation.common.CategoryButtonView
 import com.example.godeliveryapp.presentation.homeScreen.listings.components.RestaurantListingCardView
 import com.example.godeliveryapp.presentation.homeScreen.slidingAds.SlidingAdBanners
 import com.example.godeliveryapp.presentation.navigation.Route
@@ -61,7 +61,8 @@ import com.example.zomatoclone.presentation.homeScreen.OfferAds.components.PageI
 fun FoodScreenView(
     modifier: Modifier = Modifier, navController: NavController,
     navigateToDetails: (RestaurantListingCardModel) -> Unit,
-    viewModel: HomeScreenViewModel = hiltViewModel(),
+    navigateToCategory: (CategoryDto) -> Unit,
+    viewModel: FoodScreenViewModel = hiltViewModel()
 ) {
 
     val textFieldValue by remember {
@@ -73,6 +74,8 @@ fun FoodScreenView(
     }
 
     val itemsList = viewModel.restaurants.collectAsState(initial = listOf()).value
+    val categoriesList = viewModel.categories.collectAsState(initial = listOf()).value
+    val halfSize = categoriesList?.size?.div(2)
 
 // Hero Section
 
@@ -220,16 +223,23 @@ fun FoodScreenView(
 
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
                         contentPadding = PaddingValues(start = NormalPadding)
                     ) {
-                        items(5) {
-                            DishCategoryButton(navController = navController)
-                            Spacer(modifier = Modifier.width(12.dp))
+                        if (categoriesList != null) {
+                            items(halfSize!!) { index ->
+                                CategoryButtonView(
+                                    category = categoriesList[index],
+                                    navigateToCategoryScreen = { navigateToCategory(categoriesList[index]) }
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                            }
                         }
                     }
 
@@ -237,11 +247,17 @@ fun FoodScreenView(
 
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
-                        contentPadding = PaddingValues(start = NormalPadding, end = NormalPadding)
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        contentPadding = PaddingValues(start = NormalPadding)
                     ) {
-                        items(5) {
-                            DishCategoryButton(navController = navController)
-                            Spacer(modifier = Modifier.width(12.dp))
+                        if (categoriesList != null) {
+                            items(halfSize!!) { index ->
+                                CategoryButtonView(
+                                    category = categoriesList[index + halfSize],
+                                    navigateToCategoryScreen = { navigateToCategory(categoriesList[index]) }
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                            }
                         }
                     }
 

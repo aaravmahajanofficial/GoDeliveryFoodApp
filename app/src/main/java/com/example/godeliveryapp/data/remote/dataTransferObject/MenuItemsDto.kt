@@ -19,5 +19,8 @@ data class MenuItemsDto(
     val price: Double,
 
     @SerialName("description")
-    val description: String
+    val description: String,
+
+    @SerialName("categoryId")
+    val itemCategory: Int
 )

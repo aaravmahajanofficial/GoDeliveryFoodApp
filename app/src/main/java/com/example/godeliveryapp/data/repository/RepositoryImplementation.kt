@@ -4,6 +4,7 @@ import com.example.godeliveryapp.data.remote.RestaurantDto
 import com.example.godeliveryapp.data.remote.RetrofitAPI
 import com.example.godeliveryapp.data.remote.dataTransferObject.CartDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
+import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.MenuItemsDto
 import com.example.godeliveryapp.domain.model.APIMODEL.Item
 import com.example.godeliveryapp.domain.model.CartItemModel
@@ -132,6 +133,16 @@ class RepositoryImplementation(
             menuItems
         }
 
+    }
+
+    override suspend fun getCategories(): List<CategoryDto> {
+        return withContext(Dispatchers.IO) {
+
+            val categories =
+                postgrest.from("Category").select().decodeList<CategoryDto>()
+
+            categories
+        }
     }
 
     override suspend fun getNearbyLocations(coordinates: String): List<Item> {

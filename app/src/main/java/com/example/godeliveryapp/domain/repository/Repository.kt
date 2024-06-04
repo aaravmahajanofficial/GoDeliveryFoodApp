@@ -2,6 +2,7 @@ package com.example.godeliveryapp.domain.repository
 
 import com.example.godeliveryapp.data.remote.RestaurantDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
+import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.MenuItemsDto
 import com.example.godeliveryapp.domain.model.APIMODEL.Item
 import com.example.godeliveryapp.domain.model.CartItemModel
@@ -22,5 +23,7 @@ interface Repository {
     suspend fun getMenu(restaurantId: Int): List<MenuItemsDto>
 
     suspend fun getNearbyLocations(coordinates: String): List<Item>?
+
+    suspend fun getCategories(): List<CategoryDto>?
 
 }
