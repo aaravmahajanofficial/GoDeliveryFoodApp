@@ -31,8 +31,8 @@ data class RestaurantDto(
     @SerialName("features")
     val features: List<String>,
 
-    @SerialName("isNonVeg")
-    val isNonVeg: Boolean,
+    @SerialName("isPureVeg")
+    val isPureVeg: Boolean,
 
     @SerialName("meals")
     val meals: List<String>,

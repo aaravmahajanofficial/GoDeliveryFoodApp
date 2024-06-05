@@ -12,7 +12,7 @@ data class RestaurantListingCardModel(
     val cuisines: List<String>,
     val distance: String,
     val features: List<String>,
-    val isNonVeg: Boolean,
+    val isPureVeg: Boolean,
     val meals: List<String>,
     val name: String,
     val postalCode: String,

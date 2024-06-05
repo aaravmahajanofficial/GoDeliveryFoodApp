@@ -38,7 +38,7 @@ class CategoryScreenViewModel @Inject constructor(private val repository: Reposi
                         cuisines = item.cuisines,
                         distance = item.distance,
                         features = item.features,
-                        isNonVeg = item.isNonVeg,
+                        isPureVeg = item.isPureVeg,
                         meals = item.meals,
                         name = item.name,
                         postalCode = item.postalCode,

@@ -2,7 +2,6 @@ package com.example.godeliveryapp.presentation.homeScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.domain.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,7 +37,7 @@ class HomeScreenViewModel @Inject constructor(private val repository: Repository
                     cuisines = item.cuisines,
                     distance = item.distance,
                     features = item.features,
-                    isNonVeg = item.isNonVeg,
+                    isPureVeg = item.isPureVeg,
                     meals = item.meals,
                     name = item.name,
                     postalCode = item.postalCode,

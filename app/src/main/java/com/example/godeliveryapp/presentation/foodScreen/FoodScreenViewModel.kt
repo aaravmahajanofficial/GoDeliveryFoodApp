@@ -38,7 +38,7 @@ class FoodScreenViewModel @Inject constructor(private val repository: Repository
                     cuisines = item.cuisines,
                     distance = item.distance,
                     features = item.features,
-                    isNonVeg = item.isNonVeg,
+                    isPureVeg = item.isPureVeg,
                     meals = item.meals,
                     name = item.name,
                     postalCode = item.postalCode,
