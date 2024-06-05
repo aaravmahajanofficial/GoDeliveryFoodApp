@@ -26,4 +26,6 @@ interface Repository {
 
     suspend fun getCategories(): List<CategoryDto>?
 
+    suspend fun getRestaurantsByCategory(id : Int): List<RestaurantDto>?
+
 }

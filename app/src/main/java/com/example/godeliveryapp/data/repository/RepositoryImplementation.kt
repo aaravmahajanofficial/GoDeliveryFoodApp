@@ -145,6 +145,28 @@ class RepositoryImplementation(
         }
     }
 
+    override suspend fun getRestaurantsByCategory(id : Int): List<RestaurantDto> {
+        return withContext(Dispatchers.IO) {
+
+            val menuItems =
+                postgrest.from("MenuItems").select { filter { eq("categoryId", id) } }
+                    .decodeList<MenuItemsDto>()
+
+            //now filter this menuItems to get the restaurantId
+
+            val filterRestaurant = menuItems.map { menuItem ->
+
+                postgrest.from("Restaurants").select { filter { eq("restaurantId", menuItem.restaurantId) } }
+                    .decodeSingle<RestaurantDto>()
+
+            }
+
+            //how to return a list of unique restaurant objects, without duplicates
+           filterRestaurant.distinctBy { it.restaurantId }
+
+        }
+    }
+
     override suspend fun getNearbyLocations(coordinates: String): List<Item> {
         return withContext(Dispatchers.IO) {
 
