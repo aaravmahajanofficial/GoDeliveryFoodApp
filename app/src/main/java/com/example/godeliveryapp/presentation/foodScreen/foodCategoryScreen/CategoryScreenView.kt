@@ -87,16 +87,19 @@ fun CategoryScreenView(
     val filterRestaurantList =
         viewModel.filterRestaurantList.collectAsState(initial = listOf()).value
 
+    val appliedFilterRestaurants =
+        viewModel.appliedFilterRestaurants.collectAsState(initial = listOf()).value
+
 
     val pureVegCheckBoxState = remember { mutableStateOf(false) }
     val nonVegCheckBoxState = remember { mutableStateOf(false) }
-    val ratingsGreaterThanFour = remember { mutableStateOf(false) }
-    val pureVeg = remember { mutableStateOf(false) }
-    val takeout = remember { mutableStateOf(false) }
-
-
-
-
+    var ratingsGreaterThanFour by remember { mutableStateOf(false) }
+    var pureVeg by remember {
+        mutableStateOf(false)
+    }
+    var takeout by remember {
+        mutableStateOf(false)
+    }
 
 
     val isLoading = viewModel.isLoading.collectAsState(initial = false).value
@@ -172,7 +175,9 @@ fun CategoryScreenView(
                     Spacer(modifier = Modifier.height(NormalPadding))
 
                     LazyRow(
-                        modifier = Modifier,
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically,
                         contentPadding = PaddingValues(start = NormalPadding, end = NormalPadding)
                     ) {
                         item {
@@ -231,11 +236,90 @@ fun CategoryScreenView(
                                 }
                             }
                             Spacer(modifier = Modifier.width(8.dp))
-                            OptionButton(screenHeight = screenHeight, buttonText = "Pure Veg")
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        color = if (pureVeg) colorResource(id = R.color.black) else Color.Transparent,
+                                        shape = CircleShape
+                                    )
+                                    .height((screenHeight / 24).dp)
+                                    .width((screenHeight / 8).dp)
+                                    .border(
+                                        BorderStroke(color = Color.Gray, width = 0.dp),
+                                        shape = CircleShape
+                                    )
+                                    .clickable {
+                                        pureVeg = !pureVeg
+                                        viewModel.isPureVeg.value = pureVeg
+                                        viewModel.applyFilters()
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Pure Veg",
+                                    color = if (pureVeg) colorResource(id = R.color.white) else colorResource(
+                                        id = R.color.black
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
+                                )
+                            }
                             Spacer(modifier = Modifier.width(8.dp))
-                            OptionButton(screenHeight = screenHeight, buttonText = "Take-out")
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        color = if (takeout) colorResource(id = R.color.black) else Color.Transparent,
+                                        shape = CircleShape
+                                    )
+                                    .height((screenHeight / 24).dp)
+                                    .width((screenHeight / 8).dp)
+                                    .border(
+                                        BorderStroke(color = Color.Gray, width = 0.dp),
+                                        shape = CircleShape
+                                    )
+                                    .clickable {
+                                        takeout = !takeout
+                                        viewModel.takeOut.value = takeout
+                                        viewModel.applyFilters()
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Take-Out",
+                                    color = if (takeout) colorResource(id = R.color.white) else colorResource(
+                                        id = R.color.black
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
+                                )
+                            }
                             Spacer(modifier = Modifier.width(8.dp))
-                            OptionButton(screenHeight = screenHeight, buttonText = "Ratings 4.0+")
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        color = if (ratingsGreaterThanFour) colorResource(id = R.color.black) else Color.Transparent,
+                                        shape = CircleShape
+                                    )
+                                    .height((screenHeight / 24).dp)
+                                    .width((screenHeight / 8).dp)
+                                    .border(
+                                        BorderStroke(color = Color.Gray, width = 0.dp),
+                                        shape = CircleShape
+                                    )
+                                    .clickable {
+                                        ratingsGreaterThanFour = !ratingsGreaterThanFour
+                                        viewModel.ratingGreaterThanFour.value =
+                                            ratingsGreaterThanFour
+                                        viewModel.applyFilters()
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Rating 4.0+",
+                                    color = if (ratingsGreaterThanFour) colorResource(id = R.color.white) else colorResource(
+                                        id = R.color.black
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
+                                )
+                            }
 
                         }
                     }
@@ -251,11 +335,18 @@ fun CategoryScreenView(
 
 
                 }
-                if (filterRestaurantList != null) {
-                    items(filterRestaurantList.size) { index ->
-                        FoodCard(restaurantListingCardModel = filterRestaurantList[index])
+                if (!appliedFilterRestaurants.isNullOrEmpty()) {
+                    items(appliedFilterRestaurants.size) { index ->
+                        appliedFilterRestaurants[index]?.let { FoodCard(restaurantListingCardModel = it) }
 
                     }
+                } else {
+                    if (filterRestaurantList != null) {
+                        items(filterRestaurantList.size) { index ->
+                            FoodCard(restaurantListingCardModel = filterRestaurantList[index])
+                        }
+                    }
+
                 }
 
             }
@@ -507,29 +598,6 @@ fun CategoryScreenView(
         }
     }
 
-
-}
-
-@Composable
-private fun OptionButton(screenHeight: Int, buttonText: String) {
-
-    Box(
-        modifier = Modifier
-            .background(color = Color.Transparent, shape = CircleShape)
-            .height((screenHeight / 24).dp)
-            .width((screenHeight / 8).dp)
-            .border(
-                BorderStroke(color = Color.Gray, width = 0.dp),
-                shape = CircleShape
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = buttonText,
-            color = colorResource(id = R.color.black),
-            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
-        )
-    }
 
 }
 

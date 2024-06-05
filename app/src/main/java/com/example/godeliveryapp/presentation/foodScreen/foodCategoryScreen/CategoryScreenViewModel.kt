@@ -18,9 +18,20 @@ class CategoryScreenViewModel @Inject constructor(private val repository: Reposi
         MutableStateFlow<List<RestaurantListingCardModel>?>(listOf())
     val filterRestaurantList: Flow<List<RestaurantListingCardModel>?> get() = _filterRestaurantList
 
+    private val _applyFilterRestaurant =
+        MutableStateFlow<List<RestaurantListingCardModel?>?>(listOf())
+
+    val appliedFilterRestaurants: Flow<List<RestaurantListingCardModel?>?> get() = _applyFilterRestaurant
+
+    var isPureVeg = MutableStateFlow<Boolean>(false)
+
+    val ratingGreaterThanFour = MutableStateFlow<Boolean>(false)
+
+    val takeOut = MutableStateFlow<Boolean>(false)
+
+
     private val _isLoading = MutableStateFlow<Boolean>(false)
     val isLoading: Flow<Boolean> get() = _isLoading
-
 
     fun filterRestaurants(categoryId: Int) {
 
@@ -53,10 +64,35 @@ class CategoryScreenViewModel @Inject constructor(private val repository: Reposi
 
                 }
 
-                _filterRestaurantList.emit(restaurants)
+                if (restaurants != null) {
+                    _filterRestaurantList.emit(restaurants.sortedByDescending { it.rating })
+                }
             } finally {
 
                 _isLoading.emit(false)
+            }
+
+
+        }
+
+    }
+
+    fun applyFilters() {
+
+        viewModelScope.launch {
+
+            val applyFilterList = _filterRestaurantList.value?.filter { restaurant ->
+                val isPureVegMatch = !isPureVeg.value || restaurant.isPureVeg
+                val isRatingMatch =
+                    !ratingGreaterThanFour.value || restaurant.rating >= (4.0).toString()
+                val isTakeOutMatch = !takeOut.value || restaurant.features.contains("Takeout")
+
+                //only return those cards which satisfy all the three conditions
+                isPureVegMatch && isRatingMatch && isTakeOutMatch
+            }
+
+            if (applyFilterList != null) {
+                _applyFilterRestaurant.emit(applyFilterList.sortedByDescending { it.rating })
             }
 
 
