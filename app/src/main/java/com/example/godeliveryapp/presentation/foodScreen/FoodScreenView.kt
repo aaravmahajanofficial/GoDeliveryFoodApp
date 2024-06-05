@@ -254,7 +254,7 @@ fun FoodScreenView(
                             items(halfSize!!) { index ->
                                 CategoryButtonView(
                                     category = categoriesList[index + halfSize],
-                                    navigateToCategoryScreen = { navigateToCategory(categoriesList[index]) }
+                                    navigateToCategoryScreen = { navigateToCategory(categoriesList[index + halfSize]) }
                                 )
                                 Spacer(modifier = Modifier.width(12.dp))
                             }

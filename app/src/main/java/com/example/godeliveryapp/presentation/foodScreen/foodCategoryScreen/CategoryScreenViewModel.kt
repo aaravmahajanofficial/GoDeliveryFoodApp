@@ -21,6 +21,7 @@ class CategoryScreenViewModel @Inject constructor(private val repository: Reposi
     private val _isLoading = MutableStateFlow<Boolean>(false)
     val isLoading: Flow<Boolean> get() = _isLoading
 
+
     fun filterRestaurants(categoryId: Int) {
 
         _isLoading.value = true
