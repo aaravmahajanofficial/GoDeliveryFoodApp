@@ -10,4 +10,8 @@ sealed class Route(val route: String) {
     data object FoodScreen : Route(route = "food_screen")
     data object CartScreen : Route(route = "cart_screen")
 
+    data object LoginPage : Route(route = "login_page")
+
+    data object SignUpPage : Route(route = "sign_up_page")
+
 }

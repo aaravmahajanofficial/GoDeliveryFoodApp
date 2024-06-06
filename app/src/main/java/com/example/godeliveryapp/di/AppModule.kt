@@ -31,7 +31,7 @@ class AppModule {
         ) {
             install(Auth)
             install(Postgrest)
-            //install other modules
+
         }
     }
 

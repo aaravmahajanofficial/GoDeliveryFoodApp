@@ -1,23 +1,16 @@
 package com.example.zomatoclone.presentation.onBoarding.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -29,21 +22,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.godeliveryapp.R
+import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
+import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 
 @Composable
 fun LoginPage(
     modifier: Modifier = Modifier,
+    navController: NavController
 ) {
 
     var textFieldValue by remember {
@@ -52,151 +51,128 @@ fun LoginPage(
         )
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-        Image(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(350.dp),
-            painter = painterResource(id = R.drawable.mart3),
-            contentDescription = null,
-            contentScale = ContentScale.Crop
-        )
-
-        Spacer(modifier = Modifier.height(MediumPadding2))
-
-        Text(
-            text = "India's #1 Food Delivery\nand Dining App",
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(ExtraSmallPadding1),
-            style = MaterialTheme.typography.titleLarge
-
-        )
-
-        Spacer(modifier = Modifier.padding(ExtraSmallPadding2))
-
-        Text(
-            text = "Log in or sign up",
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(ExtraSmallPadding1),
-            style = MaterialTheme.typography.bodyLarge
-
-        )
-
-        Spacer(modifier = Modifier.padding(ExtraSmallPadding2))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = MediumPadding1, end = MediumPadding1),
+                .fillMaxSize()
+                .padding(NormalPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
 
-            OutlinedTextField(
-                value = textFieldValue,
-                onValueChange = { textFieldValue = it },
-                label = {
-                    Text(
-                        "Enter Phone Number",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                },
-                shape = RoundedCornerShape(10.dp),
-
+            Box(
+                modifier = Modifier
+                    .padding(Dimens.ExtraSmallPadding3)
+                    .height((screenHeight / 3)), contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.drone_delivery_amico),
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit
                 )
+            }
 
-        }
+            Spacer(modifier = Modifier.height(MediumPadding2))
 
-        Spacer(modifier = Modifier.height(MediumPadding1))
-
-        TextButton(
-            modifier = Modifier
-                .height(55.dp)
-                .fillMaxWidth()
-                .padding(start = MediumPadding1, end = MediumPadding1),
-            onClick = { /*TODO*/ },
-            shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.primaryColor))
-        ) {
 
             Text(
-                text = "Continue", textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyMedium
+                text = "Get started with App",
+                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                color = colorResource(id = R.color.black),
+                modifier = Modifier.align(Alignment.Start)
             )
 
-        }
+            Spacer(modifier = Modifier.padding(ExtraSmallPadding1))
 
-        Spacer(modifier = Modifier.height(MediumPadding1))
-
-        Text(
-            text = "or",
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge
-
-        )
-
-        Spacer(modifier = Modifier.height(MediumPadding1))
-
-        Row(modifier = Modifier, horizontalArrangement = Arrangement.SpaceBetween) {
-            IconButton(
-                onClick = { /*TODO*/ },
-                modifier = Modifier
-                    .size(60.dp)
-                    .border(
-                        BorderStroke(
-                            color = Color.LightGray,
-                            width = 1.dp,
-                        ),
-                        shape = RoundedCornerShape(100.dp),
-                    ),
-            ) {
-
-                Image(
-
-                    painterResource(id = R.drawable.mart3), contentDescription = null,
-                    modifier = Modifier.size(32.dp),
-                )
-
-            }
-
-            Spacer(modifier = Modifier.width(MediumPadding2))
-
-            IconButton(
-                onClick = { /*TODO*/ },
-                modifier = Modifier
-                    .size(60.dp)
-                    .border(
-                        BorderStroke(
-                            color = Color.LightGray,
-                            width = 1.dp,
-                        ),
-                        shape = RoundedCornerShape(100.dp),
-                    ),
-            ) {
-
-                androidx.compose.material3.Icon(
-                    imageVector = Icons.Rounded.MoreVert,
-                    contentDescription = null
-                )
-
-            }
-        }
-
-        Spacer(modifier = Modifier.height(MediumPadding1))
-
-        Text(
-            textAlign = TextAlign.Center,
-            text = "By continuing, you agree to our \nTerms of Service Privacy Policy Content Policy",
-            style = MaterialTheme.typography.bodyMedium,
-            color = colorResource(
-                id = R.color.primaryColor
+            Text(
+                text = "Login or signup to use app",
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
+                color = colorResource(id = R.color.gray),
+                modifier = Modifier.align(Alignment.Start)
             )
 
-        )
+            Spacer(modifier = Modifier.padding(MediumPadding1))
+
+            Text(
+                text = "Enter email",
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+                color = colorResource(id = R.color.black),
+                modifier = Modifier.align(Alignment.Start)
+            )
+
+            Spacer(modifier = Modifier.height(ExtraSmallPadding2))
 
 
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = textFieldValue,
+                onValueChange = { textFieldValue = it },
+                shape = RoundedCornerShape(5.dp),
+
+                )
+
+            Spacer(modifier = Modifier.padding(ExtraSmallPadding3))
+
+            Text(
+                text = "Enter password",
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+                color = colorResource(id = R.color.black),
+                modifier = Modifier.align(Alignment.Start)
+            )
+
+            Spacer(modifier = Modifier.height(ExtraSmallPadding2))
+
+
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = textFieldValue,
+                onValueChange = { textFieldValue = it },
+                shape = RoundedCornerShape(5.dp),
+
+                )
+
+            Spacer(modifier = Modifier.height(MediumPadding1))
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                TextButton(
+                    modifier = Modifier
+                        .height(55.dp)
+                        .fillMaxWidth(),
+                    onClick = { /*TODO*/ },
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.black))
+                ) {
+
+                    Text(
+                        text = "Continue", textAlign = TextAlign.Center,
+                        color = colorResource(id = R.color.white),
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
+                    )
+
+                }
+
+                Spacer(modifier = Modifier.height(ExtraSmallPadding3))
+
+
+                Text(
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "By continuing, I accept the Terms & Conditions & Privacy Policy",
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Normal),
+                    color = colorResource(id = R.color.gray),
+                    maxLines = 1
+
+                )
+            }
+
+
+        }
     }
 
 

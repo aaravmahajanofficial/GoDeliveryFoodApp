@@ -31,12 +31,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUp(modifier: Modifier = Modifier) {
+fun SignUp(modifier: Modifier = Modifier, navController: NavController) {
 
     var textFieldValue by remember {
         mutableStateOf("")
