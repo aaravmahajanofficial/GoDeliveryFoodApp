@@ -11,16 +11,16 @@ import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
 import com.example.godeliveryapp.presentation.foodScreen.FoodScreenView
 import com.example.godeliveryapp.presentation.foodScreen.foodCategoryScreen.CategoryScreenView
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreen
-import com.example.zomatoclone.presentation.onBoarding.components.LoginPage
-import com.example.zomatoclone.presentation.onBoarding.components.SignUp
+import com.example.godeliveryapp.presentation.onBoarding.components.LoginPageView
+import com.example.godeliveryapp.presentation.onBoarding.components.SignUpView
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Composable
-fun SetupNavGraph(navController: NavHostController) {
+fun SetupNavGraph(navController: NavHostController, startDestination: String) {
 
     //when app first starts, shows up this screen
-    NavHost(navController = navController, startDestination = Route.FoodScreen.route) {
+    NavHost(navController = navController, startDestination = startDestination) {
 
         composable(route = Route.HomeScreen.route) {
 
@@ -61,11 +61,11 @@ fun SetupNavGraph(navController: NavHostController) {
         }
 
         composable(route = Route.LoginPage.route) {
-            LoginPage(navController = navController)
+            LoginPageView(navController = navController)
         }
 
         composable(route = Route.SignUpPage.route) {
-            SignUp(navController = navController)
+            SignUpView(navController = navController)
         }
 
         composable(route = Route.CartScreen.route) {

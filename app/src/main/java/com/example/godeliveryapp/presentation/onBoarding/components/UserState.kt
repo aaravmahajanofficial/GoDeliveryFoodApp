@@ -6,4 +6,6 @@ sealed class UserState {
     data object Success : UserState()
     data class Error(val string: String) : UserState()
 
+    data object Empty : UserState()
+
 }

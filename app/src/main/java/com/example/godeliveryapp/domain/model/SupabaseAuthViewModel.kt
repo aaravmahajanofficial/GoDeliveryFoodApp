@@ -15,13 +15,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class SupabaseAuthViewModel @Inject constructor(
     private val supabaseClient: SupabaseClient,
 ) : ViewModel() {
 
-    private val _userState = MutableStateFlow<UserState>(UserState.Loading)
+    private val _userState = MutableStateFlow<UserState>(UserState.Empty)
     val userState: Flow<UserState> get() = _userState
 
     private fun saveToken(context: Context) {
@@ -126,9 +125,7 @@ class SupabaseAuthViewModel @Inject constructor(
                 _userState.value = UserState.Loading
                 val accessToken = getToken(context)
                 if (accessToken.isNullOrEmpty()) {
-
-                    _userState.value = UserState.Success
-
+                    _userState.value = UserState.Error("User not logged in")
                 } else {
 
                     supabaseClient.auth.retrieveUser(accessToken)
@@ -140,12 +137,17 @@ class SupabaseAuthViewModel @Inject constructor(
 
             } catch (e: RestException) {
                 _userState.value = UserState.Error(e.message.toString())
+
             }
 
 
         }
 
 
+    }
+
+    fun resetUserState() {
+        _userState.value = UserState.Empty
     }
 
 
