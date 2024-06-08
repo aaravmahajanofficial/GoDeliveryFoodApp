@@ -14,4 +14,6 @@ sealed class Route(val route: String) {
 
     data object SignUpPage : Route(route = "sign_up_page")
 
+    data object WelcomeScreen : Route(route = "welcome_screen")
+
 }

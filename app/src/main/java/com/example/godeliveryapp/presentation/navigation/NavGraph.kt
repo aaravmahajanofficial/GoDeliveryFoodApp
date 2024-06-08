@@ -13,6 +13,7 @@ import com.example.godeliveryapp.presentation.foodScreen.foodCategoryScreen.Cate
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreen
 import com.example.godeliveryapp.presentation.onBoarding.components.LoginPageView
 import com.example.godeliveryapp.presentation.onBoarding.components.SignUpView
+import com.example.godeliveryapp.presentation.onBoarding.components.WelcomeScreen
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -35,6 +36,10 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
                 }
             )
 
+        }
+
+        composable(route = Route.WelcomeScreen.route) {
+            WelcomeScreen(navController = navController)
         }
 
         composable(route = Route.FoodScreen.route) {

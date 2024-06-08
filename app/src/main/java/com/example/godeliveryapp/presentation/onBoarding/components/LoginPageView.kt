@@ -11,10 +11,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -34,22 +37,16 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.SupabaseAuthViewModel
-import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
-import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.navigation.Route
 
@@ -62,7 +59,6 @@ fun LoginPageView(
 ) {
 
     val openDialog = remember { mutableStateOf(false) }
-
     val userState = viewModel.userState.collectAsState(initial = UserState.Empty).value
     val context = LocalContext.current
 
@@ -86,55 +82,38 @@ fun LoginPageView(
                 .fillMaxSize()
                 .padding(NormalPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
+
+            Spacer(modifier = Modifier.padding(ExtraSmallPadding3))
 
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(ExtraSmallPadding3)
-                    .height(screenHeight.div(5)), contentAlignment = Alignment.Center
+                    .height(screenHeight.div(12)), contentAlignment = Alignment.Center
             ) {
                 Image(
                     modifier = Modifier.fillMaxSize(),
-                    painter = painterResource(id = R.drawable.drone_delivery_amico),
+                    painter = painterResource(id = R.drawable.app_logo),
                     contentDescription = null,
                     contentScale = ContentScale.Fit
                 )
             }
 
-            Spacer(modifier = Modifier.height(MediumPadding2))
+            Spacer(modifier = Modifier.padding(ExtraSmallPadding3))
 
 
             Text(
-                text = "Get started with App",
-                style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                text = "Login",
+                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.SemiBold),
                 color = colorResource(id = R.color.black),
                 modifier = Modifier.align(Alignment.Start)
             )
 
-            Spacer(modifier = Modifier.padding(ExtraSmallPadding2))
-
-            val annotatedLoginOrSignUpString = buildAnnotatedString {
-
-                append("Login or ")
-
-                withStyle(
-                    style = SpanStyle(
-                        fontWeight = FontWeight.SemiBold, color = colorResource(
-                            id = R.color.black
-                        ),
-                        textDecoration = TextDecoration.Underline
-                    )
-                ) {
-                    append("SignUp")
-                }
-                append(" to use app")
-            }
-
             Text(
-                text = annotatedLoginOrSignUpString,
-                style = MaterialTheme.typography.labelMedium.copy(
+                text = "Login to continue using the app",
+                style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.Medium, color = colorResource(
                         id = R.color.gray
                     )
@@ -143,76 +122,83 @@ fun LoginPageView(
 
                 )
 
-            Spacer(modifier = Modifier.padding(NormalPadding))
+            Spacer(modifier = Modifier.padding(ExtraSmallPadding3))
 
 
-            OutlinedTextField(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email
-                ),
-                label = {
-                    Text(
-                        text = "Email",
-                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-                        color = Color.LightGray
-                    )
-                },
-                value = emailFieldController,
-                onValueChange = { emailFieldController = it },
-                shape = RoundedCornerShape(5.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.LightGray,
-                    focusedBorderColor = colorResource(id = R.color.black),
-                    focusedTextColor = colorResource(id = R.color.black),
-                    cursorColor = colorResource(id = R.color.black),
-                    errorCursorColor = Color.Red,
-                    errorBorderColor = Color.Red,
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.SpaceEvenly
+            ) {
 
-                    )
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email
+                    ),
+                    placeholder = {
+                        Text(
+                            text = "Enter your email",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                            color = Color.LightGray
+                        )
+                    },
+                    value = emailFieldController,
+                    onValueChange = { emailFieldController = it },
+                    shape = RoundedCornerShape(5.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color.LightGray,
+                        focusedBorderColor = colorResource(id = R.color.black),
+                        focusedTextColor = colorResource(id = R.color.black),
+                        cursorColor = colorResource(id = R.color.black),
+                        errorCursorColor = Color.Red,
+                        errorBorderColor = Color.Red,
 
-            )
+                        )
 
-            Spacer(modifier = Modifier.padding(ExtraSmallPadding2))
+                )
 
-            OutlinedTextField(
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password
-                ),
-                label = {
-                    Text(
-                        text = "Password",
-                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-                        color = Color.LightGray
-                    )
-                },
-                modifier = Modifier.fillMaxWidth(),
-                value = passwordFieldController,
-                onValueChange = { passwordFieldController = it },
-                shape = RoundedCornerShape(5.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.LightGray,
-                    focusedBorderColor = colorResource(id = R.color.black),
-                    focusedTextColor = colorResource(id = R.color.black),
-                    cursorColor = colorResource(id = R.color.black),
-                    errorCursorColor = Color.Red,
-                    errorBorderColor = Color.Red,
+                Spacer(modifier = Modifier.padding(ExtraSmallPadding3))
 
-                    )
+                OutlinedTextField(
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password
+                    ),
+                    placeholder = {
+                        Text(
+                            text = "Enter password",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                            color = Color.LightGray
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    value = passwordFieldController,
+                    onValueChange = { passwordFieldController = it },
+                    shape = RoundedCornerShape(5.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color.LightGray,
+                        focusedBorderColor = colorResource(id = R.color.black),
+                        focusedTextColor = colorResource(id = R.color.black),
+                        cursorColor = colorResource(id = R.color.black),
+                        errorCursorColor = Color.Red,
+                        errorBorderColor = Color.Red,
 
-            )
+                        )
 
-            Spacer(modifier = Modifier.height(NormalPadding))
+                )
+            }
+
+            Spacer(modifier = Modifier.height(1.dp))
 
             Text(
                 text = "Forgot Password?",
-                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
                 color = colorResource(id = R.color.gray),
                 modifier = Modifier.align(Alignment.End)
             )
 
-            Spacer(modifier = Modifier.height(screenHeight / 6))
+            Spacer(modifier = Modifier.height(screenHeight / 4))
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -232,7 +218,7 @@ fun LoginPageView(
                         )
 
                     },
-                    shape = RoundedCornerShape(10.dp),
+                    shape = RoundedCornerShape(5.dp),
                     colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.black))
                 ) {
 
@@ -244,44 +230,7 @@ fun LoginPageView(
 
                 }
 
-                Spacer(modifier = Modifier.height(ExtraSmallPadding3))
 
-                val annotatedString = buildAnnotatedString {
-                    append("By continuing, I accept the ")
-
-                    withStyle(
-                        style = SpanStyle(
-                            fontWeight = FontWeight.SemiBold, color = colorResource(
-                                id = R.color.black
-                            )
-                        )
-                    ) {
-                        append("Terms & Conditions")
-                    }
-
-                    append(" & ")
-
-                    withStyle(
-                        style = SpanStyle(
-                            fontWeight = FontWeight.SemiBold, color = colorResource(
-                                id = R.color.black
-                            )
-                        )
-                    ) {
-                        append("Privacy Policy")
-                    }
-                }
-
-
-                Text(
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
-                    text = annotatedString,
-                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Normal),
-                    color = colorResource(id = R.color.gray),
-                    maxLines = 1
-
-                )
             }
 
 
@@ -316,11 +265,29 @@ fun LoginPageView(
 
     if (openDialog.value) {
         AlertDialog(
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.ErrorOutline,
+                    contentDescription = null,
+                    tint = colorResource(id = R.color.black)
+                )
+
+            },
+            shape = MaterialTheme.shapes.extraSmall,
+            containerColor = colorResource(id = R.color.white),
             title = {
-                Text(text = "Oops!")
+                Text(
+                    text = "Authentication Error",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Medium),
+                    color = colorResource(id = R.color.black)
+                )
             },
             text = {
-                Text(text = (userState as UserState.Error).string)
+                Text(
+                    text = (userState as UserState.Error).string,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                    color = colorResource(id = R.color.black)
+                )
             },
             onDismissRequest = { openDialog.value = false }, confirmButton = {
                 TextButton(
@@ -330,22 +297,15 @@ fun LoginPageView(
 
                     }) {
 
-                    Text(text = "Confirm")
-
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        openDialog.value = false
-                        viewModel.resetUserState()
-                    }) {
-
-                    Text(text = "Dismiss")
-
+                    Text(
+                        text = "Ok",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        color = colorResource(id = R.color.black)
+                    )
 
                 }
             })
+
     }
 
 

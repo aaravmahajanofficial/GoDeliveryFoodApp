@@ -93,7 +93,7 @@ class SupabaseAuthViewModel @Inject constructor(
                 _userState.value = UserState.Success
 
             } catch (e: Exception) {
-                _userState.value = UserState.Error(e.message.toString())
+                _userState.value = UserState.Error("Invalid Login Credentials. Please try again.")
             }
 
         }
