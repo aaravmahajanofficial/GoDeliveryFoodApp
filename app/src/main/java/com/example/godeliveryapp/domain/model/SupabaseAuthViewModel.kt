@@ -13,6 +13,8 @@ import io.github.jan.supabase.gotrue.providers.builtin.Email
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,7 +49,8 @@ class SupabaseAuthViewModel @Inject constructor(
     fun signUp(
         context: Context,
         userEmail: String,
-        userPassword: String
+        userPassword: String,
+        userName: String
     ) {
 
         viewModelScope.launch {
@@ -55,10 +58,10 @@ class SupabaseAuthViewModel @Inject constructor(
             try {
 
                 _userState.value = UserState.Loading
-
                 supabaseClient.auth.signUpWith(Email) {
                     email = userEmail
                     password = userPassword
+                    data = buildJsonObject { put("displayName", userName) }
                 }
 
                 saveToken(context)
@@ -67,12 +70,20 @@ class SupabaseAuthViewModel @Inject constructor(
 
             } catch (e: Exception) {
 
-                _userState.value = UserState.Error(e.message.toString())
+                when (e) {
+
+                    is RestException -> {
+                        _userState.value = UserState.Error(e.error)
+                    }
+
+                    else -> {
+                        _userState.value = UserState.Error(e.message.toString())
+                    }
+                }
             }
 
+
         }
-
-
     }
 
     fun login(
@@ -93,7 +104,17 @@ class SupabaseAuthViewModel @Inject constructor(
                 _userState.value = UserState.Success
 
             } catch (e: Exception) {
-                _userState.value = UserState.Error("Invalid Login Credentials. Please try again.")
+
+                when (e) {
+
+                    is RestException -> {
+                        _userState.value = UserState.Error(e.error)
+                    }
+
+                    else -> {
+                        _userState.value = UserState.Error(e.message.toString())
+                    }
+                }
             }
 
         }

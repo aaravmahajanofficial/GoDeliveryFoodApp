@@ -326,7 +326,8 @@ fun SignUpView(
                             viewModel.signUp(
                                 context = context,
                                 userEmail = emailFieldController,
-                                userPassword = passwordFieldController
+                                userPassword = passwordFieldController,
+                                userName = nameController
                             )
                         }
 

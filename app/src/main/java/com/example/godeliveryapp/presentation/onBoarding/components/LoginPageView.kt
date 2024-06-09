@@ -250,7 +250,7 @@ fun LoginPageView(
                     onClick = {
 
                         if (isEnable.value) {
-                            viewModel.signUp(
+                            viewModel.login(
                                 context = context,
                                 userEmail = emailFieldController,
                                 userPassword = passwordFieldController
