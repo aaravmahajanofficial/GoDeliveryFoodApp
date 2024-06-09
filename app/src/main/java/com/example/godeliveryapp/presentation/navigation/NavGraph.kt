@@ -11,7 +11,9 @@ import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
 import com.example.godeliveryapp.presentation.foodScreen.FoodScreenView
 import com.example.godeliveryapp.presentation.foodScreen.foodCategoryScreen.CategoryScreenView
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreen
+import com.example.godeliveryapp.presentation.onBoarding.components.ForgotPasswordPageView
 import com.example.godeliveryapp.presentation.onBoarding.components.LoginPageView
+import com.example.godeliveryapp.presentation.onBoarding.components.OtpPageView
 import com.example.godeliveryapp.presentation.onBoarding.components.SignUpView
 import com.example.godeliveryapp.presentation.onBoarding.components.WelcomeScreen
 import kotlinx.serialization.encodeToString
@@ -40,6 +42,14 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
 
         composable(route = Route.WelcomeScreen.route) {
             WelcomeScreen(navController = navController)
+        }
+
+        composable(route = Route.ForgotPasswordScreen.route) {
+            ForgotPasswordPageView(navController = navController)
+        }
+
+        composable(route = Route.OtpScreen.route) {
+            OtpPageView(navController = navController)
         }
 
         composable(route = Route.FoodScreen.route) {

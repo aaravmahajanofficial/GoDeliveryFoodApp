@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -44,16 +45,19 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.SupabaseAuthViewModel
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.navigation.Route
@@ -63,11 +67,11 @@ import com.example.godeliveryapp.presentation.navigation.Route
 fun LoginPageView(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: SupabaseAuthViewModel = hiltViewModel()
+    authViewModel: SupabaseAuthViewModel = hiltViewModel()
 ) {
 
     val openDialog = remember { mutableStateOf(false) }
-    val userState = viewModel.userState.collectAsState(initial = UserState.Empty).value
+    val userState = authViewModel.userState.collectAsState(initial = UserState.Empty).value
     val context = LocalContext.current
 
     var emailFieldController by remember {
@@ -227,13 +231,28 @@ fun LoginPageView(
                 )
             }
 
-            Spacer(modifier = Modifier.height(1.dp))
+            Spacer(modifier = Modifier.height(ExtraSmallPadding1))
 
-            Text(
-                text = "Forgot Password?",
-                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                color = colorResource(id = R.color.gray),
-                modifier = Modifier.align(Alignment.End)
+            val annotatedString = buildAnnotatedString {
+                withStyle(
+                    MaterialTheme.typography.labelMedium.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = colorResource(id = R.color.gray)
+                    )
+                        .toSpanStyle()
+                ) {
+                    append("Forgot Password?")
+                }
+            }
+
+            ClickableText(
+                onClick = {
+
+                    navController.navigate(Route.ForgotPasswordScreen.route)
+
+                },
+                modifier = Modifier.align(Alignment.End),
+                text = annotatedString,
             )
 
             Spacer(modifier = Modifier.height(screenHeight / 4))
@@ -250,7 +269,7 @@ fun LoginPageView(
                     onClick = {
 
                         if (isEnable.value) {
-                            viewModel.login(
+                            authViewModel.login(
                                 context = context,
                                 userEmail = emailFieldController,
                                 userPassword = passwordFieldController
@@ -298,7 +317,7 @@ fun LoginPageView(
             navController.navigate(Route.HomeScreen.route) {
                 popUpTo(Route.LoginPage.route) { inclusive = true }
             }
-            viewModel.resetUserState()
+            authViewModel.resetUserState()
         }
 
         UserState.Empty -> {
@@ -336,7 +355,7 @@ fun LoginPageView(
                 TextButton(
                     onClick = {
                         openDialog.value = false
-                        viewModel.resetUserState()
+                        authViewModel.resetUserState()
 
                     }) {
 

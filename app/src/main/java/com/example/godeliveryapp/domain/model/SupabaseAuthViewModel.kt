@@ -138,6 +138,21 @@ class SupabaseAuthViewModel @Inject constructor(
 
     }
 
+    fun forgotPassword(email: String) {
+
+        viewModelScope.launch {
+
+            try {
+                _userState.value = UserState.Loading
+                supabaseClient.auth.resetPasswordForEmail(email)
+                _userState.value = UserState.Success
+            } catch (e: Exception) {
+                _userState.value = UserState.Error(e.message.toString())
+            }
+        }
+
+    }
+
     fun isUserLoggedIn(context: Context) {
 
         viewModelScope.launch {

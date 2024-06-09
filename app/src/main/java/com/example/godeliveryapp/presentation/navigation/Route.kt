@@ -16,4 +16,8 @@ sealed class Route(val route: String) {
 
     data object WelcomeScreen : Route(route = "welcome_screen")
 
+    data object ForgotPasswordScreen : Route(route = "forgot_password_screen")
+
+    data object OtpScreen : Route(route = "otp_screen")
+
 }
