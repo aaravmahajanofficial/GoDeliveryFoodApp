@@ -42,12 +42,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
+import com.example.godeliveryapp.domain.model.SupabaseAuthViewModel
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
@@ -56,7 +58,6 @@ import com.example.godeliveryapp.presentation.common.components.CategoryCardView
 import com.example.godeliveryapp.presentation.common.components.OfferCardView
 import com.example.godeliveryapp.presentation.homeScreen.listings.components.RestaurantListingCardView
 import com.example.godeliveryapp.presentation.homeScreen.slidingAds.SlidingAdBanners
-import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.zomatoclone.presentation.homeScreen.OfferAds.components.PageIndicator
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -66,9 +67,12 @@ fun HomeScreen(
     navController: NavController,
     navigateToDetails: (RestaurantListingCardModel) -> Unit,
     viewModel: HomeScreenViewModel = hiltViewModel(),
+    authViewModel: SupabaseAuthViewModel = hiltViewModel()
 ) {
 
     val isLoading = viewModel.isLoading.collectAsState(initial = true)
+
+    val context = LocalContext.current
 
 
     val textFieldValue by remember {
@@ -140,9 +144,7 @@ fun HomeScreen(
                             modifier = Modifier
                                 .scale(1.2f)
                                 .clickable {
-                                    navController.navigate(
-                                        route = Route.DetailsScreen.route
-                                    )
+                                    authViewModel.logOut(context = context)
                                 },
                             imageVector = Icons.Outlined.Person,
                             contentDescription = null,

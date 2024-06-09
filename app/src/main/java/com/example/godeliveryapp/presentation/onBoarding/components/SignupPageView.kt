@@ -1,6 +1,8 @@
 package com.example.godeliveryapp.presentation.onBoarding.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,9 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
@@ -24,6 +29,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -38,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -87,6 +95,20 @@ fun SignUpView(
         )
     }
 
+    val isEnable = remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(
+        nameController,
+        emailFieldController,
+        passwordFieldController,
+        confirmPasswordController
+    ) {
+        isEnable.value =
+            nameController.isNotEmpty() && emailFieldController.isNotEmpty() && passwordFieldController.isNotEmpty() && confirmPasswordController.isNotEmpty()
+    }
+
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -98,7 +120,21 @@ fun SignUpView(
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
 
-            Spacer(modifier = Modifier.padding(ExtraSmallPadding3))
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .clickable { navController.navigateUp() }
+                    .background(color = Color.White, shape = CircleShape)
+                    .size(42.dp), contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = null,
+                    tint = colorResource(id = R.color.black),
+                    modifier = Modifier.scale(1f)
+                )
+            }
 
             Box(
                 modifier = Modifier
@@ -147,8 +183,11 @@ fun SignUpView(
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
                     ),
+                    singleLine = true,
+                    maxLines = 1,
                     placeholder = {
                         Text(
                             text = "Enter your name",
@@ -156,6 +195,38 @@ fun SignUpView(
                             color = Color.LightGray
                         )
                     },
+                    value = nameController,
+                    onValueChange = { nameController = it },
+                    shape = RoundedCornerShape(5.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color.LightGray,
+                        focusedBorderColor = colorResource(id = R.color.black),
+                        focusedTextColor = colorResource(id = R.color.black),
+                        cursorColor = colorResource(id = R.color.black),
+                        errorCursorColor = Color.Red,
+                        errorBorderColor = Color.Red,
+
+                        )
+
+                )
+
+                Spacer(modifier = Modifier.padding(ExtraSmallPadding3))
+
+                OutlinedTextField(
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
+                    singleLine = true,
+                    maxLines = 1,
+                    placeholder = {
+                        Text(
+                            text = "Enter your email",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                            color = Color.LightGray
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
                     value = emailFieldController,
                     onValueChange = { emailFieldController = it },
                     shape = RoundedCornerShape(5.dp),
@@ -176,37 +247,8 @@ fun SignUpView(
                 OutlinedTextField(
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password
-                    ),
-                    placeholder = {
-                        Text(
-                            text = "Enter your email",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                            color = Color.LightGray
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    value = passwordFieldController,
-                    onValueChange = { passwordFieldController = it },
-                    shape = RoundedCornerShape(5.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color.LightGray,
-                        focusedBorderColor = colorResource(id = R.color.black),
-                        focusedTextColor = colorResource(id = R.color.black),
-                        cursorColor = colorResource(id = R.color.black),
-                        errorCursorColor = Color.Red,
-                        errorBorderColor = Color.Red,
-
-                        )
-
-                )
-
-                Spacer(modifier = Modifier.padding(ExtraSmallPadding3))
-
-                OutlinedTextField(
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Next
                     ),
                     placeholder = {
                         Text(
@@ -215,6 +257,8 @@ fun SignUpView(
                             color = Color.LightGray
                         )
                     },
+                    singleLine = true,
+                    maxLines = 1,
                     modifier = Modifier.fillMaxWidth(),
                     value = passwordFieldController,
                     onValueChange = { passwordFieldController = it },
@@ -236,8 +280,11 @@ fun SignUpView(
                 OutlinedTextField(
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
                     ),
+                    singleLine = true,
+                    maxLines = 1,
                     placeholder = {
                         Text(
                             text = "Enter confirm password",
@@ -246,8 +293,8 @@ fun SignUpView(
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    value = passwordFieldController,
-                    onValueChange = { passwordFieldController = it },
+                    value = confirmPasswordController,
+                    onValueChange = { confirmPasswordController = it },
                     shape = RoundedCornerShape(5.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedBorderColor = Color.LightGray,
@@ -275,15 +322,19 @@ fun SignUpView(
                         .fillMaxWidth(),
                     onClick = {
 
-                        viewModel.login(
-                            context = context,
-                            userEmail = emailFieldController,
-                            userPassword = passwordFieldController
-                        )
+                        if (isEnable.value) {
+                            viewModel.signUp(
+                                context = context,
+                                userEmail = emailFieldController,
+                                userPassword = passwordFieldController
+                            )
+                        }
 
                     },
                     shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.black))
+                    colors = if (isEnable.value) ButtonDefaults.textButtonColors(colorResource(id = R.color.black)) else ButtonDefaults.textButtonColors(
+                        Color.LightGray
+                    ),
                 ) {
 
                     Text(
@@ -318,8 +369,9 @@ fun SignUpView(
 
         UserState.Success -> {
             navController.navigate(Route.HomeScreen.route) {
-                popUpTo(Route.LoginPage.route) { inclusive = true }
+                popUpTo(Route.WelcomeScreen.route) { inclusive = true }
             }
+            viewModel.resetUserState()
         }
 
         UserState.Empty -> {

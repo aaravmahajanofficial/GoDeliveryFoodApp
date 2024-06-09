@@ -1,6 +1,8 @@
 package com.example.godeliveryapp.presentation.onBoarding.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,9 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
@@ -24,6 +29,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -38,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -76,6 +84,18 @@ fun LoginPageView(
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
+    val isEnable = remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(
+        emailFieldController,
+        passwordFieldController,
+    ) {
+        isEnable.value =
+            emailFieldController.isNotEmpty() && passwordFieldController.isNotEmpty()
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -85,19 +105,31 @@ fun LoginPageView(
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
 
-            Spacer(modifier = Modifier.padding(ExtraSmallPadding3))
+            Box(
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .clickable { navController.navigateUp() }
+                    .background(color = Color.White, shape = CircleShape)
+                    .size(42.dp), contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = null,
+                    tint = colorResource(id = R.color.black),
+                    modifier = Modifier.scale(1f)
+                )
+            }
 
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(ExtraSmallPadding3)
                     .height(screenHeight.div(12)), contentAlignment = Alignment.Center
             ) {
                 Image(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier,
                     painter = painterResource(id = R.drawable.app_logo),
                     contentDescription = null,
-                    contentScale = ContentScale.Fit
+                    contentScale = ContentScale.Fit,
                 )
             }
 
@@ -134,7 +166,8 @@ fun LoginPageView(
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Email
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
                     ),
                     placeholder = {
                         Text(
@@ -143,6 +176,8 @@ fun LoginPageView(
                             color = Color.LightGray
                         )
                     },
+                    maxLines = 1,
+                    singleLine = true,
                     value = emailFieldController,
                     onValueChange = { emailFieldController = it },
                     shape = RoundedCornerShape(5.dp),
@@ -163,8 +198,11 @@ fun LoginPageView(
                 OutlinedTextField(
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
                     ),
+                    singleLine = true,
+                    maxLines = 1,
                     placeholder = {
                         Text(
                             text = "Enter password",
@@ -211,15 +249,19 @@ fun LoginPageView(
                         .fillMaxWidth(),
                     onClick = {
 
-                        viewModel.login(
-                            context = context,
-                            userEmail = emailFieldController,
-                            userPassword = passwordFieldController
-                        )
+                        if (isEnable.value) {
+                            viewModel.signUp(
+                                context = context,
+                                userEmail = emailFieldController,
+                                userPassword = passwordFieldController
+                            )
+                        }
 
                     },
                     shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.textButtonColors(colorResource(id = R.color.black))
+                    colors = if (isEnable.value) ButtonDefaults.textButtonColors(colorResource(id = R.color.black)) else ButtonDefaults.textButtonColors(
+                        Color.LightGray
+                    ),
                 ) {
 
                     Text(
@@ -256,6 +298,7 @@ fun LoginPageView(
             navController.navigate(Route.HomeScreen.route) {
                 popUpTo(Route.LoginPage.route) { inclusive = true }
             }
+            viewModel.resetUserState()
         }
 
         UserState.Empty -> {
