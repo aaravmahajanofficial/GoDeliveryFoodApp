@@ -8,6 +8,7 @@ import com.example.godeliveryapp.utils.SharedPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.exceptions.RestException
+import io.github.jan.supabase.gotrue.OtpType
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.gotrue.providers.builtin.Email
 import kotlinx.coroutines.flow.Flow
@@ -138,18 +139,78 @@ class SupabaseAuthViewModel @Inject constructor(
 
     }
 
-    fun forgotPassword(email: String) {
+    fun forgotPassword(userEmail: String) {
 
         viewModelScope.launch {
-
             try {
                 _userState.value = UserState.Loading
-                supabaseClient.auth.resetPasswordForEmail(email)
+                supabaseClient.auth.resetPasswordForEmail(userEmail)
                 _userState.value = UserState.Success
             } catch (e: Exception) {
-                _userState.value = UserState.Error(e.message.toString())
+                when (e) {
+                    is RestException -> {
+                        _userState.value = UserState.Error(e.error)
+                    }
+
+                    else -> {
+                        _userState.value = UserState.Error(e.message.toString())
+
+                    }
+                }
             }
         }
+
+    }
+
+    fun verifyOtp(context: Context, userEmail: String, token: String) {
+
+        viewModelScope.launch {
+            try {
+                _userState.value = UserState.Loading
+                supabaseClient.auth.verifyEmailOtp(
+                    type = OtpType.Email.EMAIL,
+                    email = userEmail,
+                    token = token
+                )
+                _userState.value = UserState.Success
+
+            } catch (e: Exception) {
+
+                when (e) {
+                    is RestException -> {
+                        _userState.value = UserState.Error(e.error)
+                    }
+
+                    else -> {
+                        _userState.value = UserState.Error(e.message.toString())
+                    }
+                }
+
+            }
+        }
+    }
+
+    fun createNewPassword(context: Context, userPassword: String) {
+
+        viewModelScope.launch {
+            try {
+                _userState.value = UserState.Loading
+                supabaseClient.auth.modifyUser(updateCurrentUser = true) { password = userPassword }
+                _userState.value = UserState.Success
+
+            } catch (e: Exception) {
+                when (e) {
+                    is RestException -> {
+                        _userState.value = UserState.Error(e.error)
+                    }
+
+                    else -> {
+                        _userState.value = UserState.Error(e.message.toString())
+                    }
+                }
+            }
+        }
+
 
     }
 

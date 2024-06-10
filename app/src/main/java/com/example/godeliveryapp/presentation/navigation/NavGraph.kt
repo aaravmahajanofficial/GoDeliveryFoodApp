@@ -2,8 +2,10 @@ package com.example.godeliveryapp.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.CartScreen.CartScreen
@@ -11,6 +13,7 @@ import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
 import com.example.godeliveryapp.presentation.foodScreen.FoodScreenView
 import com.example.godeliveryapp.presentation.foodScreen.foodCategoryScreen.CategoryScreenView
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreen
+import com.example.godeliveryapp.presentation.onBoarding.components.CreateNewPasswordPageView
 import com.example.godeliveryapp.presentation.onBoarding.components.ForgotPasswordPageView
 import com.example.godeliveryapp.presentation.onBoarding.components.LoginPageView
 import com.example.godeliveryapp.presentation.onBoarding.components.OtpPageView
@@ -48,8 +51,17 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
             ForgotPasswordPageView(navController = navController)
         }
 
-        composable(route = Route.OtpScreen.route) {
-            OtpPageView(navController = navController)
+        composable(route = Route.CreateNewPasswordScreen.route) {
+            CreateNewPasswordPageView(navController = navController)
+        }
+        composable(
+            route = Route.OtpScreen.route,
+            arguments = listOf(navArgument("email") { type = NavType.StringType })
+        ) {
+            OtpPageView(
+                navController = navController,
+                userEmail = it.arguments?.getString("email") ?: ""
+            )
         }
 
         composable(route = Route.FoodScreen.route) {

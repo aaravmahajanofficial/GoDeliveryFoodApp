@@ -1,5 +1,6 @@
 package com.example.godeliveryapp.presentation.onBoarding.components
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,7 +18,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -60,7 +64,7 @@ fun ForgotPasswordPageView(
             ""
         )
     }
-
+    val openDialog = remember { mutableStateOf(false) }
     val userState = authViewModel.userState.collectAsState(initial = UserState.Empty).value
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
@@ -177,6 +181,80 @@ fun ForgotPasswordPageView(
 
             }
 
+
+        }
+
+        when (userState) {
+
+            is UserState.Error -> {
+                openDialog.value = true
+            }
+
+            UserState.Empty -> {}
+            UserState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+
+                    CircularProgressIndicator(color = colorResource(id = R.color.primaryColor))
+
+                }
+            }
+
+            UserState.Success -> {
+                navController.navigate("otp_screen/${emailFieldController}")
+                Toast.makeText(
+                    navController.context,
+                    "Password reset link sent to your email",
+                    Toast.LENGTH_SHORT
+                ).show()
+                authViewModel.resetUserState()
+            }
+        }
+
+        if (openDialog.value) {
+            AlertDialog(
+                icon = {
+                    Icon(
+                        imageVector = Icons.Filled.ErrorOutline,
+                        contentDescription = null,
+                        tint = colorResource(id = R.color.black)
+                    )
+
+                },
+                shape = MaterialTheme.shapes.extraSmall,
+                containerColor = colorResource(id = R.color.white),
+                title = {
+                    Text(
+                        text = "Authentication Error",
+                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Medium),
+                        color = colorResource(id = R.color.black)
+                    )
+                },
+                text = {
+                    Text(
+                        text = (userState as UserState.Error).string,
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        color = colorResource(id = R.color.black)
+                    )
+                },
+                onDismissRequest = { openDialog.value = false }, confirmButton = {
+                    TextButton(
+                        onClick = {
+                            openDialog.value = false
+                            authViewModel.resetUserState()
+
+                        }) {
+
+                        Text(
+                            text = "Ok",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                            color = colorResource(id = R.color.black)
+                        )
+
+                    }
+                })
 
         }
 

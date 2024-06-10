@@ -18,7 +18,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -27,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +43,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -60,8 +65,13 @@ import com.example.godeliveryapp.presentation.navigation.Route
 fun OtpPageView(
     modifier: Modifier = Modifier,
     navController: NavController,
+    userEmail: String,
     authViewModel: SupabaseAuthViewModel = hiltViewModel()
 ) {
+
+    val userState = authViewModel.userState.collectAsState(initial = UserState.Empty).value
+    val openDialog = remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     val isEnable = remember {
         mutableStateOf(false)
@@ -123,7 +133,7 @@ fun OtpPageView(
             ) {
                 Image(
                     modifier = Modifier,
-                    painter = painterResource(id = R.drawable.forgot_password_logo),
+                    painter = painterResource(id = R.drawable.otp_sent_logo),
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
                 )
@@ -208,7 +218,13 @@ fun OtpPageView(
 
             TextButton(
                 elevation = ButtonDefaults.elevatedButtonElevation(),
-                onClick = { navController.navigate(Route.LoginPage.route) },
+                onClick = {
+                    authViewModel.verifyOtp(
+                        context = context,
+                        userEmail = userEmail,
+                        token = (otp1 + otp2 + otp3 + otp4 + otp5 + otp6)
+                    )
+                },
 
                 modifier = Modifier
                     .fillMaxWidth()
@@ -232,5 +248,76 @@ fun OtpPageView(
 
 
     }
+
+    when (userState) {
+        is UserState.Error -> {
+
+            openDialog.value = true
+        }
+
+        UserState.Loading -> {
+
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+
+        }
+
+        UserState.Success -> {
+            navController.navigate(Route.CreateNewPasswordScreen.route) {
+                popUpTo(Route.OtpScreen.route) { inclusive = true }
+            }
+            authViewModel.resetUserState()
+        }
+
+        UserState.Empty -> {
+
+        }
+    }
+
+    if (openDialog.value) {
+        AlertDialog(
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.ErrorOutline,
+                    contentDescription = null,
+                    tint = colorResource(id = R.color.black)
+                )
+
+            },
+            shape = MaterialTheme.shapes.extraSmall,
+            containerColor = colorResource(id = R.color.white),
+            title = {
+                Text(
+                    text = "Authentication Error",
+                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Medium),
+                    color = colorResource(id = R.color.black)
+                )
+            },
+            text = {
+                Text(
+                    text = (userState as UserState.Error).string,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                    color = colorResource(id = R.color.black)
+                )
+            },
+            onDismissRequest = { openDialog.value = false }, confirmButton = {
+                TextButton(
+                    onClick = {
+                        openDialog.value = false
+                        authViewModel.resetUserState()
+
+                    }) {
+
+                    Text(
+                        text = "Ok",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        color = colorResource(id = R.color.black)
+                    )
+
+                }
+            })
+    }
+
 
 }
