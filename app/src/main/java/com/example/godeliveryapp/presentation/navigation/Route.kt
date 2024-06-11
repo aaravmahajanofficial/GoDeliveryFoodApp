@@ -22,4 +22,6 @@ sealed class Route(val route: String) {
 
     data object CreateNewPasswordScreen : Route(route = "create_new_password_screen")
 
+    data object ProfileScreen : Route(route = "profile_screen")
+
 }

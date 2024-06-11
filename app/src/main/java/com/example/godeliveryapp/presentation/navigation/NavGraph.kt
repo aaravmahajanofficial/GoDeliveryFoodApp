@@ -13,6 +13,7 @@ import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
 import com.example.godeliveryapp.presentation.foodScreen.FoodScreenView
 import com.example.godeliveryapp.presentation.foodScreen.foodCategoryScreen.CategoryScreenView
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreen
+import com.example.godeliveryapp.presentation.homeScreen.ProfilePageView
 import com.example.godeliveryapp.presentation.onBoarding.components.CreateNewPasswordPageView
 import com.example.godeliveryapp.presentation.onBoarding.components.ForgotPasswordPageView
 import com.example.godeliveryapp.presentation.onBoarding.components.LoginPageView
@@ -62,6 +63,10 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
                 navController = navController,
                 userEmail = it.arguments?.getString("email") ?: ""
             )
+        }
+
+        composable(route = Route.ProfileScreen.route) {
+            ProfilePageView(navController = navController)
         }
 
         composable(route = Route.FoodScreen.route) {
