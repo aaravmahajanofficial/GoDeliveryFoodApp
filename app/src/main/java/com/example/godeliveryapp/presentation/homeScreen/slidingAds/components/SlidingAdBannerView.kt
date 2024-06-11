@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
+import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.homeScreen.slidingAds.SlidingAdBanner
 
@@ -55,7 +56,7 @@ fun SlidingAdBannerView(modifier: Modifier = Modifier, slidingAdBanner: SlidingA
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .weight(1f),
+                    .weight(0.5f),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.Start
             ) {
@@ -70,14 +71,14 @@ fun SlidingAdBannerView(modifier: Modifier = Modifier, slidingAdBanner: SlidingA
                 if (slidingAdBanner.description != null) {
                     Text(
                         text = slidingAdBanner.description,
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Normal),
+                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Normal),
                         color = colorResource(
                             id = slidingAdBanner.buttonColor
                         ),
                     )
                 }
 
-                Spacer(modifier = Modifier.height(NormalPadding))
+                Spacer(modifier = Modifier.height(MediumPadding2))
 
                 Box(
                     modifier = Modifier
@@ -87,7 +88,6 @@ fun SlidingAdBannerView(modifier: Modifier = Modifier, slidingAdBanner: SlidingA
                         )
                         .padding(ExtraSmallPadding2),
                     contentAlignment = Alignment.Center
-
                 ) {
 
                     Text(
