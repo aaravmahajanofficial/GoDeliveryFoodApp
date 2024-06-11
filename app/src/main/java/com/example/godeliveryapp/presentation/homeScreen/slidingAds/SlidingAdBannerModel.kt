@@ -7,6 +7,8 @@ import com.example.godeliveryapp.R
 data class SlidingAdBanner(
 
     val title: String,
+    val description: String? = null,
+    val buttonTitle: String,
     @ColorRes var background: Int,
     @ColorRes var buttonColor: Int,
     @DrawableRes val imageId: Int
@@ -15,23 +17,18 @@ data class SlidingAdBanner(
 val SlidingAdBanners = listOf(
 
     SlidingAdBanner(
-        "Get up to 25% on all food orders",
+        title = "Get up to 25% on all food orders",
         buttonColor = R.color.orderNowButtonColor,
         background = R.color.offerAD1Color,
-        imageId = R.drawable.foodoffer
+        imageId = R.drawable.foodoffer,
+        buttonTitle = "Order Now",
     ),
     SlidingAdBanner(
-        "Get up to 35% on all desserts.",
+        title = "Gold Membership",
+        description = "Free delivery on all orders",
         buttonColor = R.color.orderNowButtonColor,
-        background = R.color.offerAD2Color,
-        imageId = R.drawable.mart2
+        background = R.color.offerAD1Color,
+        imageId = R.drawable.foodoffer,
+        buttonTitle = "Know more",
     ),
-    SlidingAdBanner(
-        "Get up to 40% on all coffee orders",
-        buttonColor = R.color.orderNowButtonColor,
-        background = R.color.offerAD3Color,
-        imageId = R.drawable.mart3
-    )
-
-
 )
