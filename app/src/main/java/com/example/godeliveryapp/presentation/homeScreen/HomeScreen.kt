@@ -31,6 +31,7 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -58,6 +59,7 @@ import com.example.godeliveryapp.presentation.common.components.CategoryCardView
 import com.example.godeliveryapp.presentation.common.components.OfferCardView
 import com.example.godeliveryapp.presentation.homeScreen.listings.components.RestaurantListingCardView
 import com.example.godeliveryapp.presentation.homeScreen.slidingAds.SlidingAdBanners
+import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.zomatoclone.presentation.homeScreen.OfferAds.components.PageIndicator
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -86,244 +88,261 @@ fun HomeScreen(
     val itemsList = viewModel.restaurants.collectAsState(initial = listOf()).value
 
 // Hero Section
-
-    if (!itemsList.isNullOrEmpty()) {
-        LazyColumn(
+    if (isLoading.value) {
+        Box(
             modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Center
+            contentAlignment = Alignment.Center
         ) {
-            item {
-                //header
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(NormalPadding),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-
-                    Column(modifier = Modifier) {
-                        Text(
-                            "Deliver Now", style = MaterialTheme.typography.labelLarge.copy(
-                                color = colorResource(
-                                    id = R.color.gray
-                                )
-                            )
+            CircularProgressIndicator(color = colorResource(id = R.color.primaryColor))
+        }
+    } else {
 
 
-                        )
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                "Google", style = MaterialTheme.typography.titleLarge.copy(
-                                    color = colorResource(
-                                        id = R.color.black
-                                    )
-                                )
-                            )
-                            Icon(
-                                imageVector = Icons.Rounded.KeyboardArrowDown,
-                                contentDescription = null,
-                                modifier = Modifier.size(32.dp)
-                            )
-
-                        }
-
-
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .size(42.dp)
-                            .background(
-                                color = colorResource(id = R.color.lightGray), shape = CircleShape
-                            ), contentAlignment = Alignment.Center
-
-                    ) {
-
-                        Icon(
-                            modifier = Modifier
-                                .scale(1.2f)
-                                .clickable {
-                                    authViewModel.logOut(context = context)
-                                },
-                            imageVector = Icons.Outlined.Person,
-                            contentDescription = null,
-                        )
-
-                    }
-
-                }
-
-                //search bar
-                Box(
-                    modifier = Modifier
-                        .padding(start = NormalPadding, end = NormalPadding)
-                        .background(
-                            color = colorResource(id = R.color.lightGray),
-                            shape = RoundedCornerShape(32.dp)
-                        )
-                        .fillMaxWidth()
-                        .height(50.dp), contentAlignment = Alignment.Center
-                ) {
-
+        if (!itemsList.isNullOrEmpty()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center
+            ) {
+                item {
+                    //header
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 10.dp, end = 10.dp)
+                            .padding(NormalPadding),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row(
-                            modifier = Modifier,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Search,
-                                contentDescription = null,
-                                modifier = Modifier.scale(1f),
-                                tint = colorResource(id = R.color.black),
-                            )
-                            Spacer(modifier = Modifier.width(5.dp))
 
+                        Column(modifier = Modifier) {
                             Text(
-                                "Search for food, grocery, meat etc.",
-                                style = MaterialTheme.typography.labelLarge,
-                                color = colorResource(id = R.color.gray)
+                                "Deliver Now", style = MaterialTheme.typography.labelLarge.copy(
+                                    color = colorResource(
+                                        id = R.color.gray
+                                    )
+                                )
+
+
                             )
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    "Google", style = MaterialTheme.typography.titleLarge.copy(
+                                        color = colorResource(
+                                            id = R.color.black
+                                        )
+                                    )
+                                )
+                                Icon(
+                                    imageVector = Icons.Rounded.KeyboardArrowDown,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(32.dp)
+                                )
+
+                            }
+
+
                         }
 
-                        Row(
-                            modifier = Modifier,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                        Box(
+                            modifier = Modifier
+                                .size(42.dp)
+                                .background(
+                                    color = colorResource(id = R.color.lightGray),
+                                    shape = CircleShape
+                                ), contentAlignment = Alignment.Center
+
                         ) {
-                            Icon(
-                                imageVector = Icons.Outlined.MicNone,
-                                contentDescription = null,
-                                modifier = Modifier.scale(1f),
-                                tint = colorResource(id = R.color.black)
-                            )
-                            Spacer(modifier = Modifier.width(5.dp))
-
-                            Text(
-                                " | ",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = colorResource(id = R.color.black)
-                            )
-                            Spacer(modifier = Modifier.width(5.dp))
 
                             Icon(
-                                imageVector = Icons.Outlined.Tune,
+                                modifier = Modifier
+                                    .scale(1.2f)
+                                    .clickable {
+                                        navController.navigate(route = Route.ProfileScreen.route)
+                                    },
+                                imageVector = Icons.Outlined.Person,
                                 contentDescription = null,
-                                modifier = Modifier.scale(1f),
-                                tint = colorResource(id = R.color.black)
+                            )
+
+                        }
+
+                    }
+
+                    //search bar
+                    Box(
+                        modifier = Modifier
+                            .padding(start = NormalPadding, end = NormalPadding)
+                            .background(
+                                color = colorResource(id = R.color.lightGray),
+                                shape = RoundedCornerShape(32.dp)
+                            )
+                            .fillMaxWidth()
+                            .height(50.dp), contentAlignment = Alignment.Center
+                    ) {
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp, end = 10.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Search,
+                                    contentDescription = null,
+                                    modifier = Modifier.scale(1f),
+                                    tint = colorResource(id = R.color.black),
+                                )
+                                Spacer(modifier = Modifier.width(5.dp))
+
+                                Text(
+                                    "Search for food, grocery, meat etc.",
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = colorResource(id = R.color.gray)
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.MicNone,
+                                    contentDescription = null,
+                                    modifier = Modifier.scale(1f),
+                                    tint = colorResource(id = R.color.black)
+                                )
+                                Spacer(modifier = Modifier.width(5.dp))
+
+                                Text(
+                                    " | ",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = colorResource(id = R.color.black)
+                                )
+                                Spacer(modifier = Modifier.width(5.dp))
+
+                                Icon(
+                                    imageVector = Icons.Outlined.Tune,
+                                    contentDescription = null,
+                                    modifier = Modifier.scale(1f),
+                                    tint = colorResource(id = R.color.black)
+                                )
+                            }
+                        }
+
+
+                    }
+
+                    Spacer(modifier = Modifier.height(MediumPadding1))
+
+                    //Category Grid
+                    Column(modifier = Modifier.height(420.dp)) {
+                        LazyVerticalGrid(
+                            modifier = Modifier.fillMaxWidth(),
+                            columns = GridCells.Fixed(2),
+                            contentPadding = PaddingValues(start = 13.dp, end = 13.dp),
+                        ) {
+                            items(CategoryCardList) { item ->
+                                CategoryCardView(navController = navController, categoryCard = item)
+                            }
+
+                        }
+
+                        Box(
+                            modifier = Modifier.padding(
+                                start = NormalPadding,
+                                end = NormalPadding
+                            )
+                        ) {
+                            OfferCardView(
+                                title = "Gold Membership",
+                                description = "Free delivery on all orders",
+                                imageId = R.drawable.giftcard
                             )
                         }
                     }
 
 
-                }
+                    Spacer(modifier = Modifier.height(MediumPadding2))
 
-                Spacer(modifier = Modifier.height(MediumPadding1))
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        HorizontalPager(
+                            state = pageState,
+                            pageSpacing = 8.dp,
+                            contentPadding = PaddingValues(
+                                start = NormalPadding,
+                                end = NormalPadding
+                            )
+                        ) { index ->
+                            SlidingAdBannerView(slidingAdBanner = SlidingAdBanners[index])
+                        }
 
-                //Category Grid
-                Column(modifier = Modifier.height(420.dp)) {
-                    LazyVerticalGrid(
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        PageIndicator(
+                            pageSize = SlidingAdBanners.size, selectedPage = pageState.currentPage
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(MediumPadding2))
+
+                    Box(modifier = Modifier.padding(start = NormalPadding)) {
+                        Text(
+                            text = "Popular Restaurants",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+
+                    //Popular Restaurants
+                    LazyRow(
                         modifier = Modifier.fillMaxWidth(),
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(start = 13.dp, end = 13.dp),
+                        contentPadding = PaddingValues(NormalPadding),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        items(CategoryCardList) { item ->
-                            CategoryCardView(navController = navController, categoryCard = item)
+                        this.items(itemsList.size) { index ->
+                            val restaurantIndex = itemsList[index]
+                            RestaurantListingCardView(
+                                restaurantListingCardModel = restaurantIndex,
+                                navigateToDetails = { navigateToDetails(restaurantIndex) })
+                            Spacer(modifier = Modifier.width(14.dp))
                         }
 
                     }
 
-                    Box(modifier = Modifier.padding(start = NormalPadding, end = NormalPadding)) {
-                        OfferCardView(
-                            title = "Gold Membership",
-                            description = "Free delivery on all orders",
-                            imageId = R.drawable.giftcard
+                    Spacer(modifier = Modifier.height(MediumPadding1))
+
+                    Box(modifier = Modifier.padding(start = NormalPadding)) {
+                        Text(
+                            text = "Best To Dine-In", style = MaterialTheme.typography.titleLarge
                         )
                     }
-                }
 
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(NormalPadding),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        this.items(itemsList.size) { index ->
+                            val restaurantIndex = itemsList[index]
+                            RestaurantListingCardView(
+                                restaurantListingCardModel = restaurantIndex,
+                                navigateToDetails = { navigateToDetails(restaurantIndex) })
+                            Spacer(modifier = Modifier.width(14.dp))
+                        }
 
-                Spacer(modifier = Modifier.height(MediumPadding2))
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    HorizontalPager(
-                        state = pageState,
-                        pageSpacing = 8.dp,
-                        contentPadding = PaddingValues(
-                            start = NormalPadding,
-                            end = NormalPadding
-                        )
-                    ) { index ->
-                        SlidingAdBannerView(slidingAdBanner = SlidingAdBanners[index])
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    PageIndicator(
-                        pageSize = SlidingAdBanners.size, selectedPage = pageState.currentPage
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(MediumPadding2))
-
-                Box(modifier = Modifier.padding(start = NormalPadding)) {
-                    Text(
-                        text = "Popular Restaurants", style = MaterialTheme.typography.titleLarge
-                    )
-                }
-
-                //Popular Restaurants
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(NormalPadding),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    this.items(itemsList.size) { index ->
-                        val restaurantIndex = itemsList[index]
-                        RestaurantListingCardView(
-                            restaurantListingCardModel = restaurantIndex,
-                            navigateToDetails = { navigateToDetails(restaurantIndex) })
-                        Spacer(modifier = Modifier.width(14.dp))
-                    }
-
-                }
-
-                Spacer(modifier = Modifier.height(MediumPadding1))
-
-                Box(modifier = Modifier.padding(start = NormalPadding)) {
-                    Text(
-                        text = "Best To Dine-In", style = MaterialTheme.typography.titleLarge
-                    )
-                }
-
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(NormalPadding),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    this.items(itemsList.size) { index ->
-                        val restaurantIndex = itemsList[index]
-                        RestaurantListingCardView(
-                            restaurantListingCardModel = restaurantIndex,
-                            navigateToDetails = { navigateToDetails(restaurantIndex) })
-                        Spacer(modifier = Modifier.width(14.dp))
-                    }
 
                 }
 
 
             }
-
-
         }
     }
 

@@ -17,7 +17,6 @@ class HomeScreenViewModel @Inject constructor(private val repository: Repository
     val restaurants: Flow<List<RestaurantListingCardModel>?> get() = _restaurants
 
 
-
     private var _isLoading = MutableStateFlow(true)
 
     val isLoading: Flow<Boolean> = _isLoading
@@ -28,36 +27,39 @@ class HomeScreenViewModel @Inject constructor(private val repository: Repository
 
     private fun fetchRestaurants() {
         viewModelScope.launch {
-            val restaurantDetails = repository.getRestaurants()
-            val restaurantListingCards = restaurantDetails?.map { item ->
-                RestaurantListingCardModel(
-                    about = item.about,
-                    city = item.city,
-                    country = item.country,
-                    cuisines = item.cuisines,
-                    distance = item.distance,
-                    features = item.features,
-                    isPureVeg = item.isPureVeg,
-                    meals = item.meals,
-                    name = item.name,
-                    postalCode = item.postalCode,
-                    priceRange = item.priceRange,
-                    rating = item.rating,
-                    restaurantId = item.restaurantId,
-                    schedule = item.schedule,
-                    streetAddress = item.streetAddress,
-                    imageURL = item.imageURL
-                )
+            try {
+                _isLoading.value = true
+                val restaurantDetails = repository.getRestaurants()
+                val restaurantListingCards = restaurantDetails?.map { item ->
+                    RestaurantListingCardModel(
+                        about = item.about,
+                        city = item.city,
+                        country = item.country,
+                        cuisines = item.cuisines,
+                        distance = item.distance,
+                        features = item.features,
+                        isPureVeg = item.isPureVeg,
+                        meals = item.meals,
+                        name = item.name,
+                        postalCode = item.postalCode,
+                        priceRange = item.priceRange,
+                        rating = item.rating,
+                        restaurantId = item.restaurantId,
+                        schedule = item.schedule,
+                        streetAddress = item.streetAddress,
+                        imageURL = item.imageURL
+                    )
+
+                }
+
+                _restaurants.emit(restaurantListingCards)
+                _isLoading.value = false
+            } catch (_: Exception) {
 
             }
 
-            _restaurants.emit(restaurantListingCards)
-            _isLoading.value = false
-
         }
     }
-
-
 
 
 }
