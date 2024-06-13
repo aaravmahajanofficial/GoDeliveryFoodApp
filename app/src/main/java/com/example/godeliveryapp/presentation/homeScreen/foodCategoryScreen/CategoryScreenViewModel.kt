@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.foodScreen.foodCategoryScreen
+package com.example.godeliveryapp.presentation.homeScreen.foodCategoryScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

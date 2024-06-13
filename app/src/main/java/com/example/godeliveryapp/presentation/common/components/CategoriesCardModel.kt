@@ -13,7 +13,7 @@ val CategoryCardList = listOf(
         title = "Food",
         description = "25 mins",
         imageId = R.drawable.fastfood,
-        route = Route.FoodScreen.route
+        route = Route.HomeScreen.route
     ),
 
     CategoryCard(

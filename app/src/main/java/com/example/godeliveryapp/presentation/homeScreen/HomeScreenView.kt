@@ -18,9 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -43,20 +40,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
+import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
-import com.example.godeliveryapp.domain.model.SupabaseAuthViewModel
+import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
-import com.example.godeliveryapp.presentation.common.components.CategoryCardList
-import com.example.godeliveryapp.presentation.common.components.CategoryCardView
-import com.example.godeliveryapp.presentation.common.components.OfferCardView
+import com.example.godeliveryapp.presentation.common.CategoryButtonView
 import com.example.godeliveryapp.presentation.homeScreen.listings.components.RestaurantListingCardView
 import com.example.godeliveryapp.presentation.homeScreen.slidingAds.SlidingAdBanners
 import com.example.godeliveryapp.presentation.navigation.Route
@@ -64,18 +59,14 @@ import com.example.zomatoclone.presentation.homeScreen.OfferAds.components.PageI
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(
-    modifier: Modifier = Modifier,
-    navController: NavController,
+fun HomeScreenView(
+    modifier: Modifier = Modifier, navController: NavController,
     navigateToDetails: (RestaurantListingCardModel) -> Unit,
-    viewModel: HomeScreenViewModel = hiltViewModel(),
-    authViewModel: SupabaseAuthViewModel = hiltViewModel()
+    navigateToCategory: (CategoryDto) -> Unit,
+    viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
 
-    val isLoading = viewModel.isLoading.collectAsState(initial = true)
-
-    val context = LocalContext.current
-
+    val isLoading = viewModel.isLoading.collectAsState(initial = true).value
 
     val textFieldValue by remember {
         mutableStateOf("")
@@ -86,9 +77,12 @@ fun HomeScreen(
     }
 
     val itemsList = viewModel.restaurants.collectAsState(initial = listOf()).value
+    val categoriesList = viewModel.categories.collectAsState(initial = listOf()).value
+    val halfSize = categoriesList?.size?.div(2)
 
 // Hero Section
-    if (isLoading.value) {
+
+    if (isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -96,8 +90,6 @@ fun HomeScreen(
             CircularProgressIndicator(color = colorResource(id = R.color.primaryColor))
         }
     } else {
-
-
         if (!itemsList.isNullOrEmpty()) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -109,7 +101,7 @@ fun HomeScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(NormalPadding),
+                            .padding(Dimens.NormalPadding),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
 
@@ -169,7 +161,7 @@ fun HomeScreen(
                     //search bar
                     Box(
                         modifier = Modifier
-                            .padding(start = NormalPadding, end = NormalPadding)
+                            .padding(start = Dimens.NormalPadding, end = Dimens.NormalPadding)
                             .background(
                                 color = colorResource(id = R.color.lightGray),
                                 shape = RoundedCornerShape(32.dp)
@@ -237,37 +229,60 @@ fun HomeScreen(
 
                     }
 
-                    Spacer(modifier = Modifier.height(MediumPadding1))
+                    Spacer(modifier = Modifier.height(MediumPadding2))
 
-                    //Category Grid
-                    Column(modifier = Modifier.height(420.dp)) {
-                        LazyVerticalGrid(
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        LazyRow(
                             modifier = Modifier.fillMaxWidth(),
-                            columns = GridCells.Fixed(2),
-                            contentPadding = PaddingValues(start = 13.dp, end = 13.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            contentPadding = PaddingValues(start = NormalPadding)
                         ) {
-                            items(CategoryCardList) { item ->
-                                CategoryCardView(navController = navController, categoryCard = item)
+                            if (categoriesList != null) {
+                                items(halfSize!!) { index ->
+                                    CategoryButtonView(
+                                        category = categoriesList[index],
+                                        navigateToCategoryScreen = {
+                                            navigateToCategory(
+                                                categoriesList[index]
+                                            )
+                                        }
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                }
                             }
-
                         }
 
-                        Box(
-                            modifier = Modifier.padding(
-                                start = NormalPadding,
-                                end = NormalPadding
-                            )
+                        Spacer(modifier = Modifier.height(MediumPadding1))
+
+                        LazyRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            contentPadding = PaddingValues(start = NormalPadding)
                         ) {
-                            OfferCardView(
-                                title = "Gold Membership",
-                                description = "Free delivery on all orders",
-                                imageId = R.drawable.giftcard
-                            )
+                            if (categoriesList != null) {
+                                items(halfSize!!) { index ->
+                                    CategoryButtonView(
+                                        category = categoriesList[index + halfSize],
+                                        navigateToCategoryScreen = {
+                                            navigateToCategory(
+                                                categoriesList[index + halfSize]
+                                            )
+                                        }
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                }
+                            }
                         }
+
+
                     }
 
-
-                    Spacer(modifier = Modifier.height(MediumPadding2))
+                    Spacer(modifier = Modifier.height(32.dp))
 
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -283,6 +298,7 @@ fun HomeScreen(
                             SlidingAdBannerView(slidingAdBanner = SlidingAdBanners[index])
                         }
 
+
                         Spacer(modifier = Modifier.height(12.dp))
 
                         PageIndicator(
@@ -290,9 +306,9 @@ fun HomeScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(MediumPadding2))
+                    Spacer(modifier = Modifier.height(Dimens.MediumPadding2))
 
-                    Box(modifier = Modifier.padding(start = NormalPadding)) {
+                    Box(modifier = Modifier.padding(start = Dimens.NormalPadding)) {
                         Text(
                             text = "Popular Restaurants",
                             style = MaterialTheme.typography.titleLarge
@@ -315,7 +331,7 @@ fun HomeScreen(
 
                     }
 
-                    Spacer(modifier = Modifier.height(MediumPadding1))
+                    Spacer(modifier = Modifier.height(Dimens.MediumPadding1))
 
                     Box(modifier = Modifier.padding(start = NormalPadding)) {
                         Text(
@@ -346,5 +362,5 @@ fun HomeScreen(
         }
     }
 
-}
 
+}

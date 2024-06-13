@@ -10,9 +10,8 @@ import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.CartScreen.CartScreen
 import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
-import com.example.godeliveryapp.presentation.foodScreen.FoodScreenView
-import com.example.godeliveryapp.presentation.foodScreen.foodCategoryScreen.CategoryScreenView
-import com.example.godeliveryapp.presentation.homeScreen.HomeScreen
+import com.example.godeliveryapp.presentation.homeScreen.HomeScreenView
+import com.example.godeliveryapp.presentation.homeScreen.foodCategoryScreen.CategoryScreenView
 import com.example.godeliveryapp.presentation.onBoarding.components.CreateNewPasswordPageView
 import com.example.godeliveryapp.presentation.onBoarding.components.ForgotPasswordPageView
 import com.example.godeliveryapp.presentation.onBoarding.components.LoginPageView
@@ -28,21 +27,6 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
 
     //when app first starts, shows up this screen
     NavHost(navController = navController, startDestination = startDestination) {
-
-        composable(route = Route.HomeScreen.route) {
-
-            HomeScreen(
-                navController = navController,
-                navigateToDetails = { restaurantListingCardModel ->
-                    //sending this whole function
-                    navigateToDetailsScreen(
-                        navController,
-                        restaurantListingCardModel = restaurantListingCardModel
-                    )
-                }
-            )
-
-        }
 
         composable(route = Route.WelcomeScreen.route) {
             WelcomeScreen(navController = navController)
@@ -69,9 +53,9 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
             ProfileScreenView(navController = navController)
         }
 
-        composable(route = Route.FoodScreen.route) {
+        composable(route = Route.HomeScreen.route) {
 
-            FoodScreenView(
+            HomeScreenView(
                 navController = navController,
                 navigateToDetails = { restaurantListingCardModel ->
                     //sending this whole function
