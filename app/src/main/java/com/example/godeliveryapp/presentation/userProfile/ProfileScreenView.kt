@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.homeScreen
+package com.example.godeliveryapp.presentation.userProfile
 
 import SlidingAdBannerView
 import androidx.compose.foundation.BorderStroke
@@ -30,6 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -40,6 +41,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
@@ -49,11 +51,13 @@ import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.homeScreen.slidingAds.SlidingAdBanners
 
 @Composable
-fun ProfilePageView(
+fun ProfileScreenView(
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController,
+    profileScreenViewModel: ProfileScreenViewModel = hiltViewModel()
 ) {
 
+    val userDetails = profileScreenViewModel.userDetails.collectAsState(initial = null).value
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -94,7 +98,7 @@ fun ProfilePageView(
                 ) {
 
                     Text(
-                        text = "Vicky john",
+                        text = userDetails?.userName ?: "User Name",
                         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(id = R.color.black)
                     )
@@ -149,31 +153,31 @@ fun ProfilePageView(
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
 
-                optionRow(
+                OptionRow(
                     screenHeight = screenHeight,
                     optionTitle = "My Account",
                     imageVector = Icons.Outlined.PersonOutline
                 )
                 Spacer(modifier = Modifier.height(MediumPadding2))
-                optionRow(
+                OptionRow(
                     screenHeight = screenHeight,
                     optionTitle = "My Orders",
                     imageVector = Icons.Outlined.ShoppingBag
                 )
                 Spacer(modifier = Modifier.height(MediumPadding2))
-                optionRow(
+                OptionRow(
                     screenHeight = screenHeight,
                     optionTitle = "Payments",
                     imageVector = Icons.Outlined.Payments
                 )
                 Spacer(modifier = Modifier.height(MediumPadding2))
-                optionRow(
+                OptionRow(
                     screenHeight = screenHeight,
                     optionTitle = "Address",
                     imageVector = Icons.Outlined.LocationOn
                 )
                 Spacer(modifier = Modifier.height(MediumPadding2))
-                optionRow(
+                OptionRow(
                     screenHeight = screenHeight,
                     optionTitle = "Favourites",
                     imageVector = Icons.Outlined.FavoriteBorder
@@ -181,7 +185,7 @@ fun ProfilePageView(
 
                 Spacer(modifier = Modifier.height(MediumPadding2))
 
-                optionRow(
+                OptionRow(
                     screenHeight = screenHeight,
                     optionTitle = "Settings",
                     imageVector = Icons.Outlined.Settings
@@ -201,7 +205,7 @@ fun ProfilePageView(
 }
 
 @Composable
-private fun optionRow(screenHeight: Dp, optionTitle: String, imageVector: ImageVector) {
+private fun OptionRow(screenHeight: Dp, optionTitle: String, imageVector: ImageVector) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,

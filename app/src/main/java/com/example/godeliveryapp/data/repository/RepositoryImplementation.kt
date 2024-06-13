@@ -229,6 +229,21 @@ class RepositoryImplementation(
 
     }
 
+    override suspend fun getUserData(): UserDto {
+        return withContext(Dispatchers.IO) {
+
+            val userDto = UserDto(
+                userId = sharedPreferences.getUserData("USER_ID")!!,
+                userName = sharedPreferences.getUserData("USER_NAME")!!,
+                userEmail = sharedPreferences.getUserData("USER_EMAIL")!!,
+                userAddress = "",
+                userPhone = "",
+                landmark = ""
+            )
+
+            userDto
+        }
+    }
 
 }
 

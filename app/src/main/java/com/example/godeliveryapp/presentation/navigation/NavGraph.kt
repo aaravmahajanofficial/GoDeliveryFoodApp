@@ -13,13 +13,13 @@ import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
 import com.example.godeliveryapp.presentation.foodScreen.FoodScreenView
 import com.example.godeliveryapp.presentation.foodScreen.foodCategoryScreen.CategoryScreenView
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreen
-import com.example.godeliveryapp.presentation.homeScreen.ProfilePageView
 import com.example.godeliveryapp.presentation.onBoarding.components.CreateNewPasswordPageView
 import com.example.godeliveryapp.presentation.onBoarding.components.ForgotPasswordPageView
 import com.example.godeliveryapp.presentation.onBoarding.components.LoginPageView
 import com.example.godeliveryapp.presentation.onBoarding.components.OtpPageView
 import com.example.godeliveryapp.presentation.onBoarding.components.SignUpView
 import com.example.godeliveryapp.presentation.onBoarding.components.WelcomeScreen
+import com.example.godeliveryapp.presentation.userProfile.ProfileScreenView
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -66,7 +66,7 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
         }
 
         composable(route = Route.ProfileScreen.route) {
-            ProfilePageView(navController = navController)
+            ProfileScreenView(navController = navController)
         }
 
         composable(route = Route.FoodScreen.route) {
