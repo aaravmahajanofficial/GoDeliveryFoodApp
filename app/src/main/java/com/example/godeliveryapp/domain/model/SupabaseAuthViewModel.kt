@@ -1,8 +1,11 @@
 package com.example.godeliveryapp.domain.model
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.godeliveryapp.data.remote.dataTransferObject.UserDto
+import com.example.godeliveryapp.domain.repository.Repository
 import com.example.godeliveryapp.presentation.onBoarding.components.UserState
 import com.example.godeliveryapp.utils.SharedPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SupabaseAuthViewModel @Inject constructor(
     private val supabaseClient: SupabaseClient,
+    private val repository: Repository
 ) : ViewModel() {
 
     private val _userState = MutableStateFlow<UserState>(UserState.Empty)
@@ -32,7 +36,7 @@ class SupabaseAuthViewModel @Inject constructor(
 
             val accessToken = supabaseClient.auth.currentAccessTokenOrNull()
             val sharedPref = SharedPreferences(context)
-            sharedPref.saveStringData("ACCESS_TOKEN", accessToken)
+            sharedPref.saveTokenData("ACCESS_TOKEN", accessToken)
 
         }
 
@@ -40,10 +44,8 @@ class SupabaseAuthViewModel @Inject constructor(
 
     private fun getToken(context: Context): String? {
 
-
         val sharedPref = SharedPreferences(context)
-        return sharedPref.getStringData("ACCESS_TOKEN")
-
+        return sharedPref.getTokenData("ACCESS_TOKEN")
 
     }
 
@@ -68,6 +70,20 @@ class SupabaseAuthViewModel @Inject constructor(
                 saveToken(context)
 
                 _userState.value = UserState.Success
+
+                val sharedPreferences = SharedPreferences(context)
+                val user = supabaseClient.auth.retrieveUserForCurrentSession()
+                sharedPreferences.saveUserData("USER_NAME", userName)
+                sharedPreferences.saveUserData("USER_EMAIL", userEmail)
+                sharedPreferences.saveUserData("USER_ID", user.id)
+
+                repository.insertUserData()
+
+                Log.d("USER_ID", user.id)
+                Log.d("USER_NAME", userName)
+                Log.d("USER_EMAIL", userEmail)
+
+
 
             } catch (e: Exception) {
 

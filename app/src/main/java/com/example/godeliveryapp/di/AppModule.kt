@@ -1,13 +1,16 @@
 package com.example.godeliveryapp.di
 
+import android.content.Context
 import com.example.godeliveryapp.data.remote.RetrofitAPI
 import com.example.godeliveryapp.data.repository.RepositoryImplementation
 import com.example.godeliveryapp.domain.repository.Repository
+import com.example.godeliveryapp.utils.SharedPreferences
 import com.example.zomatoclone.utils.Constants
 import com.example.zomatoclone.utils.Constants.BASE_API_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
@@ -50,17 +53,16 @@ class AppModule {
     fun provideSupabaseDatabase(client: SupabaseClient): Postgrest {
         return client.postgrest
     }
-//
-//    @Provides
-//    @Singleton
-//    fun provideSupabaseStorage(client: SupabaseClient): Storage {
-//        return client.storage
-//    }
 
     @Provides
     @Singleton
-    fun providesRestaurant(postgrest: Postgrest, retrofitAPI: RetrofitAPI): Repository =
-        RepositoryImplementation(postgrest = postgrest, retrofitAPI = retrofitAPI)
+    fun providesRestaurant(postgrest: Postgrest, retrofitAPI: RetrofitAPI, sharedPreferences: SharedPreferences): Repository =
+        RepositoryImplementation(postgrest = postgrest, retrofitAPI = retrofitAPI, sharedPreferences = sharedPreferences)
 
+    @Provides
+    @Singleton
+    fun providesSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
+        return SharedPreferences(context)
+    }
 
 }

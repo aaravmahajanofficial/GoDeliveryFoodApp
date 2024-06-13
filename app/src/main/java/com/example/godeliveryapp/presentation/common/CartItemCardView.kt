@@ -35,8 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.godeliveryapp.R
-import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
-import com.example.godeliveryapp.domain.model.CartOrderItemModel
+import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
@@ -45,7 +44,7 @@ import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 @Composable
 fun CartItemCardView(
     modifier: Modifier = Modifier,
-    cartOrderItemModel: CartOrderItemModel,
+    cartItemModel: CartItemModel,
     viewModel: CartScreenViewModel = hiltViewModel()
 ) {
 
@@ -73,7 +72,6 @@ fun CartItemCardView(
                         RoundedCornerShape(12.dp)
                     ), contentAlignment = Alignment.Center
             ) {
-                //            restaurantListingCard.imageId?.let { painterResource(id = it) }?.let {
 
                 Image(
                     painter = painterResource(id = R.drawable.restaurant2),
@@ -93,7 +91,7 @@ fun CartItemCardView(
             ) {
 
                 Text(
-                    text = cartOrderItemModel.itemName,
+                    text = cartItemModel.menuItemModel.itemName,
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                     color = colorResource(
                         id = R.color.black
@@ -103,7 +101,7 @@ fun CartItemCardView(
                 Spacer(modifier = Modifier.height(MediumPadding2))
 
                 Text(
-                    text = cartOrderItemModel.price.toString(),
+                    text = cartItemModel.menuItemModel.itemPrice.toString(),
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
                     color = colorResource(id = R.color.gray)
                 )
@@ -132,17 +130,10 @@ fun CartItemCardView(
                             .scale(0.8f)
                             .clickable {
 
-                                val cartOrderItemDto = CartOrderItemDto(
-                                    itemId = cartOrderItemModel.itemId,
-                                    cartId = cartOrderItemModel.cartId,
-                                    quantity = (cartOrderItemModel.quantity) - 1
-                                )
-                                if (cartOrderItemDto.quantity >= 1) {
-                                    viewModel.updateCartItem(cartOrderItemDto)
+                                if (cartItemModel.quantity > 1) {
+                                    viewModel.upsertCartItem(cartItemModel.copy(quantity = cartItemModel.quantity - 1))
                                 } else {
-
-                                    viewModel.deleteCartItem(cartOrderItemModel.itemId)
-
+                                    viewModel.deleteCartItem(cartItemModel)
                                 }
 
                             },
@@ -151,7 +142,7 @@ fun CartItemCardView(
                         )
                     )
                     Text(
-                        text = cartOrderItemModel.quantity.toString(),
+                        text = cartItemModel.quantity.toString(),
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
                     )
                     Icon(
@@ -160,13 +151,7 @@ fun CartItemCardView(
                         modifier = Modifier
                             .scale(0.8f)
                             .clickable {
-                                val cartOrderItemDto = CartOrderItemDto(
-                                    itemId = cartOrderItemModel.itemId,
-                                    cartId = cartOrderItemModel.cartId,
-                                    quantity = (cartOrderItemModel.quantity) + 1
-                                )
-
-                                viewModel.updateCartItem(cartOrderItemDto)
+                                viewModel.upsertCartItem(cartItemModel.copy(quantity = cartItemModel.quantity + 1))
                             },
                         tint = colorResource(
                             id = R.color.black

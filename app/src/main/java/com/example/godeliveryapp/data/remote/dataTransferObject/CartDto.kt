@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CartDto(
+
     @SerialName("cartId")
-    val cartId: Int,
+    val cartId: String,
 
     @SerialName("userId")
-    val userId: Int,
-
+    val userId: String
 )

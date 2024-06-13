@@ -230,7 +230,7 @@ fun CartScreen(
                 val cartItemCardIndex = cartItemsCards?.get(index)
                 if (cartItemCardIndex != null) {
                     CartItemCardView(
-                        cartOrderItemModel = cartItemCardIndex,
+                        cartItemModel = cartItemCardIndex,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                 }

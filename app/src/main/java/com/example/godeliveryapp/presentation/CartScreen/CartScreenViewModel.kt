@@ -2,8 +2,7 @@ package com.example.godeliveryapp.presentation.CartScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
-import com.example.godeliveryapp.domain.model.CartOrderItemModel
+import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.domain.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -12,14 +11,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CartScreenViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
+class CartScreenViewModel @Inject constructor(
+    private val repository: Repository
+) : ViewModel() {
 
-    //    collection of individual card of _cartItems, or _cartItemsCard
-    private val _cartItems = MutableStateFlow<List<CartOrderItemModel>?>(listOf())
-    val cartItems: Flow<List<CartOrderItemModel>?> get() = _cartItems
+    // collection of individual card of _cartItems, or _cartItemsCard
+    private val _cartItems = MutableStateFlow<List<CartItemModel>?>(listOf())
+    val cartItems: Flow<List<CartItemModel>?> get() = _cartItems
 
     private val _cartSubTotal = MutableStateFlow(0.0)
     val cartSubTotal: Flow<Double> get() = _cartSubTotal
+
+    private val _totalItemsInCart = MutableStateFlow(0)
+    val totalItemsInCart: Flow<Int> get() = _totalItemsInCart
 
     init {
         getItems()
@@ -29,21 +33,10 @@ class CartScreenViewModel @Inject constructor(private val repository: Repository
 
         viewModelScope.launch {
             //list of cartItems
-            val cartItems = repository.getCartItems(1)
-
-            val cartItemsCardList = cartItems?.map { item ->
-                CartOrderItemModel(
-                    cartId = item.cartId,
-                    price = item.menuItem.price,
-                    itemName = item.menuItem.itemName,
-                    quantity = item.quantity,
-                    itemId = item.menuItem.itemId
-                )
-            }
-
-            _cartItems.emit(cartItemsCardList)
+            val cartItems = repository.getCartItems()
+            _cartItems.emit(cartItems)
+            _totalItemsInCart.emit(cartItems!!.size)
             calculateCartValue()
-
         }
 
     }
@@ -51,33 +44,21 @@ class CartScreenViewModel @Inject constructor(private val repository: Repository
     private fun calculateCartValue() {
 
         val items = _cartItems.value ?: emptyList()
-        val sum = items.sumOf { (it.quantity * it.price) }
+        val sum = items.sumOf { (it.quantity * it.menuItemModel.itemPrice) }
         _cartSubTotal.value = sum
 
     }
 
-    fun updateCartItem(cartItem: CartOrderItemDto) {
-
+    fun upsertCartItem(cartItem: CartItemModel) {
         viewModelScope.launch {
-
-            repository.updateCartItem(cartItem)
-            getItems()
-
-        }
-
-    }
-
-    fun createItem(cartItem: CartOrderItemDto) {
-
-        viewModelScope.launch {
-            repository.addCartItem(cartItem)
+            repository.upsertCartItem(cartItem)
             getItems()
         }
     }
 
-    fun deleteCartItem(itemId: Int) {
+    fun deleteCartItem(cartItem: CartItemModel) {
         viewModelScope.launch {
-            repository.deleteCartItem(itemId)
+            repository.deleteCartItem(cartItem)
             getItems()
         }
     }

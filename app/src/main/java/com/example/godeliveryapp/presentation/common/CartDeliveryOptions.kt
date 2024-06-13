@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.presentation.Dimens
+import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 
 @Composable
 fun CartDeliveryOptions() {
@@ -38,7 +39,7 @@ fun CartDeliveryOptions() {
     ) {
         Row(
             modifier = Modifier
-                .padding(Dimens.NormalPadding)
+                .padding(NormalPadding)
                 .fillMaxSize(),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically

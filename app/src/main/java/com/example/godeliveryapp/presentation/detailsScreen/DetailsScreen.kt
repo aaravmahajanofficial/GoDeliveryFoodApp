@@ -1,7 +1,5 @@
 package com.example.godeliveryapp.presentation.detailsScreen
 
-import MenuItemCardView
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,15 +19,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material.icons.rounded.ShoppingCart
 import androidx.compose.material.icons.rounded.StarRate
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -52,8 +47,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -62,14 +55,12 @@ import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
-import com.example.godeliveryapp.presentation.navigation.Route
+import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemCardView
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    navigateUp: (() -> Unit)? = null,
     viewModel: DetailsScreenViewModel = hiltViewModel(),
     cartScreenViewModel: CartScreenViewModel = hiltViewModel(),
     restaurantListingCardModel: RestaurantListingCardModel
@@ -79,40 +70,36 @@ fun DetailsScreen(
         viewModel.getMenu(restaurantListingCardModel.restaurantId)
     }
 
+    val isLoading = viewModel.isLoading.collectAsState(initial = false).value
+
     val menuItemsCards = viewModel.menuItems.collectAsState(initial = listOf()).value
     val cartItems = cartScreenViewModel.cartItems.collectAsState(initial = listOf()).value
+    val totalItems = cartScreenViewModel.totalItemsInCart.collectAsState(initial = 0).value
     val screenHeight = LocalConfiguration.current.screenHeightDp
     var checked by remember { mutableStateOf(false) }
 
-    ConstraintLayout(
-        modifier = Modifier
-            .fillMaxSize()
+    if (isLoading) {
 
-    ) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(color = colorResource(id = R.color.primaryColor))
+        }
 
-        val (content, button) = createRefs()
+    } else {
+
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .constrainAs(content) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(button.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    height = Dimension.fillToConstraints
-                    width = Dimension.fillToConstraints
-                },
+                .fillMaxSize(),
             horizontalAlignment = Alignment.Start,
         ) {
             item {
-//Hero Section
+                //Hero Section
                 Box(
                     modifier = Modifier
                         .height((screenHeight / 3).dp)
                         .fillMaxWidth()
                         .background(Color.Transparent, shape = RoundedCornerShape(12.dp)),
                 ) {
-//            restaurantListingCard.imageId?.let { painterResource(id = it) }?.let {
+                    //            restaurantListingCard.imageId?.let { painterResource(id = it) }?.let {
 
                     Image(
                         modifier = Modifier.fillMaxSize(),
@@ -121,7 +108,7 @@ fun DetailsScreen(
                         contentScale = ContentScale.Crop
                     )
 
-//            }
+                    //            }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -175,12 +162,43 @@ fun DetailsScreen(
                                     modifier = Modifier.scale(1f)
                                 )
                             }
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Box(
+                                modifier = Modifier
+                                    .background(color = Color.White, shape = CircleShape)
+                                    .size(42.dp),
+                                contentAlignment = (Alignment.TopEnd),
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .background(
+                                            color = colorResource(id = R.color.secondaryColor),
+                                            shape = CircleShape
+                                        )
+                                        .size(NormalPadding), contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = totalItems.toString(),
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                                        color = colorResource(id = R.color.black),
+                                        textAlign = TextAlign.Center,
+                                    )
+                                }
+                                Icon(
+                                    imageVector = Icons.Outlined.ShoppingCart,
+                                    contentDescription = null,
+                                    tint = colorResource(id = R.color.black),
+                                    modifier = Modifier
+                                        .scale(1f)
+                                        .align(Alignment.Center)
+                                )
+                            }
                         }
                     }
 
                 }
 
-//Below Image
+                //Below Image
                 Column(
                     modifier
                         .fillMaxWidth()
@@ -342,7 +360,7 @@ fun DetailsScreen(
                 val menuItemCardModel = menuItemsCards[index]
 
                 MenuItemCardView(
-                    menuItemCardModel = menuItemCardModel
+                    menuItemModel = menuItemCardModel
                 )
 
                 Spacer(
@@ -356,58 +374,5 @@ fun DetailsScreen(
             }
 
         }
-        if (cartItems != null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .constrainAs(button) {
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        height = Dimension.fillToConstraints
-                    }
-                    .background(Color.White)
-            ) {
-                OutlinedButton(
-                    onClick = {
-                        navController.navigate(Route.CartScreen.route)
-                    },
-                    shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(
-                            id = R.color.black
-                        ),
-                    ),
-                    border = BorderStroke(0.dp, Color.Transparent),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = NormalPadding,
-                            bottom = 12.dp,
-                            top = 12.dp,
-                            end = NormalPadding
-                        )
-                        .height(50.dp)
-                ) {
-
-                    Icon(
-                        imageVector = Icons.Rounded.ShoppingCart,
-                        contentDescription = null,
-                        tint = Color.White
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-
-                    Text(
-                        text = "View Cart (${cartItems.size} Items)",
-                        color = Color.White,
-                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
-                    )
-
-
-                }
-            }
-        }
-
     }
 }

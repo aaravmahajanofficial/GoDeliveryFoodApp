@@ -1,11 +1,10 @@
 package com.example.godeliveryapp.domain.model
 
-import com.example.godeliveryapp.data.remote.dataTransferObject.MenuItemsDto
+import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemModel
 
 data class CartItemModel(
 
-    val cartId : Int,
-    val quantity: Int,
-    val menuItem: MenuItemsDto
+    val menuItemModel: MenuItemModel,
+    val quantity: Int
 
 )

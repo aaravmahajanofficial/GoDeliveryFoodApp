@@ -1,3 +1,5 @@
+package com.example.godeliveryapp.presentation.detailsScreen.menuItems
+
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,7 +37,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,20 +57,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.godeliveryapp.R
-import com.example.godeliveryapp.data.remote.dataTransferObject.CartOrderItemDto
+import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
-import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemCardModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuItemCardView(
     modifier: Modifier = Modifier,
-    menuItemCardModel: MenuItemCardModel,
-    viewModel: CartScreenViewModel = hiltViewModel()
+    menuItemModel: MenuItemModel,
+    viewModel: CartScreenViewModel = hiltViewModel(),
 ) {
     val cartItems = viewModel.cartItems.collectAsState(initial = listOf()).value
     val screenHeight = LocalConfiguration.current.screenHeightDp
@@ -87,15 +87,15 @@ fun MenuItemCardView(
         }
     }
 
-    var existingItem =
-        cartItems?.firstOrNull { it.itemId == menuItemCardModel.itemId }
+    val existingItem =
+        cartItems?.firstOrNull { it.menuItemModel.itemId == menuItemModel.itemId }
 
-    LaunchedEffect(viewModel.cartItems) {
-
-        existingItem =
-            cartItems?.firstOrNull { it.itemId == menuItemCardModel.itemId }
-
-    }
+//    LaunchedEffect(cartItems) {
+//
+//        existingItem =
+//            cartItems?.firstOrNull { it.menuItemModel.itemId == menuItemModel.itemId }
+//
+//    }
 
     Card(
         modifier = Modifier
@@ -124,7 +124,7 @@ fun MenuItemCardView(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = menuItemCardModel.itemName,
+                        text = menuItemModel.itemName,
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                         color = colorResource(
                             id = R.color.black
@@ -137,7 +137,7 @@ fun MenuItemCardView(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = menuItemCardModel.itemDescription,
+                        text = menuItemModel.itemDescription,
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray,
                         maxLines = 2,
@@ -147,7 +147,7 @@ fun MenuItemCardView(
                 }
 
                 Text(
-                    text = "₹ ${menuItemCardModel.itemPrice}",
+                    text = "₹ ${menuItemModel.itemPrice}",
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
                     color = colorResource(id = R.color.black),
                 )
@@ -201,20 +201,20 @@ fun MenuItemCardView(
                                         .scale(0.8f)
                                         .clickable {
 
-                                            val cartOrderItemDto = CartOrderItemDto(
-                                                cartId = 1,
-                                                itemId = menuItemCardModel.itemId,
-                                                quantity = existingItem!!.quantity
-                                            )
-
-                                            if (existingItem!!.quantity > 1) {
-                                                viewModel.updateCartItem(
-                                                    cartOrderItemDto.copy(
-                                                        quantity = cartOrderItemDto.quantity - 1
+                                            if (existingItem.quantity > 1) {
+                                                viewModel.upsertCartItem(
+                                                    cartItem = CartItemModel(
+                                                        menuItemModel = menuItemModel,
+                                                        quantity = existingItem.quantity - 1,
                                                     )
                                                 )
                                             } else {
-                                                viewModel.deleteCartItem(menuItemCardModel.itemId)
+                                                viewModel.deleteCartItem(
+                                                    cartItem = CartItemModel(
+                                                        menuItemModel = menuItemModel,
+                                                        quantity = 1
+                                                    )
+                                                )
                                             }
 
                                         },
@@ -223,7 +223,7 @@ fun MenuItemCardView(
                                     )
                                 )
                                 Text(
-                                    text = "${existingItem!!.quantity}",
+                                    text = "${existingItem.quantity}",
                                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
                                 )
                                 Icon(
@@ -233,15 +233,10 @@ fun MenuItemCardView(
                                         .scale(0.8f)
                                         .clickable {
 
-                                            val cartOrderItemDto = CartOrderItemDto(
-                                                cartId = 1,
-                                                itemId = menuItemCardModel.itemId,
-                                                quantity = existingItem!!.quantity
-                                            )
-
-                                            viewModel.updateCartItem(
-                                                cartOrderItemDto.copy(
-                                                    quantity = cartOrderItemDto.quantity + 1
+                                            viewModel.upsertCartItem(
+                                                cartItem = CartItemModel(
+                                                    menuItemModel = menuItemModel,
+                                                    quantity = existingItem.quantity + 1,
                                                 )
                                             )
 
@@ -352,7 +347,7 @@ fun MenuItemCardView(
                                 Spacer(modifier = Modifier.height(10.dp))
 
                                 Text(
-                                    text = menuItemCardModel.itemName,
+                                    text = menuItemModel.itemName,
                                     style = MaterialTheme.typography.titleLarge.copy(
                                         fontWeight = FontWeight.Bold
                                     ),
@@ -367,7 +362,7 @@ fun MenuItemCardView(
                                 Spacer(modifier = Modifier.height(10.dp))
 
                                 Text(
-                                    text = "₹ ${menuItemCardModel.itemPrice}",
+                                    text = "₹ ${menuItemModel.itemPrice}",
                                     style = MaterialTheme.typography.titleMedium.copy(
                                         fontWeight = FontWeight.Bold
                                     ),
@@ -376,7 +371,7 @@ fun MenuItemCardView(
                                 Spacer(modifier = Modifier.height(10.dp))
 
                                 Text(
-                                    text = menuItemCardModel.itemDescription,
+                                    text = menuItemModel.itemDescription,
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = Color.Gray,
                                     overflow = TextOverflow.Visible,
@@ -399,15 +394,13 @@ fun MenuItemCardView(
                             OutlinedButton(
                                 onClick = {
 
-                                    val cartOrderItemDto = CartOrderItemDto(
-                                        cartId = 1,
-                                        itemId = menuItemCardModel.itemId,
-                                        quantity = 1
+                                    viewModel.upsertCartItem(
+                                        cartItem = CartItemModel(
+                                            menuItemModel = menuItemModel,
+                                            quantity = if(existingItem != null) existingItem.quantity + 1 else 1
+                                        )
                                     )
 
-                                    viewModel.createItem(
-                                        cartOrderItemDto
-                                    )
                                     showBottomSheet = false
 
                                 },
@@ -425,7 +418,7 @@ fun MenuItemCardView(
                             ) {
 
                                 Text(
-                                    "Add to cart - ₹ ${menuItemCardModel.itemPrice}",
+                                    "Add to cart - ₹ ${menuItemModel.itemPrice}",
                                     color = Color.White,
                                     style = MaterialTheme.typography.bodyLarge.copy(
                                         fontWeight = FontWeight.Medium

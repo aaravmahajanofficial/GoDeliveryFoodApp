@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
 
                             SetupNavGraph(
                                 navController = navController,
-                                startDestination = Route.ProfileScreen.route
+                                startDestination = Route.WelcomeScreen.route
                             )
                         }
 
