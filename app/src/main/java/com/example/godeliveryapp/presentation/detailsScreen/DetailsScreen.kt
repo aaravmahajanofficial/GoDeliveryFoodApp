@@ -56,6 +56,7 @@ import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemCardView
+import com.example.godeliveryapp.presentation.navigation.Route
 
 @Composable
 fun DetailsScreen(
@@ -166,23 +167,29 @@ fun DetailsScreen(
                             Box(
                                 modifier = Modifier
                                     .background(color = Color.White, shape = CircleShape)
-                                    .size(42.dp),
+                                    .size(42.dp)
+                                    .clickable { navController.navigate(Route.CartScreen.route) },
                                 contentAlignment = (Alignment.TopEnd),
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .background(
-                                            color = colorResource(id = R.color.secondaryColor),
-                                            shape = CircleShape
+                                if (totalItems > 0) {
+                                    Box(
+                                        modifier = Modifier
+                                            .background(
+                                                color = colorResource(id = R.color.secondaryColor),
+                                                shape = CircleShape
+                                            )
+                                            .size(NormalPadding),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = totalItems.toString(),
+                                            style = MaterialTheme.typography.bodyMedium.copy(
+                                                fontWeight = FontWeight.SemiBold
+                                            ),
+                                            color = colorResource(id = R.color.black),
+                                            textAlign = TextAlign.Center,
                                         )
-                                        .size(NormalPadding), contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = totalItems.toString(),
-                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                                        color = colorResource(id = R.color.black),
-                                        textAlign = TextAlign.Center,
-                                    )
+                                    }
                                 }
                                 Icon(
                                     imageVector = Icons.Outlined.ShoppingCart,
