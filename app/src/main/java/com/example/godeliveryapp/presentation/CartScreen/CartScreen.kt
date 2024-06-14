@@ -12,21 +12,28 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
+import androidx.compose.material.icons.outlined.Discount
+import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.rounded.AccessTime
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -34,24 +41,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
+import com.example.godeliveryapp.presentation.Dimens
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
-import com.example.godeliveryapp.presentation.common.CartDeliveryOptions
 import com.example.godeliveryapp.presentation.common.CartItemCardView
-import com.example.godeliveryapp.presentation.common.CartPaymentDetailsCard
 import com.example.zomatoclone.utils.Constants.DELIVERY_FEE
 import com.example.zomatoclone.utils.Constants.PROMOCODE
 import com.example.zomatoclone.utils.Constants.TAX
@@ -66,70 +73,48 @@ fun CartScreen(
     navController: NavController
 ) {
 
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+
     val cartItemsCards = viewModel.cartItems.collectAsState(initial = listOf()).value
     val cartSubTotal = viewModel.cartSubTotal.collectAsState(initial = 0.0).value
     val cartTotal = cartSubTotal - PROMOCODE + DELIVERY_FEE + TAX
 
-    ConstraintLayout(
-        modifier = Modifier
-            .fillMaxSize()
-
-    ) {
-        val (content, button) = createRefs()
-
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         LazyColumn(
             modifier = Modifier
-                .constrainAs(content) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(button.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    height = Dimension.fillToConstraints
-                    width = Dimension.fillToConstraints
-                }
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(start = NormalPadding, top = NormalPadding, end = NormalPadding),
             horizontalAlignment = Alignment.Start
         ) {
             item {
-                Row(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            top = NormalPadding,
-                            start = NormalPadding,
-                            end = NormalPadding
-                        )
+                        .clickable { navController.navigateUp() }
+                        .background(color = Color.White, shape = CircleShape)
+                        .size(42.dp),
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                         contentDescription = null,
                         tint = colorResource(id = R.color.black),
-                        modifier = Modifier
-                            .scale(1.2f)
-                            .clickable {
-                                navController.navigateUp()
-                            }
-
+                        modifier = Modifier.scale(1f)
                     )
                 }
 
-                Box(modifier = Modifier.padding(start = NormalPadding, top = NormalPadding)) {
-                    Text(
-                        text = "Cart",
-                        color = colorResource(id = R.color.black),
-                        style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold)
-                    )
-                }
+                Spacer(modifier = Modifier.height(ExtraSmallPadding1))
+
+                Text(
+                    text = "Cart",
+                    color = colorResource(id = R.color.black),
+                    style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold)
+                )
 
                 Spacer(modifier = Modifier.height(MediumPadding1))
 
                 Row(
                     modifier = Modifier
-                        .padding(
-                            start = NormalPadding,
-                            end = NormalPadding,
-
-                            )
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
@@ -142,7 +127,7 @@ fun CartScreen(
                         modifier = Modifier.scale(1.5f),
                     )
 
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(ExtraSmallPadding3))
 
                     Column(
                         modifier = Modifier.weight(1f),
@@ -177,20 +162,15 @@ fun CartScreen(
 
                 Spacer(
                     modifier = Modifier
+                        .padding(top = MediumPadding2, bottom = MediumPadding2)
                         .fillMaxWidth()
-                        .padding(
-                            top = MediumPadding2,
-                            start = NormalPadding,
-                            end = NormalPadding,
-                            bottom = MediumPadding2
-                        )
                         .height(1.dp)
                         .background(color = colorResource(id = R.color.lightGray))
                 )
 
                 Row(
                     modifier = Modifier
-                        .padding(start = NormalPadding, end = NormalPadding)
+
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -212,6 +192,7 @@ fun CartScreen(
                         )
                         Text(
                             text = "Add more",
+                            modifier = Modifier.clickable { navController.navigateUp() },
                             color = colorResource(
                                 id = R.color.secondaryColor
                             ),
@@ -221,7 +202,7 @@ fun CartScreen(
                     }
 
                 }
-                Spacer(modifier = Modifier.height(ExtraSmallPadding3))
+                Spacer(modifier = Modifier.height(MediumPadding1))
             }
 
             items(cartItemsCards?.size ?: 0) {
@@ -238,31 +219,58 @@ fun CartScreen(
 
             item {
 
-                Box(modifier = Modifier.padding(start = NormalPadding, top = NormalPadding)) {
-                    Text(
-                        text = "Delivery Time",
-                        color = colorResource(id = R.color.black),
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                    )
-                }
+                Spacer(modifier = Modifier.height(MediumPadding2))
+
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = "",
+                    onValueChange = {},
+                    shape = RoundedCornerShape(5.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = colorResource(id = R.color.lightGray),
+                        unfocusedBorderColor = colorResource(id = R.color.lightGray),
+                        focusedContainerColor = colorResource(id = R.color.lightGray),
+                        unfocusedContainerColor = colorResource(id = R.color.lightGray),
+                        focusedTextColor = colorResource(id = R.color.black),
+                        unfocusedTextColor = colorResource(id = R.color.black)
+                    ),
+                    placeholder = {
+                        Text(
+                            text = "Add cooking instructions",
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
+                            color = colorResource(id = R.color.gray)
+                        )
+                    }
+                )
+                Spacer(modifier = Modifier.height(MediumPadding2))
+
+            }
+
+            item {
+
+                Text(
+                    text = "Delivery Time",
+                    color = colorResource(id = R.color.black),
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                )
 
                 Spacer(modifier = Modifier.height(MediumPadding1))
 
                 Row(
                     modifier = Modifier
-                        .padding(start = NormalPadding, end = NormalPadding)
+
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
 
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(75.dp)
-                            .width(155.dp)
+                            .height(screenHeight.div(10))
+                            .width(screenWidth.div(3))
                             .background(
-                                shape = RoundedCornerShape(12.dp),
+                                shape = RoundedCornerShape(8.dp),
                                 color = Color.Transparent
                             )
                             .border(
@@ -270,7 +278,7 @@ fun CartScreen(
                                     width = (2.dp),
                                     color = colorResource(id = R.color.black)
                                 ),
-                                shape = RoundedCornerShape(12.dp)
+                                shape = RoundedCornerShape(8.dp)
                             ), contentAlignment = Alignment.Center
                     ) {
 
@@ -319,14 +327,15 @@ fun CartScreen(
                         }
 
                     }
-                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Spacer(modifier = Modifier.width(ExtraSmallPadding3))
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(75.dp)
-                            .width(180.dp)
+                            .height(screenHeight.div(10))
+                            .width(screenWidth.div(2))
                             .background(
-                                shape = RoundedCornerShape(12.dp),
+                                shape = RoundedCornerShape(8.dp),
                                 color = Color.Transparent
                             )
                             .border(
@@ -334,7 +343,7 @@ fun CartScreen(
                                     width = (2.dp),
                                     color = colorResource(id = R.color.lightGray)
                                 ),
-                                shape = RoundedCornerShape(12.dp)
+                                shape = RoundedCornerShape(8.dp)
                             ), contentAlignment = Alignment.Center
                     ) {
 
@@ -385,107 +394,105 @@ fun CartScreen(
                     }
                 }
 
+                Spacer(modifier = Modifier.height(MediumPadding2))
+
 
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            top = MediumPadding2,
-                            start = NormalPadding,
-                            end = NormalPadding
-                        )
                         .height(1.dp)
                         .background(color = colorResource(id = R.color.lightGray))
                 )
 
-                CartDeliveryOptions()
-                CartDeliveryOptions()
-                CartDeliveryOptions()
+                Spacer(modifier = Modifier.height(MediumPadding2))
 
-                Box(modifier = Modifier.padding(start = NormalPadding, top = NormalPadding)) {
-                    Text(
-                        text = "Bill Details",
-                        color = colorResource(id = R.color.black),
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                    )
-                }
+                CartDeliveryOptions(
+                    title = "Delivery Options",
+                    description = "Standard Delivery",
+                    imageVector = Icons.Outlined.Layers
+                )
+                CartDeliveryOptions(
+                    title = "Promo code Applied",
+                    description = "₹85 coupon savings",
+                    imageVector = Icons.Outlined.Discount
+                )
+
+                Text(
+                    text = "Bill Details",
+                    color = colorResource(id = R.color.black),
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                )
+
+                Spacer(modifier = Modifier.height(MediumPadding1))
 
                 CartPaymentDetailsCard(cartSubTotal = cartTotalRoundOff(cartSubTotal))
 
+                Spacer(modifier = Modifier.height(MediumPadding1))
+
+            }
+            item {
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(), contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Total",
+                                color = colorResource(id = R.color.black),
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                            )
+                            Text(
+                                text = cartTotalRoundOff(cartTotal),
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                color = colorResource(id = R.color.black)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(NormalPadding))
+                        OutlinedButton(
+                            onClick = {},
+                            shape = RoundedCornerShape(5.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(
+                                    id = R.color.black
+                                ),
+                            ),
+                            border = BorderStroke(0.dp, Color.Transparent),
+                            modifier = Modifier
+                                .height(screenHeight / 14)
+                                .fillMaxWidth()
+                        ) {
+
+                            Text(
+                                "Make Payment",
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
+                            )
+
+                        }
+
+                        Spacer(modifier = Modifier.height(NormalPadding))
+                    }
+                }
 
             }
 
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding()
-                .constrainAs(button) {
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    height = Dimension.fillToConstraints
-                }
-                .background(Color.White)
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(
-                        start = NormalPadding,
-                        end = NormalPadding
-                    )
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.Center
-            ) {
-
-                Row(
-                    modifier = Modifier
-                        .padding(top = ExtraSmallPadding3)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Total",
-                        color = colorResource(id = R.color.black),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                    )
-                    Text(
-                        text = cartTotalRoundOff(cartTotal),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = colorResource(id = R.color.black)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(NormalPadding))
-                OutlinedButton(
-                    onClick = {},
-                    shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(
-                            id = R.color.black
-                        ),
-                    ),
-                    border = BorderStroke(0.dp, Color.Transparent),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            bottom = 12.dp,
-                        )
-                        .height(50.dp)
-                ) {
-
-                    Text(
-                        "Make Payment",
-                        color = Color.White,
-                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
-                    )
-
-                }
-            }
         }
     }
+
 
 }
 
@@ -493,4 +500,185 @@ private fun cartTotalRoundOff(cartTotal: Double): String {
     val df = DecimalFormat("#.##")
     df.roundingMode = RoundingMode.CEILING
     return df.format(cartTotal)
+}
+
+@Composable
+fun CartDeliveryOptions(title: String, description: String, imageVector: ImageVector) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(0.dp),
+        colors = CardDefaults.cardColors(Color.Transparent),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Icon(
+                imageVector = imageVector,
+                contentDescription = null, modifier = Modifier.scale(1.2f),
+                tint = colorResource(
+                    id = R.color.black
+                )
+            )
+
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(
+                        start = ExtraSmallPadding3,
+                        top = ExtraSmallPadding2,
+                    )
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.Start,
+            ) {
+
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                    color = colorResource(
+                        id = R.color.black
+                    ),
+                    maxLines = 2,
+                )
+
+                Spacer(modifier = Modifier.height(ExtraSmallPadding2))
+
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
+                    color = colorResource(id = R.color.black)
+                )
+
+            }
+
+            Icon(
+                imageVector = Icons.AutoMirrored.Rounded.ArrowForwardIos,
+                contentDescription = null, modifier = Modifier.scale(0.8f),
+                tint = colorResource(id = R.color.gray),
+            )
+
+
+        }
+
+    }
+
+    Spacer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = MediumPadding2, bottom = MediumPadding2)
+            .height(1.dp)
+            .background(color = colorResource(id = R.color.lightGray))
+    )
+}
+
+@Composable
+fun CartPaymentDetailsCard(modifier: Modifier = Modifier, cartSubTotal: String) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth(),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Text(
+                    text = "Subtotal",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
+                    color = colorResource(id = R.color.gray)
+                )
+
+                Text(
+                    text = cartSubTotal,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                    color = colorResource(id = R.color.black)
+                )
+
+
+            }
+
+            Spacer(modifier = Modifier.height(ExtraSmallPadding3))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Text(
+                    text = "Promocode",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
+                    color = colorResource(id = R.color.gray)
+                )
+
+                Text(
+                    text = "- ₹ $PROMOCODE",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                    color = colorResource(id = R.color.secondaryColor)
+                )
+
+            }
+            Spacer(modifier = Modifier.height(Dimens.ExtraSmallPadding3))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Text(
+                    text = "Delivery Fee",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
+                    color = colorResource(id = R.color.gray)
+                )
+
+                Text(
+                    text = "₹ $DELIVERY_FEE",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                    color = colorResource(id = R.color.black)
+                )
+
+
+            }
+            Spacer(modifier = Modifier.height(ExtraSmallPadding3))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Text(
+                    text = "Tax & other fees",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
+                    color = colorResource(id = R.color.gray)
+                )
+
+                Text(
+                    text = "₹ $TAX",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                    color = colorResource(id = R.color.black)
+                )
+
+
+            }
+
+
+        }
+    }
+
+
 }

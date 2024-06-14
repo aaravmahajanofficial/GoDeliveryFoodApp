@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
                         is UserState.Success -> {
                             SetupNavGraph(
                                 navController = navController,
-                                startDestination = Route.HomeScreen.route
+                                startDestination = Route.CartScreen.route
                             )
                         }
 

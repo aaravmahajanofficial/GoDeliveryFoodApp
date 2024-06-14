@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,7 +40,6 @@ import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
-import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 
 @Composable
 fun CartItemCardView(
@@ -48,25 +48,25 @@ fun CartItemCardView(
     viewModel: CartScreenViewModel = hiltViewModel()
 ) {
 
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                start = NormalPadding, end = NormalPadding, top = NormalPadding
-            ),
+            .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(0.dp),
         colors = CardDefaults.cardColors(Color.Transparent),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize(),
-            horizontalArrangement = Arrangement.Start,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .height(100.dp)
-                    .width(100.dp)
+                    .height(screenHeight.div(8))
+                    .width(screenWidth.div(4))
                     .background(Color.Transparent, shape = RoundedCornerShape(12.dp))
                     .clip(
                         RoundedCornerShape(12.dp)
@@ -101,8 +101,8 @@ fun CartItemCardView(
                 Spacer(modifier = Modifier.height(MediumPadding2))
 
                 Text(
-                    text = cartItemModel.menuItemModel.itemPrice.toString(),
-                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                    text = "₹ ${cartItemModel.menuItemModel.itemPrice}",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                     color = colorResource(id = R.color.gray)
                 )
 
