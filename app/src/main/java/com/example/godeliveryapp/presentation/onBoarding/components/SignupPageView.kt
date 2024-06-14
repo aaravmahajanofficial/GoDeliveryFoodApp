@@ -68,7 +68,7 @@ fun SignUpView(
 ) {
 
     val openDialog = remember { mutableStateOf(false) }
-    val userState = viewModel.userState.collectAsState(initial = UserState.Empty).value
+    val viewState = viewModel.viewState.collectAsState(initial = ViewState.Empty).value
     val context = LocalContext.current
 
     var nameController by remember {
@@ -353,14 +353,14 @@ fun SignUpView(
         }
     }
 
-    when (userState) {
-        is UserState.Error -> {
+    when (viewState) {
+        is ViewState.Error -> {
 
             openDialog.value = true
 
         }
 
-        UserState.Loading -> {
+        ViewState.Loading -> {
 
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
@@ -368,14 +368,14 @@ fun SignUpView(
 
         }
 
-        UserState.Success -> {
+        ViewState.Success -> {
             navController.navigate(Route.HomeScreen.route) {
                 popUpTo(Route.WelcomeScreen.route) { inclusive = true }
             }
             viewModel.resetUserState()
         }
 
-        UserState.Empty -> {
+        ViewState.Empty -> {
 
         }
     }
@@ -401,7 +401,7 @@ fun SignUpView(
             },
             text = {
                 Text(
-                    text = (userState as UserState.Error).string,
+                    text = (viewState as ViewState.Error).string,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                     color = colorResource(id = R.color.black)
                 )

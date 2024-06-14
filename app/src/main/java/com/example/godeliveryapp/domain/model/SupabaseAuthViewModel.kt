@@ -4,9 +4,8 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.godeliveryapp.data.remote.dataTransferObject.UserDto
 import com.example.godeliveryapp.domain.repository.Repository
-import com.example.godeliveryapp.presentation.onBoarding.components.UserState
+import com.example.godeliveryapp.presentation.onBoarding.components.ViewState
 import com.example.godeliveryapp.utils.SharedPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.SupabaseClient
@@ -27,8 +26,8 @@ class SupabaseAuthViewModel @Inject constructor(
     private val repository: Repository
 ) : ViewModel() {
 
-    private val _userState = MutableStateFlow<UserState>(UserState.Empty)
-    val userState: Flow<UserState> get() = _userState
+    private val _viewState = MutableStateFlow<ViewState>(ViewState.Empty)
+    val viewState: Flow<ViewState> get() = _viewState
 
     private fun saveToken(context: Context) {
 
@@ -60,7 +59,7 @@ class SupabaseAuthViewModel @Inject constructor(
 
             try {
 
-                _userState.value = UserState.Loading
+                _viewState.value = ViewState.Loading
                 supabaseClient.auth.signUpWith(Email) {
                     email = userEmail
                     password = userPassword
@@ -69,7 +68,7 @@ class SupabaseAuthViewModel @Inject constructor(
 
                 saveToken(context)
 
-                _userState.value = UserState.Success
+                _viewState.value = ViewState.Success
 
                 val sharedPreferences = SharedPreferences(context)
                 val user = supabaseClient.auth.retrieveUserForCurrentSession()
@@ -90,11 +89,11 @@ class SupabaseAuthViewModel @Inject constructor(
                 when (e) {
 
                     is RestException -> {
-                        _userState.value = UserState.Error(e.error)
+                        _viewState.value = ViewState.Error(e.error)
                     }
 
                     else -> {
-                        _userState.value = UserState.Error(e.message.toString())
+                        _viewState.value = ViewState.Error(e.message.toString())
                     }
                 }
             }
@@ -111,25 +110,25 @@ class SupabaseAuthViewModel @Inject constructor(
         viewModelScope.launch {
 
             try {
-                _userState.value = UserState.Loading
+                _viewState.value = ViewState.Loading
                 supabaseClient.auth.signInWith(Email) {
                     email = userEmail
                     password = userPassword
                 }
 
                 saveToken(context)
-                _userState.value = UserState.Success
+                _viewState.value = ViewState.Success
 
             } catch (e: Exception) {
 
                 when (e) {
 
                     is RestException -> {
-                        _userState.value = UserState.Error(e.error)
+                        _viewState.value = ViewState.Error(e.error)
                     }
 
                     else -> {
-                        _userState.value = UserState.Error(e.message.toString())
+                        _viewState.value = ViewState.Error(e.message.toString())
                     }
                 }
             }
@@ -143,12 +142,12 @@ class SupabaseAuthViewModel @Inject constructor(
         val sharedPreferences = SharedPreferences(context)
         viewModelScope.launch {
             try {
-                _userState.value = UserState.Loading
+                _viewState.value = ViewState.Loading
                 supabaseClient.auth.signOut()
                 sharedPreferences.clearPreferences()
-                _userState.value = UserState.Success
+                _viewState.value = ViewState.Success
             } catch (e: Exception) {
-                _userState.value = UserState.Error(e.message.toString())
+                _viewState.value = ViewState.Error(e.message.toString())
             }
         }
 
@@ -159,17 +158,17 @@ class SupabaseAuthViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                _userState.value = UserState.Loading
+                _viewState.value = ViewState.Loading
                 supabaseClient.auth.resetPasswordForEmail(userEmail)
-                _userState.value = UserState.Success
+                _viewState.value = ViewState.Success
             } catch (e: Exception) {
                 when (e) {
                     is RestException -> {
-                        _userState.value = UserState.Error(e.error)
+                        _viewState.value = ViewState.Error(e.error)
                     }
 
                     else -> {
-                        _userState.value = UserState.Error(e.message.toString())
+                        _viewState.value = ViewState.Error(e.message.toString())
 
                     }
                 }
@@ -182,23 +181,23 @@ class SupabaseAuthViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                _userState.value = UserState.Loading
+                _viewState.value = ViewState.Loading
                 supabaseClient.auth.verifyEmailOtp(
                     type = OtpType.Email.EMAIL,
                     email = userEmail,
                     token = token
                 )
-                _userState.value = UserState.Success
+                _viewState.value = ViewState.Success
 
             } catch (e: Exception) {
 
                 when (e) {
                     is RestException -> {
-                        _userState.value = UserState.Error(e.error)
+                        _viewState.value = ViewState.Error(e.error)
                     }
 
                     else -> {
-                        _userState.value = UserState.Error(e.message.toString())
+                        _viewState.value = ViewState.Error(e.message.toString())
                     }
                 }
 
@@ -210,18 +209,18 @@ class SupabaseAuthViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                _userState.value = UserState.Loading
+                _viewState.value = ViewState.Loading
                 supabaseClient.auth.modifyUser(updateCurrentUser = true) { password = userPassword }
-                _userState.value = UserState.Success
+                _viewState.value = ViewState.Success
 
             } catch (e: Exception) {
                 when (e) {
                     is RestException -> {
-                        _userState.value = UserState.Error(e.error)
+                        _viewState.value = ViewState.Error(e.error)
                     }
 
                     else -> {
-                        _userState.value = UserState.Error(e.message.toString())
+                        _viewState.value = ViewState.Error(e.message.toString())
                     }
                 }
             }
@@ -235,21 +234,21 @@ class SupabaseAuthViewModel @Inject constructor(
         viewModelScope.launch {
 
             try {
-                _userState.value = UserState.Loading
+                _viewState.value = ViewState.Loading
                 val accessToken = getToken(context)
                 if (accessToken.isNullOrEmpty()) {
-                    _userState.value = UserState.Error("User not logged in")
+                    _viewState.value = ViewState.Error("User not logged in")
                 } else {
 
                     supabaseClient.auth.retrieveUser(accessToken)
                     supabaseClient.auth.refreshCurrentSession()
                     saveToken(context)
-                    _userState.value = UserState.Success
+                    _viewState.value = ViewState.Success
 
                 }
 
             } catch (e: RestException) {
-                _userState.value = UserState.Error(e.message.toString())
+                _viewState.value = ViewState.Error(e.message.toString())
 
             }
 
@@ -260,7 +259,7 @@ class SupabaseAuthViewModel @Inject constructor(
     }
 
     fun resetUserState() {
-        _userState.value = UserState.Empty
+        _viewState.value = ViewState.Empty
     }
 
 

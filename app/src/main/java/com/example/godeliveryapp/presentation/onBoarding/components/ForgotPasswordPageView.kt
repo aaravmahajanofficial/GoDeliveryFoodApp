@@ -65,7 +65,7 @@ fun ForgotPasswordPageView(
         )
     }
     val openDialog = remember { mutableStateOf(false) }
-    val userState = authViewModel.userState.collectAsState(initial = UserState.Empty).value
+    val viewState = authViewModel.viewState.collectAsState(initial = ViewState.Empty).value
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -184,14 +184,14 @@ fun ForgotPasswordPageView(
 
         }
 
-        when (userState) {
+        when (viewState) {
 
-            is UserState.Error -> {
+            is ViewState.Error -> {
                 openDialog.value = true
             }
 
-            UserState.Empty -> {}
-            UserState.Loading -> {
+            ViewState.Empty -> {}
+            ViewState.Loading -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -202,7 +202,7 @@ fun ForgotPasswordPageView(
                 }
             }
 
-            UserState.Success -> {
+            ViewState.Success -> {
                 navController.navigate("otp_screen/${emailFieldController}")
                 Toast.makeText(
                     navController.context,
@@ -234,7 +234,7 @@ fun ForgotPasswordPageView(
                 },
                 text = {
                     Text(
-                        text = (userState as UserState.Error).string,
+                        text = (viewState as ViewState.Error).string,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                         color = colorResource(id = R.color.black)
                     )

@@ -65,7 +65,7 @@ fun CreateNewPasswordPageView(
 ) {
 
     val openDialog = remember { mutableStateOf(false) }
-    val userState = authViewModel.userState.collectAsState(initial = UserState.Empty).value
+    val viewState = authViewModel.viewState.collectAsState(initial = ViewState.Empty).value
     val context = LocalContext.current
 
     var passwordFieldController by remember {
@@ -250,14 +250,14 @@ fun CreateNewPasswordPageView(
 
         }
 
-        when (userState) {
-            is UserState.Error -> {
+        when (viewState) {
+            is ViewState.Error -> {
 
                 openDialog.value = true
 
             }
 
-            UserState.Loading -> {
+            ViewState.Loading -> {
 
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
@@ -265,7 +265,7 @@ fun CreateNewPasswordPageView(
 
             }
 
-            UserState.Success -> {
+            ViewState.Success -> {
                 navController.navigate(Route.HomeScreen.route) {
                     popUpTo(Route.WelcomeScreen.route) { inclusive = true }
                 }
@@ -277,7 +277,7 @@ fun CreateNewPasswordPageView(
                 authViewModel.resetUserState()
             }
 
-            UserState.Empty -> {
+            ViewState.Empty -> {
 
             }
         }
@@ -303,7 +303,7 @@ fun CreateNewPasswordPageView(
                 },
                 text = {
                     Text(
-                        text = (userState as UserState.Error).string,
+                        text = (viewState as ViewState.Error).string,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                         color = colorResource(id = R.color.black)
                     )

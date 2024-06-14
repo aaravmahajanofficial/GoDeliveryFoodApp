@@ -69,7 +69,7 @@ fun OtpPageView(
     authViewModel: SupabaseAuthViewModel = hiltViewModel()
 ) {
 
-    val userState = authViewModel.userState.collectAsState(initial = UserState.Empty).value
+    val viewState = authViewModel.viewState.collectAsState(initial = ViewState.Empty).value
     val openDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
@@ -249,13 +249,13 @@ fun OtpPageView(
 
     }
 
-    when (userState) {
-        is UserState.Error -> {
+    when (viewState) {
+        is ViewState.Error -> {
 
             openDialog.value = true
         }
 
-        UserState.Loading -> {
+        ViewState.Loading -> {
 
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
@@ -263,14 +263,14 @@ fun OtpPageView(
 
         }
 
-        UserState.Success -> {
+        ViewState.Success -> {
             navController.navigate(Route.CreateNewPasswordScreen.route) {
                 popUpTo(Route.OtpScreen.route) { inclusive = true }
             }
             authViewModel.resetUserState()
         }
 
-        UserState.Empty -> {
+        ViewState.Empty -> {
 
         }
     }
@@ -296,7 +296,7 @@ fun OtpPageView(
             },
             text = {
                 Text(
-                    text = (userState as UserState.Error).string,
+                    text = (viewState as ViewState.Error).string,
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                     color = colorResource(id = R.color.black)
                 )
