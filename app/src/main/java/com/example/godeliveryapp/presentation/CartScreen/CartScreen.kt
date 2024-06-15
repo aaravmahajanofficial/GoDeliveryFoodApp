@@ -27,8 +27,6 @@ import androidx.compose.material.icons.rounded.AccessTime
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -41,7 +39,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -58,7 +55,9 @@ import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
+import com.example.godeliveryapp.presentation.common.CartCustomisationCardView
 import com.example.godeliveryapp.presentation.common.CartItemCardView
+import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.zomatoclone.utils.Constants.DELIVERY_FEE
 import com.example.zomatoclone.utils.Constants.PROMOCODE
 import com.example.zomatoclone.utils.Constants.TAX
@@ -406,15 +405,32 @@ fun CartScreen(
 
                 Spacer(modifier = Modifier.height(MediumPadding2))
 
-                CartDeliveryOptions(
+                CartCustomisationCardView(
                     title = "Delivery Options",
                     description = "Standard Delivery",
-                    imageVector = Icons.Outlined.Layers
+                    imageVector = Icons.Outlined.Layers,
+                    showArrow = true
                 )
-                CartDeliveryOptions(
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = MediumPadding2, bottom = MediumPadding2)
+                        .height(1.dp)
+                        .background(color = colorResource(id = R.color.lightGray))
+                )
+                CartCustomisationCardView(
                     title = "Promo code Applied",
                     description = "₹85 coupon savings",
-                    imageVector = Icons.Outlined.Discount
+                    imageVector = Icons.Outlined.Discount,
+                    showArrow = true
+                )
+
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = MediumPadding2, bottom = MediumPadding2)
+                        .height(1.dp)
+                        .background(color = colorResource(id = R.color.lightGray))
                 )
 
                 Text(
@@ -463,7 +479,9 @@ fun CartScreen(
 
                         Spacer(modifier = Modifier.height(NormalPadding))
                         OutlinedButton(
-                            onClick = {},
+                            onClick = {
+                                navController.navigate(Route.OrderScreen.route)
+                            },
                             shape = RoundedCornerShape(5.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = colorResource(
@@ -500,81 +518,6 @@ private fun cartTotalRoundOff(cartTotal: Double): String {
     val df = DecimalFormat("#.##")
     df.roundingMode = RoundingMode.CEILING
     return df.format(cartTotal)
-}
-
-@Composable
-fun CartDeliveryOptions(title: String, description: String, imageVector: ImageVector) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(0.dp),
-        colors = CardDefaults.cardColors(Color.Transparent),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Icon(
-                imageVector = imageVector,
-                contentDescription = null, modifier = Modifier.scale(1.2f),
-                tint = colorResource(
-                    id = R.color.black
-                )
-            )
-
-
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(
-                        start = ExtraSmallPadding3,
-                        top = ExtraSmallPadding2,
-                    )
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.Start,
-            ) {
-
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                    color = colorResource(
-                        id = R.color.black
-                    ),
-                    maxLines = 2,
-                )
-
-                Spacer(modifier = Modifier.height(ExtraSmallPadding2))
-
-                Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
-                    color = colorResource(id = R.color.black)
-                )
-
-            }
-
-            Icon(
-                imageVector = Icons.AutoMirrored.Rounded.ArrowForwardIos,
-                contentDescription = null, modifier = Modifier.scale(0.8f),
-                tint = colorResource(id = R.color.gray),
-            )
-
-
-        }
-
-    }
-
-    Spacer(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = MediumPadding2, bottom = MediumPadding2)
-            .height(1.dp)
-            .background(color = colorResource(id = R.color.lightGray))
-    )
 }
 
 @Composable
