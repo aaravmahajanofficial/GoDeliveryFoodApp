@@ -22,4 +22,8 @@ sealed class Route(val route: String) {
 
     data object ProfileScreen : Route(route = "profile_screen")
 
+    data object OrderScreen : Route(route = "order_screen")
+
+    data object OrderSuccessScreen : Route(route = "order_success_screen")
+
 }
