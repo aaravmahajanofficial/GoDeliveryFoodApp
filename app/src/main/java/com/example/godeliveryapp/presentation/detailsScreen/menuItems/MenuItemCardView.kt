@@ -397,7 +397,8 @@ fun MenuItemCardView(
                                     viewModel.upsertCartItem(
                                         cartItem = CartItemModel(
                                             menuItemModel = menuItemModel,
-                                            quantity = if(existingItem != null) existingItem.quantity + 1 else 1
+                                            restaurantId = menuItemModel.restaurantId,
+                                            quantity = if (existingItem != null) existingItem.quantity + 1 else 1
                                         )
                                     )
 

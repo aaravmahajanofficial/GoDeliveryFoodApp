@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 data class CartDto(
 
     @SerialName("cartId")
-    val cartId: String,
+    val cartId: String? = null,
 
     @SerialName("userId")
-    val userId: String
+    val userId: String,
 )

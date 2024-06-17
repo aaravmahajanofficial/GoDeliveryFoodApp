@@ -3,6 +3,8 @@ package com.example.godeliveryapp.domain.repository
 import com.example.godeliveryapp.data.remote.RestaurantDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.MenuItemsDto
+import com.example.godeliveryapp.data.remote.dataTransferObject.OrderDto
+import com.example.godeliveryapp.data.remote.dataTransferObject.OrderItemDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.UserDto
 import com.example.godeliveryapp.domain.model.APIMODEL.Item
 import com.example.godeliveryapp.domain.model.CartItemModel
@@ -32,5 +34,16 @@ interface Repository {
     suspend fun insertUserData(): Boolean
 
     suspend fun getUserData(): UserDto
+
+    suspend fun placeOrder(orderDto: OrderDto, orderItems: List<OrderItemDto>): Boolean
+
+//    suspend fun getOrders(): List<OrderDto>?
+//
+//    suspend fun getOrder(orderId: Int): OrderDto?
+//
+//    suspend fun cancelOrder(orderId: Int): Boolean
+//
+//    suspend fun getOrderItems(orderId: Int): List<OrderItemDto>?
+
 
 }

@@ -51,6 +51,14 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
             )
         }
 
+        composable(
+            route = Route.CartScreen.route,
+        ) {
+            CartScreen(
+                navController = navController
+            )
+        }
+
         composable(route = Route.ProfileScreen.route) {
             ProfileScreenView(navController = navController)
         }
@@ -84,10 +92,6 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
 
         composable(route = Route.SignUpPage.route) {
             SignUpView(navController = navController)
-        }
-
-        composable(route = Route.CartScreen.route) {
-            CartScreen(navController = navController)
         }
 
         composable(route = Route.CategoryScreen.route) {

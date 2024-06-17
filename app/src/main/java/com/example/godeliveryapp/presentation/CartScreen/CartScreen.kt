@@ -35,6 +35,8 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -48,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
+import com.example.godeliveryapp.data.remote.dataTransferObject.OrderDto
 import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
@@ -75,9 +78,13 @@ fun CartScreen(
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
-    val cartItemsCards = viewModel.cartItems.collectAsState(initial = listOf()).value
+    val cartItems = viewModel.cartItems.collectAsState(initial = listOf()).value
     val cartSubTotal = viewModel.cartSubTotal.collectAsState(initial = 0.0).value
-    val cartTotal = cartSubTotal - PROMOCODE + DELIVERY_FEE + TAX
+    val cartTotal = (cartSubTotal - PROMOCODE) + DELIVERY_FEE + TAX
+
+    val textFieldValue = remember {
+        mutableStateOf("")
+    }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         LazyColumn(
@@ -204,10 +211,10 @@ fun CartScreen(
                 Spacer(modifier = Modifier.height(MediumPadding1))
             }
 
-            items(cartItemsCards?.size ?: 0) {
+            items(cartItems?.size ?: 0) {
                 //List of Items in the Cart
                     index ->
-                val cartItemCardIndex = cartItemsCards?.get(index)
+                val cartItemCardIndex = cartItems?.get(index)
                 if (cartItemCardIndex != null) {
                     CartItemCardView(
                         cartItemModel = cartItemCardIndex,
@@ -222,8 +229,8 @@ fun CartScreen(
 
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = "",
-                    onValueChange = {},
+                    value = textFieldValue.value,
+                    onValueChange = { textFieldValue.value = it },
                     shape = RoundedCornerShape(5.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = colorResource(id = R.color.lightGray),
@@ -495,10 +502,18 @@ fun CartScreen(
                         ) {
 
                             Text(
-                                "Make Payment",
+                                "Place Order",
                                 color = Color.White,
                                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
                             )
+
+                            val orderDto = OrderDto(
+                                restaurantId = cartItems?.get(0)?.restaurantId,
+                                totalAmount = cartTotal,
+                                deliveryInstructions = textFieldValue.value.ifEmpty { null },
+                            )
+
+                            viewModel.placeOrder(orderDto)
 
                         }
 

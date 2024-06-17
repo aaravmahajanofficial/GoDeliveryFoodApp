@@ -2,6 +2,8 @@ package com.example.godeliveryapp.presentation.CartScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.godeliveryapp.data.remote.dataTransferObject.OrderDto
+import com.example.godeliveryapp.data.remote.dataTransferObject.OrderItemDto
 import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.domain.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -61,6 +63,22 @@ class CartScreenViewModel @Inject constructor(
             repository.deleteCartItem(cartItem)
             getItems()
         }
+    }
+
+    fun placeOrder(orderDto: OrderDto) {
+
+        viewModelScope.launch {
+            getItems()
+            repository.placeOrder(orderDto = orderDto, orderItems = _cartItems.value!!.map {
+                OrderItemDto(
+                    itemId = it.menuItemModel.itemId,
+                    quantity = it.quantity,
+                    price = it.menuItemModel.itemPrice,
+                )
+            })
+
+        }
+
     }
 
 

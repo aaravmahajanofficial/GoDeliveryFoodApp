@@ -21,7 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.godeliveryapp.domain.model.SupabaseAuthViewModel
 import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.godeliveryapp.presentation.navigation.SetupNavGraph
-import com.example.godeliveryapp.presentation.onBoarding.components.UserState
+import com.example.godeliveryapp.presentation.onBoarding.components.ViewState
 import com.example.zomatoclone.ui.theme.GoDeliveryApp
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -52,8 +52,8 @@ class MainActivity : ComponentActivity() {
 
                     val context = LocalContext.current
 
-                    val userState =
-                        authViewModel.userState.collectAsState(initial = UserState.Loading).value
+                    val viewState =
+                        authViewModel.viewState.collectAsState(initial = ViewState.Loading).value
 
                     LaunchedEffect(Unit) {
 
@@ -61,8 +61,8 @@ class MainActivity : ComponentActivity() {
 
                     }
 
-                    when (userState) {
-                        is UserState.Error -> {
+                    when (viewState) {
+                        is ViewState.Error -> {
 
                             SetupNavGraph(
                                 navController = navController,
@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        is UserState.Loading -> {
+                        is ViewState.Loading -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
@@ -81,14 +81,14 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-                        is UserState.Success -> {
+                        is ViewState.Success -> {
                             SetupNavGraph(
                                 navController = navController,
-                                startDestination = Route.CartScreen.route
+                                startDestination = Route.HomeScreen.route
                             )
                         }
 
-                        UserState.Empty -> {
+                        ViewState.Empty -> {
 
                         }
                     }

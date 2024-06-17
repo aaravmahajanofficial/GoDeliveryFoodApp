@@ -83,7 +83,6 @@ class SupabaseAuthViewModel @Inject constructor(
                 Log.d("USER_EMAIL", userEmail)
 
 
-
             } catch (e: Exception) {
 
                 when (e) {
@@ -230,7 +229,7 @@ class SupabaseAuthViewModel @Inject constructor(
     }
 
     fun isUserLoggedIn(context: Context) {
-
+        val sharedPreferences = SharedPreferences(context)
         viewModelScope.launch {
 
             try {
@@ -249,6 +248,8 @@ class SupabaseAuthViewModel @Inject constructor(
 
             } catch (e: RestException) {
                 _viewState.value = ViewState.Error(e.message.toString())
+
+                sharedPreferences.clearPreferences()
 
             }
 

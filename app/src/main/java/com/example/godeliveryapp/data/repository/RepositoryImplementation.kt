@@ -8,16 +8,19 @@ import com.example.godeliveryapp.data.remote.dataTransferObject.CartDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.CartItemDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.MenuItemsDto
+import com.example.godeliveryapp.data.remote.dataTransferObject.OrderDto
+import com.example.godeliveryapp.data.remote.dataTransferObject.OrderItemDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.UserDto
 import com.example.godeliveryapp.domain.model.APIMODEL.Item
 import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.domain.repository.Repository
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemModel
+import com.example.godeliveryapp.presentation.orderScreen.OrderState
 import com.example.godeliveryapp.utils.SharedPreferences
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.UUID
+import kotlinx.datetime.Clock
 
 class RepositoryImplementation(
     private val postgrest: Postgrest,
@@ -104,14 +107,20 @@ class RepositoryImplementation(
     override suspend fun upsertCartItem(cartItemModel: CartItemModel) {
 
         return withContext(Dispatchers.IO) {
-            val cartId = getOrCreateCart()
-            postgrest.from("CartItems").upsert(
-                CartItemDto(
-                    itemId = cartItemModel.menuItemModel.itemId,
-                    quantity = cartItemModel.quantity,
-                    cartId = cartId
+            try {
+                val cartId = getOrCreateCart()
+                postgrest.from("CartItems").upsert(
+                    CartItemDto(
+                        itemId = cartItemModel.menuItemModel.itemId,
+                        quantity = cartItemModel.quantity,
+                        cartId = cartId,
+                        restaurantId = cartItemModel.menuItemModel.restaurantId
+                    )
                 )
-            )
+            } catch (e: Exception) {
+                Log.d("ERROR WHILE INSERTING INTO CART DETECTED : ", e.toString())
+
+            }
 
         }
 
@@ -176,18 +185,16 @@ class RepositoryImplementation(
 
     override suspend fun createNewCart(): String {
 
+        val cartDto = CartDto(
+            userId = sharedPreferences.getUserData("USER_ID")!!
+        )
+
         return withContext(Dispatchers.IO) {
 
-            val cartItemDto = CartDto(
-                cartId = UUID.randomUUID().toString(),
-                userId = sharedPreferences.getUserData("USER_ID")!!
-            )
-            Log.d("CART_ID", cartItemDto.cartId)
-            Log.d("USER_ID", cartItemDto.userId)
+            val cartId =
+                postgrest.from("Cart").insert(cartDto).decodeSingle<CartDto>().cartId!!
+            cartId
 
-            postgrest.from("Cart").insert(cartItemDto)
-
-            cartItemDto.cartId
 
         }
 
@@ -244,6 +251,53 @@ class RepositoryImplementation(
             userDto
         }
     }
+
+    override suspend fun placeOrder(orderDto: OrderDto, orderItems: List<OrderItemDto>): Boolean {
+
+        return withContext(Dispatchers.IO) {
+
+            try {
+
+                val dto = orderDto.copy(
+                    createdAt = Clock.System.now(),
+                    userId = sharedPreferences.getUserData("USER_ID")!!,
+                    orderStatus = OrderState.PENDING,
+                    verificationCode = (1000..9999).random()
+                )
+
+                val orderId =
+                    postgrest.from("Orders").insert(dto).decodeSingle<OrderDto>().orderId
+
+                orderItems.forEach { orderItem ->
+                    val orderItemDto = orderItem.copy(orderId = orderId!!)
+                    postgrest.from("OrderItems").insert(orderItemDto)
+                }
+
+                true
+
+            } catch (e: Exception) {
+                Log.d("ERROR", e.toString())
+                false
+            }
+        }
+
+    }
+
+//    override suspend fun getOrders(): List<OrderDto>? {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override suspend fun getOrder(orderId: Int): OrderDto? {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override suspend fun cancelOrder(orderId: Int): Boolean {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override suspend fun getOrderItems(orderId: Int): List<OrderItemDto>? {
+//        TODO("Not yet implemented")
+//    }
 
 }
 
