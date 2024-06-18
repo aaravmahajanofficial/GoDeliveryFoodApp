@@ -5,11 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OrderItemDto(
-    @SerialName("id")
-    var id: Int? = null,
 
     @SerialName("orderId")
-    val orderId: Int? = null,
+    val orderId: UInt? = null,
 
     @SerialName("itemId")
     val itemId: Int,

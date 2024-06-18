@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class OrderDto(
 
     @SerialName("orderId")
-    var orderId: Int? = null,
+    var orderId: UInt? = null,
 
     @SerialName("createdAt")
     var createdAt: Instant? = null,
@@ -30,6 +30,6 @@ data class OrderDto(
     var verificationCode: Int? = null,
 
     @SerialName("deliveryInstructions")
-    var deliveryInstructions: String? = null,
+    var deliveryInstructions: String? = null
 
-    )
+)

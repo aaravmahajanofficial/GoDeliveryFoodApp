@@ -50,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
-import com.example.godeliveryapp.data.remote.dataTransferObject.OrderDto
 import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
@@ -71,15 +70,14 @@ import java.text.DecimalFormat
 @Composable
 fun CartScreen(
     modifier: Modifier = Modifier,
-    viewModel: CartScreenViewModel = hiltViewModel(),
+    cartViewModel: CartScreenViewModel = hiltViewModel(),
     navController: NavController
 ) {
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-
-    val cartItems = viewModel.cartItems.collectAsState(initial = listOf()).value
-    val cartSubTotal = viewModel.cartSubTotal.collectAsState(initial = 0.0).value
+    val cartItems = cartViewModel.cartItems.collectAsState(initial = listOf()).value
+    val cartSubTotal = cartViewModel.cartSubTotal.collectAsState(initial = 0.0).value
     val cartTotal = (cartSubTotal - PROMOCODE) + DELIVERY_FEE + TAX
 
     val textFieldValue = remember {
@@ -487,6 +485,15 @@ fun CartScreen(
                         Spacer(modifier = Modifier.height(NormalPadding))
                         OutlinedButton(
                             onClick = {
+                                val deliveryInstructions = textFieldValue.value
+                                if (cartItems != null) {
+                                    cartViewModel.placeOrder(
+                                        totalAmount = cartTotal,
+                                        deliveryInstructions = deliveryInstructions,
+                                        items = cartItems
+                                    )
+                                }
+
                                 navController.navigate(Route.OrderScreen.route)
                             },
                             shape = RoundedCornerShape(5.dp),
@@ -506,14 +513,6 @@ fun CartScreen(
                                 color = Color.White,
                                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
                             )
-
-                            val orderDto = OrderDto(
-                                restaurantId = cartItems?.get(0)?.restaurantId,
-                                totalAmount = cartTotal,
-                                deliveryInstructions = textFieldValue.value.ifEmpty { null },
-                            )
-
-                            viewModel.placeOrder(orderDto)
 
                         }
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.godeliveryapp.data.remote.dataTransferObject.UserDto
 import com.example.godeliveryapp.domain.repository.Repository
 import com.example.godeliveryapp.presentation.onBoarding.components.ViewState
 import com.example.godeliveryapp.utils.SharedPreferences
@@ -54,7 +55,7 @@ class SupabaseAuthViewModel @Inject constructor(
         userPassword: String,
         userName: String
     ) {
-
+        val sharedPreferences = SharedPreferences(context)
         viewModelScope.launch {
 
             try {
@@ -68,19 +69,23 @@ class SupabaseAuthViewModel @Inject constructor(
 
                 saveToken(context)
 
-                _viewState.value = ViewState.Success
-
-                val sharedPreferences = SharedPreferences(context)
                 val user = supabaseClient.auth.retrieveUserForCurrentSession()
-                sharedPreferences.saveUserData("USER_NAME", userName)
-                sharedPreferences.saveUserData("USER_EMAIL", userEmail)
+
+                val userDto = UserDto(
+                    userId = user.id,
+                    userEmail = userEmail,
+                    userName = userName
+                )
+
                 sharedPreferences.saveUserData("USER_ID", user.id)
 
-                repository.insertUserData()
+                repository.insertUserData(userDto)
 
                 Log.d("USER_ID", user.id)
                 Log.d("USER_NAME", userName)
                 Log.d("USER_EMAIL", userEmail)
+
+                _viewState.value = ViewState.Success
 
 
             } catch (e: Exception) {

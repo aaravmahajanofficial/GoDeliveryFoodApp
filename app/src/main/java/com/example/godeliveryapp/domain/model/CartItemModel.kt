@@ -4,8 +4,8 @@ import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemMo
 
 data class CartItemModel(
 
-    val restaurantId: Int? = null,
+    val restaurantId : Int,
     val menuItemModel: MenuItemModel,
-    val quantity: Int
+    var quantity: Int
 
 )

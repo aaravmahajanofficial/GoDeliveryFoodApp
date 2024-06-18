@@ -37,6 +37,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -69,9 +70,9 @@ import kotlinx.coroutines.launch
 fun MenuItemCardView(
     modifier: Modifier = Modifier,
     menuItemModel: MenuItemModel,
-    viewModel: CartScreenViewModel = hiltViewModel(),
+    cartViewModel: CartScreenViewModel = hiltViewModel(),
 ) {
-    val cartItems = viewModel.cartItems.collectAsState(initial = listOf()).value
+    val cartItems = cartViewModel.cartItems.collectAsState(initial = listOf()).value
     val screenHeight = LocalConfiguration.current.screenHeightDp
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember {
@@ -87,15 +88,13 @@ fun MenuItemCardView(
         }
     }
 
-    val existingItem =
-        cartItems?.firstOrNull { it.menuItemModel.itemId == menuItemModel.itemId }
+    var existingItem = cartItems?.firstOrNull { it.menuItemModel.itemId == menuItemModel.itemId }
 
-//    LaunchedEffect(cartItems) {
-//
-//        existingItem =
-//            cartItems?.firstOrNull { it.menuItemModel.itemId == menuItemModel.itemId }
-//
-//    }
+    LaunchedEffect(cartItems) {
+
+        existingItem = cartItems?.firstOrNull { it.menuItemModel.itemId == menuItemModel.itemId }
+
+    }
 
     Card(
         modifier = Modifier
@@ -201,16 +200,18 @@ fun MenuItemCardView(
                                         .scale(0.8f)
                                         .clickable {
 
-                                            if (existingItem.quantity > 1) {
-                                                viewModel.upsertCartItem(
+                                            if (existingItem!!.quantity > 1) {
+                                                cartViewModel.upsertCartItem(
                                                     cartItem = CartItemModel(
+                                                        restaurantId = menuItemModel.restaurantId,
                                                         menuItemModel = menuItemModel,
-                                                        quantity = existingItem.quantity - 1,
+                                                        quantity = existingItem!!.quantity - 1,
                                                     )
                                                 )
                                             } else {
-                                                viewModel.deleteCartItem(
+                                                cartViewModel.deleteCartItem(
                                                     cartItem = CartItemModel(
+                                                        restaurantId = menuItemModel.restaurantId,
                                                         menuItemModel = menuItemModel,
                                                         quantity = 1
                                                     )
@@ -223,7 +224,7 @@ fun MenuItemCardView(
                                     )
                                 )
                                 Text(
-                                    text = "${existingItem.quantity}",
+                                    text = "${existingItem!!.quantity}",
                                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
                                 )
                                 Icon(
@@ -233,10 +234,11 @@ fun MenuItemCardView(
                                         .scale(0.8f)
                                         .clickable {
 
-                                            viewModel.upsertCartItem(
+                                            cartViewModel.upsertCartItem(
                                                 cartItem = CartItemModel(
+                                                    restaurantId = menuItemModel.restaurantId,
                                                     menuItemModel = menuItemModel,
-                                                    quantity = existingItem.quantity + 1,
+                                                    quantity = existingItem!!.quantity + 1,
                                                 )
                                             )
 
@@ -394,11 +396,11 @@ fun MenuItemCardView(
                             OutlinedButton(
                                 onClick = {
 
-                                    viewModel.upsertCartItem(
+                                    cartViewModel.upsertCartItem(
                                         cartItem = CartItemModel(
                                             menuItemModel = menuItemModel,
                                             restaurantId = menuItemModel.restaurantId,
-                                            quantity = if (existingItem != null) existingItem.quantity + 1 else 1
+                                            quantity = if (existingItem != null) existingItem!!.quantity + 1 else 1
                                         )
                                     )
 

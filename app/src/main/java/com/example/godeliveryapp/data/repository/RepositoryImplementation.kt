@@ -21,6 +21,9 @@ import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
+import java.util.UUID
+import kotlin.random.Random
+import kotlin.random.nextUInt
 
 class RepositoryImplementation(
     private val postgrest: Postgrest,
@@ -43,9 +46,13 @@ class RepositoryImplementation(
     override suspend fun getCartItems(): List<CartItemModel> {
         return withContext(Dispatchers.IO) {
 
-            val cartId = getOrCreateCart()
+            val cartId = sharedPreferences.getUserData("CART_ID")
             val cartItems = postgrest.from("CartItems").select {
-                filter { eq("cartId", cartId) }
+                filter {
+                    if (cartId != null) {
+                        eq("cartId", cartId)
+                    }
+                }
             }.decodeList<CartItemDto>()
 
             //need to match the itemId to MenuItems Table to fetch the desired food item details from the MenuItems Table
@@ -67,6 +74,7 @@ class RepositoryImplementation(
                 )
 
                 CartItemModel(
+                    restaurantId = cartItem.restaurantId,
                     menuItemModel = menuItemModel,
                     quantity = cartItem.quantity,
                 )
@@ -78,19 +86,19 @@ class RepositoryImplementation(
         }
     }
 
-    override suspend fun existsInCart(itemId: Int): CartItemModel? {
-        return withContext(Dispatchers.IO) {
-
-            val existingItem = postgrest.from("CartItems").select {
-                filter {
-                    eq("itemId", itemId)
-                }
-            }.decodeSingleOrNull<CartItemModel>()
-
-            existingItem
-
-        }
-    }
+//    override suspend fun existsInCart(itemId: Int): CartItemModel? {
+//        return withContext(Dispatchers.IO) {
+//
+//            val existingItem = postgrest.from("CartItems").select {
+//                filter {
+//                    eq("itemId", itemId)
+//                }
+//            }.decodeSingleOrNull<CartItemModel>()
+//
+//            existingItem
+//
+//        }
+//    }
 
     override suspend fun deleteCartItem(cartItemModel: CartItemModel) {
         withContext(Dispatchers.IO) {
@@ -185,14 +193,15 @@ class RepositoryImplementation(
 
     override suspend fun createNewCart(): String {
 
-        val cartDto = CartDto(
-            userId = sharedPreferences.getUserData("USER_ID")!!
-        )
-
         return withContext(Dispatchers.IO) {
 
-            val cartId =
-                postgrest.from("Cart").insert(cartDto).decodeSingle<CartDto>().cartId!!
+            val cartId = UUID.randomUUID().toString()
+            postgrest.from("Cart").insert(
+                CartDto(
+                    cartId = cartId,
+                    userId = sharedPreferences.getUserData("USER_ID")!!
+                )
+            )
             cartId
 
 
@@ -211,18 +220,9 @@ class RepositoryImplementation(
 
     }
 
-    override suspend fun insertUserData(): Boolean {
+    override suspend fun insertUserData(userDto: UserDto): Boolean {
 
         return withContext(Dispatchers.IO) {
-
-            val userDto = UserDto(
-                userId = sharedPreferences.getUserData("USER_ID")!!,
-                userName = sharedPreferences.getUserData("USER_NAME")!!,
-                userEmail = sharedPreferences.getUserData("USER_EMAIL")!!,
-                userAddress = "",
-                userPhone = "",
-                landmark = ""
-            )
 
             try {
                 postgrest.from("Users").insert(userDto)
@@ -257,20 +257,19 @@ class RepositoryImplementation(
         return withContext(Dispatchers.IO) {
 
             try {
-
+                val genOrderID = Random.nextUInt()
                 val dto = orderDto.copy(
+                    orderId = genOrderID,
                     createdAt = Clock.System.now(),
                     userId = sharedPreferences.getUserData("USER_ID")!!,
                     orderStatus = OrderState.PENDING,
                     verificationCode = (1000..9999).random()
                 )
 
-                val orderId =
-                    postgrest.from("Orders").insert(dto).decodeSingle<OrderDto>().orderId
+                postgrest.from("Orders").insert(dto)
 
-                orderItems.forEach { orderItem ->
-                    val orderItemDto = orderItem.copy(orderId = orderId!!)
-                    postgrest.from("OrderItems").insert(orderItemDto)
+                orderItems.forEach() {
+                    postgrest.from("OrderItems").insert(it.copy(orderId = genOrderID))
                 }
 
                 true

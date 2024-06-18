@@ -6,7 +6,7 @@ sealed class Route(val route: String) {
     data object CategoryScreen : Route(route = "category_screen")
 
     data object HomeScreen : Route(route = "home_screen")
-    data object CartScreen : Route(route = "cart_screen/{restaurantId}")
+    data object CartScreen : Route(route = "cart_screen")
 
     data object LoginPage : Route(route = "login_page")
 

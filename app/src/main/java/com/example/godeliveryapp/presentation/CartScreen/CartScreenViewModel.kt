@@ -18,8 +18,11 @@ class CartScreenViewModel @Inject constructor(
 ) : ViewModel() {
 
     // collection of individual card of _cartItems, or _cartItemsCard
-    private val _cartItems = MutableStateFlow<List<CartItemModel>?>(listOf())
+    private val _cartItems = MutableStateFlow<List<CartItemModel>>(listOf())
     val cartItems: Flow<List<CartItemModel>?> get() = _cartItems
+
+    private val _orderItems = MutableStateFlow<List<OrderItemDto>>(listOf())
+    val orderItems: Flow<List<OrderItemDto>> get() = _orderItems
 
     private val _cartSubTotal = MutableStateFlow(0.0)
     val cartSubTotal: Flow<Double> get() = _cartSubTotal
@@ -36,8 +39,15 @@ class CartScreenViewModel @Inject constructor(
         viewModelScope.launch {
             //list of cartItems
             val cartItems = repository.getCartItems()
-            _cartItems.emit(cartItems)
-            _totalItemsInCart.emit(cartItems!!.size)
+            _cartItems.emit(cartItems!!)
+            _orderItems.emit(cartItems.map {
+                OrderItemDto(
+                    itemId = it.menuItemModel.itemId,
+                    quantity = it.quantity,
+                    price = (it.menuItemModel.itemPrice * it.quantity)
+                )
+            })
+            _totalItemsInCart.emit(cartItems.size)
             calculateCartValue()
         }
 
@@ -65,17 +75,27 @@ class CartScreenViewModel @Inject constructor(
         }
     }
 
-    fun placeOrder(orderDto: OrderDto) {
+    fun placeOrder(totalAmount: Double, deliveryInstructions: String, items: List<CartItemModel>) {
 
         viewModelScope.launch {
-            getItems()
-            repository.placeOrder(orderDto = orderDto, orderItems = _cartItems.value!!.map {
-                OrderItemDto(
-                    itemId = it.menuItemModel.itemId,
-                    quantity = it.quantity,
-                    price = it.menuItemModel.itemPrice,
+
+            try {
+                val orderToPlace = OrderDto(
+                    restaurantId = items.first().restaurantId,
+                    totalAmount = totalAmount,
+                    deliveryInstructions = deliveryInstructions,
                 )
-            })
+
+                repository.placeOrder(orderToPlace, items.map {
+                    OrderItemDto(
+                        itemId = it.menuItemModel.itemId,
+                        quantity = it.quantity,
+                        price = (it.menuItemModel.itemPrice * it.quantity)
+                    )
+                })
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
 
         }
 
