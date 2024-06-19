@@ -71,16 +71,14 @@ fun ProfileScreenView(
 
             Box(
                 modifier = Modifier
-                    .align(Alignment.Start)
                     .clickable { navController.navigateUp() }
-                    .background(color = Color.White, shape = CircleShape)
-                    .size(42.dp), contentAlignment = Alignment.Center
+                    .size(42.dp),
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                     contentDescription = null,
                     tint = colorResource(id = R.color.black),
-                    modifier = Modifier.scale(1f)
+                    modifier = Modifier.scale(1.2f)
                 )
             }
 
@@ -91,7 +89,7 @@ fun ProfileScreenView(
             ) {
 
                 Column(
-                    modifier = Modifier,
+                    modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.SpaceEvenly
                 ) {

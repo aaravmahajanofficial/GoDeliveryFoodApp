@@ -40,7 +40,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -71,6 +73,9 @@ fun HomeScreenView(
     val textFieldValue by remember {
         mutableStateOf("")
     }
+
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
     val pageState = rememberPagerState(initialPage = 0) {
         SlidingAdBanners.size
@@ -126,7 +131,7 @@ fun HomeScreenView(
                                 Icon(
                                     imageVector = Icons.Rounded.KeyboardArrowDown,
                                     contentDescription = null,
-                                    modifier = Modifier.size(32.dp)
+                                    modifier = Modifier.size(screenWidth / 12)
                                 )
 
                             }
@@ -136,7 +141,7 @@ fun HomeScreenView(
 
                         Box(
                             modifier = Modifier
-                                .size(42.dp)
+                                .size(screenHeight / 16)
                                 .background(
                                     color = colorResource(id = R.color.lightGray),
                                     shape = CircleShape
@@ -161,13 +166,13 @@ fun HomeScreenView(
                     //search bar
                     Box(
                         modifier = Modifier
-                            .padding(start = Dimens.NormalPadding, end = Dimens.NormalPadding)
+                            .padding(start = NormalPadding, end = NormalPadding)
                             .background(
                                 color = colorResource(id = R.color.lightGray),
                                 shape = RoundedCornerShape(32.dp)
                             )
                             .fillMaxWidth()
-                            .height(50.dp), contentAlignment = Alignment.Center
+                            .height(screenHeight / 14), contentAlignment = Alignment.Center
                     ) {
 
                         Row(
@@ -175,24 +180,24 @@ fun HomeScreenView(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 10.dp, end = 10.dp)
+                                .padding(start = 8.dp, end = 8.dp)
                         ) {
                             Row(
-                                modifier = Modifier,
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Icon(
                                     imageVector = Icons.Outlined.Search,
                                     contentDescription = null,
-                                    modifier = Modifier.scale(1f),
+                                    modifier = Modifier.size(screenHeight / 32),
                                     tint = colorResource(id = R.color.black),
                                 )
+
                                 Spacer(modifier = Modifier.width(5.dp))
 
                                 Text(
-                                    "Search for food, grocery, meat etc.",
-                                    style = MaterialTheme.typography.labelLarge,
+                                    "Search for dishes & restaurants",
+                                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Normal),
                                     color = colorResource(id = R.color.gray)
                                 )
                             }
@@ -205,22 +210,20 @@ fun HomeScreenView(
                                 Icon(
                                     imageVector = Icons.Outlined.MicNone,
                                     contentDescription = null,
-                                    modifier = Modifier.scale(1f),
+                                    modifier = Modifier.size(screenHeight / 32),
                                     tint = colorResource(id = R.color.black)
                                 )
-                                Spacer(modifier = Modifier.width(5.dp))
 
                                 Text(
                                     " | ",
-                                    style = MaterialTheme.typography.bodyLarge,
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Normal),
                                     color = colorResource(id = R.color.black)
                                 )
-                                Spacer(modifier = Modifier.width(5.dp))
 
                                 Icon(
                                     imageVector = Icons.Outlined.Tune,
                                     contentDescription = null,
-                                    modifier = Modifier.scale(1f),
+                                    modifier = Modifier.size(screenHeight / 32),
                                     tint = colorResource(id = R.color.black)
                                 )
                             }
