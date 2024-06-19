@@ -16,12 +16,12 @@ data class UserDto(
     val userName: String,
 
     @SerialName("userAddress")
-    val userAddress: String? = null,
+    val userAddress: String,
 
     @SerialName("userPhone")
-    val userPhone: String? = null,
+    val userPhone: String,
 
     @SerialName("landmark")
-    val landmark: String? = null
+    val landmark: String
 
 )

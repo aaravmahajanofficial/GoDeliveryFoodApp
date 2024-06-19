@@ -56,9 +56,8 @@ fun ProfileScreenView(
     navController: NavController,
     profileScreenViewModel: ProfileScreenViewModel = hiltViewModel()
 ) {
-
-    val userDetails = profileScreenViewModel.userDetails.collectAsState(initial = null).value
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val userDetails = profileScreenViewModel.userDetails.collectAsState(initial = null).value
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
@@ -97,11 +96,13 @@ fun ProfileScreenView(
                     verticalArrangement = Arrangement.SpaceEvenly
                 ) {
 
-                    Text(
-                        text = userDetails?.userName ?: "User Name",
-                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                        color = colorResource(id = R.color.black)
-                    )
+                    if (userDetails != null) {
+                        Text(
+                            text = userDetails.userName,
+                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                            color = colorResource(id = R.color.black)
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(ExtraSmallPadding1))
 

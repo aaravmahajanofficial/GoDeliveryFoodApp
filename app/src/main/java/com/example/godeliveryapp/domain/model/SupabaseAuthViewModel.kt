@@ -57,7 +57,6 @@ class SupabaseAuthViewModel @Inject constructor(
     ) {
         val sharedPreferences = SharedPreferences(context)
         viewModelScope.launch {
-
             try {
 
                 _viewState.value = ViewState.Loading
@@ -74,12 +73,17 @@ class SupabaseAuthViewModel @Inject constructor(
                 val userDto = UserDto(
                     userId = user.id,
                     userEmail = userEmail,
-                    userName = userName
+                    userName = userName,
+                    userPhone = "",
+                    userAddress = "",
+                    landmark = ""
                 )
 
-                sharedPreferences.saveUserData("USER_ID", user.id)
-
                 repository.insertUserData(userDto)
+
+                sharedPreferences.saveUserData("USER_ID", user.id)
+                sharedPreferences.saveUserData("USER_NAME", userName)
+                sharedPreferences.saveUserData("USER_EMAIL", userEmail)
 
                 Log.d("USER_ID", user.id)
                 Log.d("USER_NAME", userName)

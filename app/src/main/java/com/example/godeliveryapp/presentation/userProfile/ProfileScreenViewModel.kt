@@ -1,5 +1,6 @@
 package com.example.godeliveryapp.presentation.userProfile
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.godeliveryapp.data.remote.dataTransferObject.UserDto
@@ -16,7 +17,6 @@ class ProfileScreenViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _userDetails = MutableStateFlow<UserDto?>(null)
-
     val userDetails: Flow<UserDto?> get() = _userDetails
 
     init {
@@ -27,9 +27,10 @@ class ProfileScreenViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val userDto = repository.getUserData()
-                _userDetails.emit(userDto)
+                _userDetails.value = userDto
             } catch (e: Exception) {
-                //handle error
+                Log.d("Error", "getUserData: $e")
+
             }
         }
     }

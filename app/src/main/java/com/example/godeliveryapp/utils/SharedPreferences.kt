@@ -34,6 +34,16 @@ class SharedPreferences(private val context: Context) {
         return sharedPreferences.getString(key, null)
     }
 
+    fun saveOrderData(key: String, data: UInt?) {
+        val sharedPreferences = context.getSharedPreferences(SHARED_PREF_FILE, Context.MODE_PRIVATE)
+        sharedPreferences.edit().putInt(key, data!!.toInt()).apply()
+    }
+
+    fun getOrderData(key: String): Int {
+        val sharedPreferences = context.getSharedPreferences(SHARED_PREF_FILE, Context.MODE_PRIVATE)
+        return sharedPreferences.getInt(key, 0)
+    }
+
     fun clearPreferences() {
         val sharedPreferences = context.getSharedPreferences(SHARED_PREF_FILE, Context.MODE_PRIVATE)
         return sharedPreferences.edit().clear().apply()

@@ -44,8 +44,10 @@ import com.example.godeliveryapp.presentation.common.CartCustomisationCardView
 import com.example.godeliveryapp.presentation.navigation.Route
 
 @Composable
-fun OrderScreenView(modifier: Modifier = Modifier, navController: NavController) {
-
+fun OrderScreenView(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
@@ -55,7 +57,8 @@ fun OrderScreenView(modifier: Modifier = Modifier, navController: NavController)
             modifier = Modifier
                 .fillMaxSize()
                 .padding(NormalPadding),
-            horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.SpaceBetween
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
             Spacer(modifier = Modifier.height(screenHeight / 16))
 
@@ -179,7 +182,7 @@ fun OrderScreenView(modifier: Modifier = Modifier, navController: NavController)
                 Spacer(modifier = Modifier.height(screenHeight / 8))
 
                 TextButton(
-                    onClick = { navController.navigate(Route.SignUpPage.route) },
+                    onClick = { navController.navigate(Route.OrderSuccessScreen.route) },
                     border = BorderStroke(0.5.dp, colorResource(id = R.color.lightGray)),
                     modifier = Modifier
                         .fillMaxWidth()

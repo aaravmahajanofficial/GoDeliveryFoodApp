@@ -1,14 +1,18 @@
 package com.example.godeliveryapp.presentation.CartScreen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.godeliveryapp.data.remote.dataTransferObject.OrderDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.OrderItemDto
 import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.domain.repository.Repository
+import com.example.godeliveryapp.presentation.orderScreen.OrderState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,14 +25,15 @@ class CartScreenViewModel @Inject constructor(
     private val _cartItems = MutableStateFlow<List<CartItemModel>>(listOf())
     val cartItems: Flow<List<CartItemModel>?> get() = _cartItems
 
-    private val _orderItems = MutableStateFlow<List<OrderItemDto>>(listOf())
-    val orderItems: Flow<List<OrderItemDto>> get() = _orderItems
-
     private val _cartSubTotal = MutableStateFlow(0.0)
     val cartSubTotal: Flow<Double> get() = _cartSubTotal
 
     private val _totalItemsInCart = MutableStateFlow(0)
     val totalItemsInCart: Flow<Int> get() = _totalItemsInCart
+
+    private val _orderState = MutableStateFlow<OrderState>(OrderState.EMPTY)
+    val orderState: StateFlow<OrderState> get() = _orderState
+
 
     init {
         getItems()
@@ -40,13 +45,6 @@ class CartScreenViewModel @Inject constructor(
             //list of cartItems
             val cartItems = repository.getCartItems()
             _cartItems.emit(cartItems!!)
-            _orderItems.emit(cartItems.map {
-                OrderItemDto(
-                    itemId = it.menuItemModel.itemId,
-                    quantity = it.quantity,
-                    price = (it.menuItemModel.itemPrice * it.quantity)
-                )
-            })
             _totalItemsInCart.emit(cartItems.size)
             calculateCartValue()
         }
@@ -55,7 +53,7 @@ class CartScreenViewModel @Inject constructor(
 
     private fun calculateCartValue() {
 
-        val items = _cartItems.value ?: emptyList()
+        val items = _cartItems.value
         val sum = items.sumOf { (it.quantity * it.menuItemModel.itemPrice) }
         _cartSubTotal.value = sum
 
@@ -76,10 +74,10 @@ class CartScreenViewModel @Inject constructor(
     }
 
     fun placeOrder(totalAmount: Double, deliveryInstructions: String, items: List<CartItemModel>) {
-
         viewModelScope.launch {
-
             try {
+                _orderState.emit(OrderState.PENDING)
+
                 val orderToPlace = OrderDto(
                     restaurantId = items.first().restaurantId,
                     totalAmount = totalAmount,
@@ -93,12 +91,21 @@ class CartScreenViewModel @Inject constructor(
                         price = (it.menuItemModel.itemPrice * it.quantity)
                     )
                 })
+
+                repository.updateOrderStatus(OrderState.CONFIRMED)
+
+                _orderState.emit(OrderState.CONFIRMED)
+
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.d("ERROR WHILE PLACING ORDER : ", e.toString())
             }
 
         }
 
+    }
+
+    fun resetOrderState() {
+        _orderState.value = OrderState.EMPTY
     }
 
 

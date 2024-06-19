@@ -86,20 +86,6 @@ class RepositoryImplementation(
         }
     }
 
-//    override suspend fun existsInCart(itemId: Int): CartItemModel? {
-//        return withContext(Dispatchers.IO) {
-//
-//            val existingItem = postgrest.from("CartItems").select {
-//                filter {
-//                    eq("itemId", itemId)
-//                }
-//            }.decodeSingleOrNull<CartItemModel>()
-//
-//            existingItem
-//
-//        }
-//    }
-
     override suspend fun deleteCartItem(cartItemModel: CartItemModel) {
         withContext(Dispatchers.IO) {
             val cartId = getOrCreateCart()
@@ -204,7 +190,6 @@ class RepositoryImplementation(
             )
             cartId
 
-
         }
 
     }
@@ -243,23 +228,24 @@ class RepositoryImplementation(
                 userId = sharedPreferences.getUserData("USER_ID")!!,
                 userName = sharedPreferences.getUserData("USER_NAME")!!,
                 userEmail = sharedPreferences.getUserData("USER_EMAIL")!!,
-                userAddress = "",
                 userPhone = "",
+                userAddress = "",
                 landmark = ""
             )
-
             userDto
+
         }
     }
 
-    override suspend fun placeOrder(orderDto: OrderDto, orderItems: List<OrderItemDto>): Boolean {
+    override suspend fun placeOrder(orderDto: OrderDto, orderItems: List<OrderItemDto>) {
+
+        val randomId = Random.nextUInt()
 
         return withContext(Dispatchers.IO) {
 
             try {
-                val genOrderID = Random.nextUInt()
                 val dto = orderDto.copy(
-                    orderId = genOrderID,
+                    orderId = randomId,
                     createdAt = Clock.System.now(),
                     userId = sharedPreferences.getUserData("USER_ID")!!,
                     orderStatus = OrderState.PENDING,
@@ -269,15 +255,37 @@ class RepositoryImplementation(
                 postgrest.from("Orders").insert(dto)
 
                 orderItems.forEach() {
-                    postgrest.from("OrderItems").insert(it.copy(orderId = genOrderID))
+                    postgrest.from("OrderItems").insert(it.copy(orderId = randomId))
                 }
+                sharedPreferences.saveOrderData("ORDER_ID", randomId)
 
-                true
 
             } catch (e: Exception) {
                 Log.d("ERROR", e.toString())
+
+            }
+        }
+
+    }
+
+    override suspend fun updateOrderStatus(newState: OrderState): Boolean {
+
+        return withContext(Dispatchers.IO) {
+
+            try {
+                postgrest.from("Orders").update({
+                    set("orderStatus", newState)
+                }) {
+                    filter {
+                        eq("orderId", sharedPreferences.getOrderData("ORDER_ID"))
+                    }
+                }
+                true
+            } catch (e: Exception) {
+                Log.d("ERROR WHILE UPDATING ORDER STATUS", e.toString())
                 false
             }
+
         }
 
     }

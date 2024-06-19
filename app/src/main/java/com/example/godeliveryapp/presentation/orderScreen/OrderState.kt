@@ -2,9 +2,10 @@ package com.example.godeliveryapp.presentation.orderScreen
 
 enum class OrderState {
     PENDING,
-    PLACED,
+    CONFIRMED,
     PREPARING,
     DISPATCHED,
     DELIVERED,
-    CANCELLED
+    CANCELLED,
+    EMPTY
 }

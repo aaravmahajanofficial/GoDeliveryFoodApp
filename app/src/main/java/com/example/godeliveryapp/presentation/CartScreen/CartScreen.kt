@@ -35,6 +35,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -60,6 +61,7 @@ import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.common.CartCustomisationCardView
 import com.example.godeliveryapp.presentation.common.CartItemCardView
 import com.example.godeliveryapp.presentation.navigation.Route
+import com.example.godeliveryapp.presentation.orderScreen.OrderState
 import com.example.zomatoclone.utils.Constants.DELIVERY_FEE
 import com.example.zomatoclone.utils.Constants.PROMOCODE
 import com.example.zomatoclone.utils.Constants.TAX
@@ -79,6 +81,7 @@ fun CartScreen(
     val cartItems = cartViewModel.cartItems.collectAsState(initial = listOf()).value
     val cartSubTotal = cartViewModel.cartSubTotal.collectAsState(initial = 0.0).value
     val cartTotal = (cartSubTotal - PROMOCODE) + DELIVERY_FEE + TAX
+    val orderState by cartViewModel.orderState.collectAsState()
 
     val textFieldValue = remember {
         mutableStateOf("")
@@ -492,9 +495,9 @@ fun CartScreen(
                                         deliveryInstructions = deliveryInstructions,
                                         items = cartItems
                                     )
+
                                 }
 
-                                navController.navigate(Route.OrderScreen.route)
                             },
                             shape = RoundedCornerShape(5.dp),
                             colors = ButtonDefaults.buttonColors(
@@ -523,6 +526,33 @@ fun CartScreen(
             }
 
         }
+
+
+        when (orderState) {
+            OrderState.CANCELLED -> {}
+            OrderState.CONFIRMED -> {
+                navController.navigate(Route.OrderSuccessScreen.route) {
+                    popUpTo(Route.CartScreen.route) {
+                        inclusive = true
+                    }
+                }
+                cartViewModel.resetOrderState()
+            }
+
+            OrderState.DELIVERED -> {}
+            OrderState.DISPATCHED -> {
+            }
+
+            OrderState.EMPTY -> {}
+            OrderState.PENDING -> {
+
+                navController.navigate(Route.OrderScreen.route)
+
+            }
+
+            OrderState.PREPARING -> {}
+        }
+
     }
 
 
