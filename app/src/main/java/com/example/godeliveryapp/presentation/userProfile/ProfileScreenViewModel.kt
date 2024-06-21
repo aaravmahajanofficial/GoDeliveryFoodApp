@@ -3,7 +3,9 @@ package com.example.godeliveryapp.presentation.userProfile
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.godeliveryapp.data.remote.dataTransferObject.OrderDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.UserDto
+import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.domain.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -19,8 +21,19 @@ class ProfileScreenViewModel @Inject constructor(
     private val _userDetails = MutableStateFlow<UserDto?>(null)
     val userDetails: Flow<UserDto?> get() = _userDetails
 
+    private val _orderDetails = MutableStateFlow<OrderDto?>(null)
+    val orderDetails: Flow<OrderDto?> get() = _orderDetails
+
+    private val _orders = MutableStateFlow<List<MyOrderModel>?>(listOf())
+    val orders: Flow<List<MyOrderModel>?> get() = _orders
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: Flow<Boolean> get() = _isLoading
+
     init {
         getUserData()
+        getOrders()
+
     }
 
     private fun getUserData() {
@@ -30,10 +43,43 @@ class ProfileScreenViewModel @Inject constructor(
                 _userDetails.value = userDto
             } catch (e: Exception) {
                 Log.d("Error", "getUserData: $e")
-
             }
         }
     }
 
+    fun getOrder(orderId: Int) {
 
+        viewModelScope.launch {
+
+            try {
+                _isLoading.value = true
+                val orderDto = repository.getOrder(orderId)
+                _orderDetails.value = orderDto
+                _isLoading.value = false
+            } catch (e: Exception) {
+                Log.d("Error", "getOrder: $e")
+            }
+
+        }
+
+
+    }
+
+    fun getOrders() {
+
+        viewModelScope.launch {
+
+            try {
+                _isLoading.value = true
+                val orders = repository.getOrderItems()
+                Log.d("Error", "getOrders: $orders")
+                _orders.value = orders
+                _isLoading.value = false
+            } catch (e: Exception) {
+                Log.d("Error", "getOrders: $e")
+            }
+
+        }
+
+    }
 }

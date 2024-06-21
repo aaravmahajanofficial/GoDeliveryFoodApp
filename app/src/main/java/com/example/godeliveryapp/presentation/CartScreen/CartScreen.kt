@@ -112,7 +112,7 @@ fun CartScreen(
                 Text(
                     text = "Cart",
                     color = colorResource(id = R.color.black),
-                    style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold)
+                    style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.ExtraBold)
                 )
 
                 Spacer(modifier = Modifier.height(MediumPadding1))

@@ -74,7 +74,6 @@ class SupabaseAuthViewModel @Inject constructor(
                     userId = user.id,
                     userEmail = userEmail,
                     userName = userName,
-                    userPhone = "",
                     userAddress = "",
                     landmark = ""
                 )

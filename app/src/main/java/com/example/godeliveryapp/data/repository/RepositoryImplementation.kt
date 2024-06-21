@@ -13,6 +13,7 @@ import com.example.godeliveryapp.data.remote.dataTransferObject.OrderItemDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.UserDto
 import com.example.godeliveryapp.domain.model.APIMODEL.Item
 import com.example.godeliveryapp.domain.model.CartItemModel
+import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.domain.repository.Repository
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemModel
 import com.example.godeliveryapp.presentation.orderScreen.OrderState
@@ -214,6 +215,7 @@ class RepositoryImplementation(
                 true
 
             } catch (e: Exception) {
+                Log.d("ERROR WHILE INSERTING USER DATA", e.toString())
                 false
             }
         }
@@ -249,7 +251,8 @@ class RepositoryImplementation(
                     createdAt = Clock.System.now(),
                     userId = sharedPreferences.getUserData("USER_ID")!!,
                     orderStatus = OrderState.PENDING,
-                    verificationCode = (1000..9999).random()
+                    verificationCode = (1000..9999).random(),
+                    paymentMode = "COD"
                 )
 
                 postgrest.from("Orders").insert(dto)
@@ -290,21 +293,103 @@ class RepositoryImplementation(
 
     }
 
-//    override suspend fun getOrders(): List<OrderDto>? {
+    //    override suspend fun getOrders(): List<OrderDto>? {
 //        TODO("Not yet implemented")
 //    }
 //
-//    override suspend fun getOrder(orderId: Int): OrderDto? {
-//        TODO("Not yet implemented")
-//    }
-//
+    override suspend fun getOrder(orderId: Int): OrderDto {
+
+        return withContext(Dispatchers.IO) {
+
+            val orderDto = postgrest.from("Orders").select {
+                filter {
+                    eq("orderId", orderId)
+                }
+            }.decodeSingle<OrderDto>()
+
+            orderDto
+
+        }
+
+    }
+
 //    override suspend fun cancelOrder(orderId: Int): Boolean {
 //        TODO("Not yet implemented")
 //    }
-//
-//    override suspend fun getOrderItems(orderId: Int): List<OrderItemDto>? {
-//        TODO("Not yet implemented")
-//    }
 
+    override suspend fun getOrderItems(): List<MyOrderModel> {
+        return withContext(Dispatchers.IO) {
+
+            try {
+
+                // fetch all the orders of the user
+                val orders = postgrest.from("Orders")
+                    .select { filter { eq("userId", sharedPreferences.getUserData("USER_ID")!!) } }
+                    .decodeList<OrderDto>()
+
+                val myOrders = mutableListOf<MyOrderModel>()
+
+                // get the order items for the particular orderId
+                orders.forEach { id ->
+
+                    // get restaurant details for each order
+                    val restaurant = postgrest.from("Restaurants").select {
+                        filter { eq("restaurantId", id.restaurantId!!) }
+                    }.decodeSingle<RestaurantDto>()
+
+                    // get the items ordered in that order
+
+                    val orderItems = postgrest.from("OrderItems").select {
+                        filter { eq("orderId", id.orderId!!) }
+                    }.decodeList<OrderItemDto>()
+
+                    // now get the dto of each item in the order
+
+                    val individualItems: List<MenuItemsDto> = orderItems.map { item ->
+                        postgrest.from("MenuItems").select {
+                            filter { eq("itemId", item.itemId) }
+                        }.decodeSingle<MenuItemsDto>()
+                    }
+
+                    val myOrderModel = MyOrderModel(
+                        orderId = id.orderId!!,
+                        items = individualItems.map { menuItemDtoToModel(it) },
+                        restaurantName = restaurant.name,
+                        restaurantAddress = restaurant.streetAddress.split(",")[0].plus(", ")
+                            .plus(restaurant.city),
+                        restaurantImage = R.drawable.restaurant1,
+                        createdAt = id.createdAt.toString(),
+                        orderStatus = id.orderStatus.toString(),
+                        orderTotal = id.totalAmount.toString(),
+                        totalItems = orderItems.size,
+                        paymentMode = id.paymentMode.toString()
+                    )
+
+                    myOrders.add(myOrderModel)
+
+                }
+
+                myOrders
+
+            } catch (e: Exception) {
+                Log.d("ERROR WHILE FETCHING ORDER ITEMS", e.toString())
+                emptyList()
+            }
+
+        }
+    }
+
+}
+
+fun menuItemDtoToModel(menuItem: MenuItemsDto): MenuItemModel {
+    return MenuItemModel(
+        itemId = menuItem.itemId,
+        itemName = menuItem.itemName,
+        itemPrice = menuItem.price,
+        itemDescription = menuItem.description,
+        itemImageId = R.drawable.restaurant1,
+        itemCategory = menuItem.itemCategory,
+        restaurantId = menuItem.restaurantId
+    )
 }
 

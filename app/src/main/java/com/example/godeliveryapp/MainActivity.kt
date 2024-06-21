@@ -81,6 +81,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
+
                         is ViewState.Success -> {
                             SetupNavGraph(
                                 navController = navController,

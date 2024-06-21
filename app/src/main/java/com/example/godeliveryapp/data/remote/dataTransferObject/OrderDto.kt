@@ -30,6 +30,8 @@ data class OrderDto(
     var verificationCode: Int? = null,
 
     @SerialName("deliveryInstructions")
-    var deliveryInstructions: String? = null
+    var deliveryInstructions: String? = null,
 
+    @SerialName("paymentMode")
+    val paymentMode: String? = null
 )

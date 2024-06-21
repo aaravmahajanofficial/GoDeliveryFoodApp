@@ -19,7 +19,7 @@ data class UserDto(
     val userAddress: String,
 
     @SerialName("userPhone")
-    val userPhone: String,
+    val userPhone: String? = null,
 
     @SerialName("landmark")
     val landmark: String

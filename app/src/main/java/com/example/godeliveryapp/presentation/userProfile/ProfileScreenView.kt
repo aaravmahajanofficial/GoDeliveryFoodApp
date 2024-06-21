@@ -49,6 +49,7 @@ import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.homeScreen.slidingAds.SlidingAdBanners
+import com.example.godeliveryapp.presentation.navigation.Route
 
 @Composable
 fun ProfileScreenView(
@@ -161,7 +162,10 @@ fun ProfileScreenView(
                 OptionRow(
                     screenHeight = screenHeight,
                     optionTitle = "My Orders",
-                    imageVector = Icons.Outlined.ShoppingBag
+                    imageVector = Icons.Outlined.ShoppingBag,
+                    onClick = {
+                        navController.navigate(Route.MyOrdersScreen.route)
+                    }
                 )
                 Spacer(modifier = Modifier.height(MediumPadding2))
                 OptionRow(
@@ -204,9 +208,18 @@ fun ProfileScreenView(
 }
 
 @Composable
-private fun OptionRow(screenHeight: Dp, optionTitle: String, imageVector: ImageVector) {
+private fun OptionRow(
+    screenHeight: Dp,
+    optionTitle: String,
+    imageVector: ImageVector,
+    onClick: () -> Unit = {}
+) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onClick()
+            },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

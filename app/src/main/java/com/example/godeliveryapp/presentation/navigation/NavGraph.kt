@@ -20,6 +20,7 @@ import com.example.godeliveryapp.presentation.onBoarding.components.SignUpView
 import com.example.godeliveryapp.presentation.onBoarding.components.WelcomeScreen
 import com.example.godeliveryapp.presentation.orderScreen.OrderScreenView
 import com.example.godeliveryapp.presentation.orderScreen.OrderSuccessScreenView
+import com.example.godeliveryapp.presentation.userProfile.MyOrdersScreenView
 import com.example.godeliveryapp.presentation.userProfile.ProfileScreenView
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -61,6 +62,10 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
 
         composable(route = Route.ProfileScreen.route) {
             ProfileScreenView(navController = navController)
+        }
+
+        composable(route = Route.MyOrdersScreen.route) {
+            MyOrdersScreenView(navController = navController)
         }
 
         composable(route = Route.HomeScreen.route) {

@@ -8,6 +8,7 @@ import com.example.godeliveryapp.data.remote.dataTransferObject.OrderItemDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.UserDto
 import com.example.godeliveryapp.domain.model.APIMODEL.Item
 import com.example.godeliveryapp.domain.model.CartItemModel
+import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.presentation.orderScreen.OrderState
 
 interface Repository {
@@ -42,11 +43,11 @@ interface Repository {
     suspend fun updateOrderStatus(newState: OrderState): Boolean
 //    suspend fun getOrders(): List<OrderDto>?
 //
-//    suspend fun getOrder(orderId: Int): OrderDto?
+    suspend fun getOrder(orderId: Int): OrderDto?
 //
 //    suspend fun cancelOrder(orderId: Int): Boolean
-//
-//    suspend fun getOrderItems(orderId: Int): List<OrderItemDto>?
+
+    suspend fun getOrderItems(): List<MyOrderModel>
 
 
 }
