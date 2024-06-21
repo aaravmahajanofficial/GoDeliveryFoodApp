@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.userProfile
+package com.example.godeliveryapp.presentation.userProfile.myOrders
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -51,6 +51,7 @@ import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import com.example.godeliveryapp.presentation.navigation.Route
+import com.example.godeliveryapp.presentation.userProfile.ProfileScreenViewModel
 
 @Composable
 fun MyOrdersScreenView(

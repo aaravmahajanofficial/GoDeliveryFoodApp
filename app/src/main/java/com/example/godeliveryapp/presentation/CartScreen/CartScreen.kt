@@ -50,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
-import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
@@ -59,6 +58,7 @@ import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.common.CartCustomisationCardView
 import com.example.godeliveryapp.presentation.common.CartItemCardView
+import com.example.godeliveryapp.presentation.common.PaymentDetailsCard
 import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.godeliveryapp.presentation.orderScreen.OrderState
 import com.example.zomatoclone.utils.Constants.DELIVERY_FEE
@@ -446,7 +446,7 @@ fun CartScreen(
 
                 Spacer(modifier = Modifier.height(MediumPadding1))
 
-                CartPaymentDetailsCard(cartSubTotal = cartTotalRoundOff(cartSubTotal))
+                PaymentDetailsCard(cartSubTotal = cartTotalRoundOff(cartSubTotal))
 
                 Spacer(modifier = Modifier.height(MediumPadding1))
 
@@ -561,108 +561,4 @@ private fun cartTotalRoundOff(cartTotal: Double): String {
     return df.format(cartTotal)
 }
 
-@Composable
-fun CartPaymentDetailsCard(modifier: Modifier = Modifier, cartSubTotal: String) {
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth(),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Text(
-                    text = "Subtotal",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
-                    color = colorResource(id = R.color.gray)
-                )
-
-                Text(
-                    text = cartSubTotal,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                    color = colorResource(id = R.color.black)
-                )
-
-
-            }
-
-            Spacer(modifier = Modifier.height(ExtraSmallPadding3))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Text(
-                    text = "Promocode",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
-                    color = colorResource(id = R.color.gray)
-                )
-
-                Text(
-                    text = "- ₹ $PROMOCODE",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                    color = colorResource(id = R.color.secondaryColor)
-                )
-
-            }
-            Spacer(modifier = Modifier.height(Dimens.ExtraSmallPadding3))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Text(
-                    text = "Delivery Fee",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
-                    color = colorResource(id = R.color.gray)
-                )
-
-                Text(
-                    text = "₹ $DELIVERY_FEE",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                    color = colorResource(id = R.color.black)
-                )
-
-
-            }
-            Spacer(modifier = Modifier.height(ExtraSmallPadding3))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Text(
-                    text = "Tax & other fees",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
-                    color = colorResource(id = R.color.gray)
-                )
-
-                Text(
-                    text = "₹ $TAX",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                    color = colorResource(id = R.color.black)
-                )
-
-
-            }
-
-
-        }
-    }
-
-
-}
