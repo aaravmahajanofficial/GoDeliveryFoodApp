@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -60,7 +59,6 @@ import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.godeliveryapp.utils.ViewState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpView(
     modifier: Modifier = Modifier,
@@ -206,8 +204,8 @@ fun SignUpView(
                         cursorColor = colorResource(id = R.color.black),
                         errorCursorColor = Color.Red,
                         errorBorderColor = Color.Red,
-
-                        )
+                        unfocusedTextColor = colorResource(id = R.color.black)
+                    )
 
                 )
 
@@ -238,8 +236,9 @@ fun SignUpView(
                         cursorColor = colorResource(id = R.color.black),
                         errorCursorColor = Color.Red,
                         errorBorderColor = Color.Red,
+                        unfocusedTextColor = colorResource(id = R.color.black)
 
-                        )
+                    )
 
                 )
 
@@ -271,8 +270,9 @@ fun SignUpView(
                         cursorColor = colorResource(id = R.color.black),
                         errorCursorColor = Color.Red,
                         errorBorderColor = Color.Red,
+                        unfocusedTextColor = colorResource(id = R.color.black)
 
-                        )
+                    )
 
                 )
 
@@ -304,8 +304,9 @@ fun SignUpView(
                         cursorColor = colorResource(id = R.color.black),
                         errorCursorColor = Color.Red,
                         errorBorderColor = Color.Red,
+                        unfocusedTextColor = colorResource(id = R.color.black)
 
-                        )
+                    )
 
                 )
             }

@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,6 +48,7 @@ import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.navigation.Route
+import com.example.godeliveryapp.utils.SharedPreferences
 
 data class OnBoardingScreenModel(
     val image: Int,
@@ -81,6 +83,8 @@ val screens = listOf(
 fun OnBoardingScreenView(modifier: Modifier = Modifier, navController: NavController) {
 
     val pagerState = rememberPagerState(initialPage = 0) { 3 }
+
+    val sharedPreferences = SharedPreferences(context = LocalContext.current)
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
@@ -169,6 +173,7 @@ fun OnBoardingScreenView(modifier: Modifier = Modifier, navController: NavContro
                             navController.navigate(Route.WelcomeScreen.route) {
                                 popUpTo(Route.OnBoardingScreen.route) { inclusive = true }
                             }
+                            sharedPreferences.setFirstTimeOpen()
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -201,6 +206,7 @@ fun OnBoardingScreenView(modifier: Modifier = Modifier, navController: NavContro
                             navController.navigate(Route.WelcomeScreen.route) {
                                 popUpTo(Route.OnBoardingScreen.route) { inclusive = true }
                             }
+                            sharedPreferences.setFirstTimeOpen()
                         },
                         modifier = Modifier
                             .fillMaxWidth()

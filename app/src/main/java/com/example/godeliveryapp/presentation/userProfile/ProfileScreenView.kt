@@ -20,11 +20,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Payments
 import androidx.compose.material.icons.outlined.PersonOutline
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +36,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
+import com.example.godeliveryapp.domain.model.SupabaseAuthViewModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
@@ -55,10 +56,12 @@ import com.example.godeliveryapp.presentation.navigation.Route
 fun ProfileScreenView(
     modifier: Modifier = Modifier,
     navController: NavController,
-    profileScreenViewModel: ProfileScreenViewModel = hiltViewModel()
+    profileScreenViewModel: ProfileScreenViewModel = hiltViewModel(),
+    supabaseAuthViewModel: SupabaseAuthViewModel = hiltViewModel()
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val userDetails = profileScreenViewModel.userDetails.collectAsState(initial = null).value
+    val context = LocalContext.current
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
@@ -170,12 +173,6 @@ fun ProfileScreenView(
                 Spacer(modifier = Modifier.height(MediumPadding2))
                 OptionRow(
                     screenHeight = screenHeight,
-                    optionTitle = "Payments",
-                    imageVector = Icons.Outlined.Payments
-                )
-                Spacer(modifier = Modifier.height(MediumPadding2))
-                OptionRow(
-                    screenHeight = screenHeight,
                     optionTitle = "Address",
                     imageVector = Icons.Outlined.LocationOn
                 )
@@ -186,17 +183,39 @@ fun ProfileScreenView(
                     imageVector = Icons.Outlined.FavoriteBorder
                 )
 
-                Spacer(modifier = Modifier.height(MediumPadding2))
-
-                OptionRow(
-                    screenHeight = screenHeight,
-                    optionTitle = "Settings",
-                    imageVector = Icons.Outlined.Settings
-                )
-
             }
 
-            Spacer(modifier = Modifier.height(screenHeight / 5))
+            Spacer(modifier = Modifier.height(screenHeight / 6))
+
+            Row(
+                modifier = Modifier
+                    .padding(start = ExtraSmallPadding1)
+                    .clickable {
+                        supabaseAuthViewModel
+                            .logOut(context = context)
+                            .also {
+                                navController.navigate(Route.WelcomeScreen.route) {
+                                    popUpTo(Route.ProfileScreen.route) { inclusive = true }
+                                }
+                            }
+                    },
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.Logout,
+                    contentDescription = null,
+                    tint = Color.Red,
+                    modifier = Modifier.size(screenHeight / 26),
+                )
+                Spacer(modifier = Modifier.width(NormalPadding))
+                Text(
+                    text = "Logout",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
+                    color = Color.Red
+                )
+            }
 
 
         }

@@ -21,6 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.godeliveryapp.domain.model.SupabaseAuthViewModel
 import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.godeliveryapp.presentation.navigation.SetupNavGraph
+import com.example.godeliveryapp.utils.SharedPreferences
 import com.example.godeliveryapp.utils.ViewState
 import com.example.zomatoclone.ui.theme.GoDeliveryApp
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,6 +34,8 @@ class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<MainViewModel>()
 
     private val authViewModel by viewModels<SupabaseAuthViewModel>()
+
+    private val sharedPreferences = SharedPreferences(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +69,11 @@ class MainActivity : ComponentActivity() {
 
                             SetupNavGraph(
                                 navController = navController,
-                                startDestination = Route.WelcomeScreen.route
+                                startDestination = if (sharedPreferences.isFirstTimeOpen()) {
+                                    Route.OnBoardingScreen.route
+                                } else {
+                                    Route.WelcomeScreen.route
+                                }
                             )
                         }
 
@@ -85,7 +92,7 @@ class MainActivity : ComponentActivity() {
                         is ViewState.Success -> {
                             SetupNavGraph(
                                 navController = navController,
-                                startDestination = Route.OnBoardingScreen.route
+                                startDestination = Route.HomeScreen.route
                             )
                         }
 

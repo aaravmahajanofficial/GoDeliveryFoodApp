@@ -135,7 +135,6 @@ fun WelcomeScreen(modifier: Modifier = Modifier, navController: NavController) {
                 Spacer(modifier = Modifier.height(MediumPadding1))
 
                 TextButton(
-                    elevation = ButtonDefaults.elevatedButtonElevation(),
                     onClick = { navController.navigate(Route.LoginPage.route) },
 
                     modifier = Modifier
@@ -158,7 +157,6 @@ fun WelcomeScreen(modifier: Modifier = Modifier, navController: NavController) {
                 Spacer(modifier = Modifier.height(ExtraSmallPadding3))
 
                 TextButton(
-                    elevation = ButtonDefaults.elevatedButtonElevation(),
                     onClick = { navController.navigate(Route.SignUpPage.route) },
                     border = BorderStroke(0.5.dp, colorResource(id = R.color.black)),
                     modifier = Modifier

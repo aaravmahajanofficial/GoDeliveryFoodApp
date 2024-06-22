@@ -6,6 +6,7 @@ class SharedPreferences(private val context: Context) {
 
     companion object {
         private const val SHARED_PREF_FILE = "APP_FILE"
+        private const val MISC_FILE = "MISC_FILE"
     }
 
     fun saveTokenData(key: String, data: String?) {
@@ -47,6 +48,16 @@ class SharedPreferences(private val context: Context) {
     fun clearPreferences() {
         val sharedPreferences = context.getSharedPreferences(SHARED_PREF_FILE, Context.MODE_PRIVATE)
         return sharedPreferences.edit().clear().apply()
+    }
+
+    fun isFirstTimeOpen(): Boolean {
+        val sharedPreferences = context.getSharedPreferences(MISC_FILE, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("IS_FIRST_TIME", true)
+    }
+
+    fun setFirstTimeOpen() {
+        val sharedPreferences = context.getSharedPreferences(MISC_FILE, Context.MODE_PRIVATE)
+        sharedPreferences.edit().putBoolean("IS_FIRST_TIME", false).apply()
     }
 
 }

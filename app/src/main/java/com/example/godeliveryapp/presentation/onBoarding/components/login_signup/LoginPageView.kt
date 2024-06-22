@@ -193,8 +193,8 @@ fun LoginPageView(
                         cursorColor = colorResource(id = R.color.black),
                         errorCursorColor = Color.Red,
                         errorBorderColor = Color.Red,
-
-                        )
+                        unfocusedTextColor = colorResource(id = R.color.black)
+                    )
 
                 )
 
@@ -226,8 +226,9 @@ fun LoginPageView(
                         cursorColor = colorResource(id = R.color.black),
                         errorCursorColor = Color.Red,
                         errorBorderColor = Color.Red,
+                        unfocusedTextColor = colorResource(id = R.color.black)
 
-                        )
+                    )
 
                 )
             }
