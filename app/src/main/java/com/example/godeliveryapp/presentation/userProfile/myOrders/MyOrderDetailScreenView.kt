@@ -44,9 +44,9 @@ import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
+import com.example.godeliveryapp.presentation.common.CustomBackArrowButton
 import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import com.example.godeliveryapp.presentation.common.PaymentDetailsCard
-import com.example.godeliveryapp.presentation.common.components.CustomBackArrowButton
 
 @Composable
 fun MyOrderDetailScreenView(modifier: Modifier = Modifier, navController: NavController) {

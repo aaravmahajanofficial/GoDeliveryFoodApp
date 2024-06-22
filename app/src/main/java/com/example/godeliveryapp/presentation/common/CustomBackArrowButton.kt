@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.common.components
+package com.example.godeliveryapp.presentation.common
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box

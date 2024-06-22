@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.common.components
+package com.example.godeliveryapp.presentation.common
 
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.presentation.navigation.Route
