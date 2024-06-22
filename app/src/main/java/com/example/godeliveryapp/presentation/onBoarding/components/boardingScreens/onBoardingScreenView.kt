@@ -132,9 +132,7 @@ fun OnBoardingScreenView(modifier: Modifier = Modifier, navController: NavContro
 
                     TextButton(
                         onClick = {
-
                             goToNextPage = true
-
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -167,7 +165,11 @@ fun OnBoardingScreenView(modifier: Modifier = Modifier, navController: NavContro
                     Spacer(modifier = Modifier.height(ExtraSmallPadding1))
 
                     TextButton(
-                        onClick = { navController.navigate(Route.WelcomeScreen.route) },
+                        onClick = {
+                            navController.navigate(Route.WelcomeScreen.route) {
+                                popUpTo(Route.OnBoardingScreen.route) { inclusive = true }
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(screenHeight / 14),
@@ -195,7 +197,11 @@ fun OnBoardingScreenView(modifier: Modifier = Modifier, navController: NavContro
                 ) {
 
                     TextButton(
-                        onClick = { navController.navigate(Route.LoginPage.route) },
+                        onClick = {
+                            navController.navigate(Route.WelcomeScreen.route) {
+                                popUpTo(Route.OnBoardingScreen.route) { inclusive = true }
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(screenHeight / 14),
