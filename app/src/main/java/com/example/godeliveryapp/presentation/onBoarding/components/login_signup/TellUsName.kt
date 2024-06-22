@@ -1,4 +1,4 @@
-package com.example.zomatoclone.presentation.onBoarding.components
+package com.example.godeliveryapp.presentation.onBoarding.components.login_signup
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

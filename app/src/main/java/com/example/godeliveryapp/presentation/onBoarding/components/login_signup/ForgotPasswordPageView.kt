@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.onBoarding.components
+package com.example.godeliveryapp.presentation.onBoarding.components.login_signup
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -52,6 +52,7 @@ import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.SupabaseAuthViewModel
 import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
+import com.example.godeliveryapp.utils.ViewState
 
 @Composable
 fun ForgotPasswordPageView(

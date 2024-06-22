@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.onBoarding.components
+package com.example.godeliveryapp.presentation.onBoarding.components.login_signup
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -60,6 +60,7 @@ import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.navigation.Route
+import com.example.godeliveryapp.utils.ViewState
 
 @Composable
 fun OtpPageView(

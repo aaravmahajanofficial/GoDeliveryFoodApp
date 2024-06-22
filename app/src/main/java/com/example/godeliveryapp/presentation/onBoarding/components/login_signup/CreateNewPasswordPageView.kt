@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.onBoarding.components
+package com.example.godeliveryapp.presentation.onBoarding.components.login_signup
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -56,6 +56,7 @@ import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.navigation.Route
+import com.example.godeliveryapp.utils.ViewState
 
 @Composable
 fun CreateNewPasswordPageView(

@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.onBoarding.components
+package com.example.godeliveryapp.utils
 
 sealed class ViewState {
 

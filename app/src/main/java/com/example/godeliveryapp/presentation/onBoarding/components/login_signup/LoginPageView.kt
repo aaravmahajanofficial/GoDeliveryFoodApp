@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.onBoarding.components
+package com.example.godeliveryapp.presentation.onBoarding.components.login_signup
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -44,38 +45,35 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.SupabaseAuthViewModel
-import com.example.godeliveryapp.presentation.Dimens
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.navigation.Route
+import com.example.godeliveryapp.utils.ViewState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpView(
+fun LoginPageView(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: SupabaseAuthViewModel = hiltViewModel()
+    authViewModel: SupabaseAuthViewModel = hiltViewModel()
 ) {
 
     val openDialog = remember { mutableStateOf(false) }
-    val viewState = viewModel.viewState.collectAsState(initial = ViewState.Empty).value
+    val viewState = authViewModel.viewState.collectAsState(initial = ViewState.Empty).value
     val context = LocalContext.current
-
-    var nameController by remember {
-        mutableStateOf(
-            ""
-        )
-    }
 
     var emailFieldController by remember {
         mutableStateOf(
@@ -89,27 +87,19 @@ fun SignUpView(
         )
     }
 
-    var confirmPasswordController by remember {
-        mutableStateOf(
-            ""
-        )
-    }
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     val isEnable = remember {
         mutableStateOf(false)
     }
 
     LaunchedEffect(
-        nameController,
         emailFieldController,
         passwordFieldController,
-        confirmPasswordController
     ) {
         isEnable.value =
-            nameController.isNotEmpty() && emailFieldController.isNotEmpty() && passwordFieldController.isNotEmpty() && confirmPasswordController.isNotEmpty()
+            emailFieldController.isNotEmpty() && passwordFieldController.isNotEmpty()
     }
-
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -119,7 +109,6 @@ fun SignUpView(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
-
 
             Box(
                 modifier = Modifier
@@ -138,15 +127,14 @@ fun SignUpView(
 
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(ExtraSmallPadding3)
                     .height(screenHeight.div(12)), contentAlignment = Alignment.Center
             ) {
                 Image(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier,
                     painter = painterResource(id = R.drawable.app_logo),
                     contentDescription = null,
-                    contentScale = ContentScale.Fit
+                    contentScale = ContentScale.Fit,
                 )
             }
 
@@ -154,14 +142,14 @@ fun SignUpView(
 
 
             Text(
-                text = "Register",
+                text = "Login",
                 style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.SemiBold),
                 color = colorResource(id = R.color.black),
                 modifier = Modifier.align(Alignment.Start)
             )
 
             Text(
-                text = "Enter Your Personal Information",
+                text = "Login to continue using the app",
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontWeight = FontWeight.Medium, color = colorResource(
                         id = R.color.gray
@@ -171,7 +159,7 @@ fun SignUpView(
 
                 )
 
-            Spacer(modifier = Modifier.padding(Dimens.ExtraSmallPadding2))
+            Spacer(modifier = Modifier.padding(ExtraSmallPadding3))
 
 
             Column(
@@ -183,42 +171,9 @@ fun SignUpView(
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    singleLine = true,
-                    maxLines = 1,
-                    placeholder = {
-                        Text(
-                            text = "Enter your name",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                            color = Color.LightGray
-                        )
-                    },
-                    value = nameController,
-                    onValueChange = { nameController = it },
-                    shape = RoundedCornerShape(5.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color.LightGray,
-                        focusedBorderColor = colorResource(id = R.color.black),
-                        focusedTextColor = colorResource(id = R.color.black),
-                        cursorColor = colorResource(id = R.color.black),
-                        errorCursorColor = Color.Red,
-                        errorBorderColor = Color.Red,
-
-                        )
-
-                )
-
-                Spacer(modifier = Modifier.padding(ExtraSmallPadding3))
-
-                OutlinedTextField(
-                    keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next
                     ),
-                    singleLine = true,
-                    maxLines = 1,
                     placeholder = {
                         Text(
                             text = "Enter your email",
@@ -226,7 +181,8 @@ fun SignUpView(
                             color = Color.LightGray
                         )
                     },
-                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 1,
+                    singleLine = true,
                     value = emailFieldController,
                     onValueChange = { emailFieldController = it },
                     shape = RoundedCornerShape(5.dp),
@@ -248,8 +204,10 @@ fun SignUpView(
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Next
+                        imeAction = ImeAction.Done
                     ),
+                    singleLine = true,
+                    maxLines = 1,
                     placeholder = {
                         Text(
                             text = "Enter password",
@@ -257,8 +215,6 @@ fun SignUpView(
                             color = Color.LightGray
                         )
                     },
-                    singleLine = true,
-                    maxLines = 1,
                     modifier = Modifier.fillMaxWidth(),
                     value = passwordFieldController,
                     onValueChange = { passwordFieldController = it },
@@ -274,42 +230,33 @@ fun SignUpView(
                         )
 
                 )
-
-                Spacer(modifier = Modifier.padding(Dimens.ExtraSmallPadding3))
-
-                OutlinedTextField(
-                    visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done
-                    ),
-                    singleLine = true,
-                    maxLines = 1,
-                    placeholder = {
-                        Text(
-                            text = "Enter confirm password",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                            color = Color.LightGray
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    value = confirmPasswordController,
-                    onValueChange = { confirmPasswordController = it },
-                    shape = RoundedCornerShape(5.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color.LightGray,
-                        focusedBorderColor = colorResource(id = R.color.black),
-                        focusedTextColor = colorResource(id = R.color.black),
-                        cursorColor = colorResource(id = R.color.black),
-                        errorCursorColor = Color.Red,
-                        errorBorderColor = Color.Red,
-
-                        )
-
-                )
             }
 
-            Spacer(modifier = Modifier.padding(ExtraSmallPadding3))
+            Spacer(modifier = Modifier.height(ExtraSmallPadding1))
+
+            val annotatedString = buildAnnotatedString {
+                withStyle(
+                    MaterialTheme.typography.labelMedium.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        color = colorResource(id = R.color.gray)
+                    )
+                        .toSpanStyle()
+                ) {
+                    append("Forgot Password?")
+                }
+            }
+
+            ClickableText(
+                onClick = {
+
+                    navController.navigate(Route.ForgotPasswordScreen.route)
+
+                },
+                modifier = Modifier.align(Alignment.End),
+                text = annotatedString,
+            )
+
+            Spacer(modifier = Modifier.height(screenHeight / 4))
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -323,11 +270,10 @@ fun SignUpView(
                     onClick = {
 
                         if (isEnable.value) {
-                            viewModel.signUp(
+                            authViewModel.login(
                                 context = context,
                                 userEmail = emailFieldController,
-                                userPassword = passwordFieldController,
-                                userName = nameController
+                                userPassword = passwordFieldController
                             )
                         }
 
@@ -370,9 +316,9 @@ fun SignUpView(
 
         ViewState.Success -> {
             navController.navigate(Route.HomeScreen.route) {
-                popUpTo(Route.WelcomeScreen.route) { inclusive = true }
+                popUpTo(Route.LoginPage.route) { inclusive = true }
             }
-            viewModel.resetUserState()
+            authViewModel.resetUserState()
         }
 
         ViewState.Empty -> {
@@ -410,7 +356,7 @@ fun SignUpView(
                 TextButton(
                     onClick = {
                         openDialog.value = false
-                        viewModel.resetUserState()
+                        authViewModel.resetUserState()
 
                     }) {
 
@@ -425,5 +371,5 @@ fun SignUpView(
 
     }
 
-}
 
+}

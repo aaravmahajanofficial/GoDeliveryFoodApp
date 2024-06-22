@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.onBoarding.components
+package com.example.godeliveryapp.presentation.onBoarding.components.login_signup
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image

@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.godeliveryapp.data.remote.dataTransferObject.UserDto
 import com.example.godeliveryapp.domain.repository.Repository
-import com.example.godeliveryapp.presentation.onBoarding.components.ViewState
 import com.example.godeliveryapp.utils.SharedPreferences
+import com.example.godeliveryapp.utils.ViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.exceptions.RestException
