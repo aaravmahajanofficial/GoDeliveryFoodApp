@@ -33,6 +33,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -77,13 +78,17 @@ fun CartScreen(
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val cartItems = cartViewModel.cartItems.collectAsState(initial = listOf()).value
+    val cartItems = cartViewModel.cartItems.collectAsState(initial = emptyList()).value
     val cartSubTotal = cartViewModel.cartSubTotal.collectAsState(initial = 0.0).value
     val cartTotal = (cartSubTotal - PROMOCODE) + DELIVERY_FEE + TAX
     val orderState by cartViewModel.orderState.collectAsState()
 
     val textFieldValue = remember {
         mutableStateOf("")
+    }
+
+    LaunchedEffect(Unit) {
+        cartViewModel.getItems()
     }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

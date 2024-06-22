@@ -151,7 +151,7 @@ fun OrderSuccessScreenView(modifier: Modifier = Modifier, navController: NavCont
                     Spacer(modifier = Modifier.height(ExtraSmallPadding3))
 
                     TextButton(
-                        onClick = { navController.navigate(Route.SignUpPage.route) },
+                        onClick = { navController.navigateUp() },
                         border = BorderStroke(0.5.dp, colorResource(id = R.color.lightGray)),
                         modifier = Modifier
                             .fillMaxWidth()

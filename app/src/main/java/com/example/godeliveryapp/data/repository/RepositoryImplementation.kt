@@ -47,7 +47,7 @@ class RepositoryImplementation(
     override suspend fun getCartItems(): List<CartItemModel> {
         return withContext(Dispatchers.IO) {
 
-            val cartId = sharedPreferences.getUserData("CART_ID")
+            val cartId = sharedPreferences.getCartData("CART_ID")
             val cartItems = postgrest.from("CartItems").select {
                 filter {
                     if (cartId != null) {
@@ -161,8 +161,8 @@ class RepositoryImplementation(
 
         return withContext(Dispatchers.IO) {
 
-            sharedPreferences.getUserData("CART_ID") ?: createNewCart().also {
-                sharedPreferences.saveUserData("CART_ID", it)
+            sharedPreferences.getCartData("CART_ID") ?: createNewCart().also {
+                sharedPreferences.saveCartData("CART_ID", it)
             }
         }
 
@@ -251,6 +251,8 @@ class RepositoryImplementation(
                     postgrest.from("OrderItems").insert(it.copy(orderId = randomId))
                 }
                 sharedPreferences.saveOrderData("ORDER_ID", randomId)
+
+                clearCart().also { sharedPreferences.clearCartPreferences() }
 
 
             } catch (e: Exception) {
@@ -367,6 +369,18 @@ class RepositoryImplementation(
             }
 
         }
+    }
+
+    override suspend fun clearCart() {
+        withContext(Dispatchers.IO) {
+            val cartId = getOrCreateCart()
+            postgrest.from("Cart").delete {
+                filter {
+                    eq("cartId", cartId)
+                }
+            }
+        }
+
     }
 
 }

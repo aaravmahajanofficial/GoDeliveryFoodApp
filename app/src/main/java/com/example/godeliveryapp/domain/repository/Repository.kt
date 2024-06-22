@@ -41,11 +41,12 @@ interface Repository {
     suspend fun placeOrder(orderDto: OrderDto, orderItems: List<OrderItemDto>)
 
     suspend fun updateOrderStatus(newState: OrderState): Boolean
-//    suspend fun getOrders(): List<OrderDto>?
-//
+
     suspend fun getOrder(orderId: Int): OrderDto?
 //
 //    suspend fun cancelOrder(orderId: Int): Boolean
+
+    suspend fun clearCart()
 
     suspend fun getOrderItems(): List<MyOrderModel>
 

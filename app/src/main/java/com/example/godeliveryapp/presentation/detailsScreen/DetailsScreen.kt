@@ -73,12 +73,12 @@ fun DetailsScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getMenu(restaurantListingCardModel.restaurantId)
+        cartScreenViewModel.getItems()
     }
 
     val isLoading = viewModel.isLoading.collectAsState(initial = false).value
 
     val menuItems = viewModel.menuItems.collectAsState(initial = listOf()).value
-    val cartItems = cartScreenViewModel.cartItems.collectAsState(initial = listOf()).value
     val filteredRestaurants = viewModel.filteredList.collectAsState(initial = listOf()).value
     val totalItems = cartScreenViewModel.totalItemsInCart.collectAsState(initial = 0).value
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp

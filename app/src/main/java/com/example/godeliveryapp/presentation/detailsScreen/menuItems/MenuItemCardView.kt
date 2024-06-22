@@ -72,7 +72,7 @@ fun MenuItemCardView(
     menuItemModel: MenuItemModel,
     cartViewModel: CartScreenViewModel = hiltViewModel(),
 ) {
-    val cartItems = cartViewModel.cartItems.collectAsState(initial = listOf()).value
+    val cartItems = cartViewModel.cartItems.collectAsState(initial = emptyList()).value
     val screenHeight = LocalConfiguration.current.screenHeightDp
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember {

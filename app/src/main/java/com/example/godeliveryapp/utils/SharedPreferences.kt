@@ -7,6 +7,7 @@ class SharedPreferences(private val context: Context) {
     companion object {
         private const val SHARED_PREF_FILE = "APP_FILE"
         private const val MISC_FILE = "MISC_FILE"
+        private const val CART_FILE = "CART_FILE"
     }
 
     fun saveTokenData(key: String, data: String?) {
@@ -47,6 +48,23 @@ class SharedPreferences(private val context: Context) {
 
     fun clearPreferences() {
         val sharedPreferences = context.getSharedPreferences(SHARED_PREF_FILE, Context.MODE_PRIVATE)
+        return sharedPreferences.edit().clear().apply()
+    }
+
+    fun saveCartData(key: String, data: String?) {
+
+        val sharedPreferences = context.getSharedPreferences(CART_FILE, Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString(key, data).apply()
+
+    }
+
+    fun getCartData(key: String): String? {
+        val sharedPreferences = context.getSharedPreferences(CART_FILE, Context.MODE_PRIVATE)
+        return sharedPreferences.getString(key, null)
+    }
+
+    fun clearCartPreferences() {
+        val sharedPreferences = context.getSharedPreferences(CART_FILE, Context.MODE_PRIVATE)
         return sharedPreferences.edit().clear().apply()
     }
 

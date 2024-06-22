@@ -9,7 +9,6 @@ import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.domain.repository.Repository
 import com.example.godeliveryapp.presentation.orderScreen.OrderState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,8 +21,8 @@ class CartScreenViewModel @Inject constructor(
 ) : ViewModel() {
 
     // collection of individual card of _cartItems, or _cartItemsCard
-    private val _cartItems = MutableStateFlow<List<CartItemModel>>(listOf())
-    val cartItems: Flow<List<CartItemModel>?> get() = _cartItems
+    private val _cartItems = MutableStateFlow<List<CartItemModel>>(emptyList())
+    val cartItems: Flow<List<CartItemModel>> get() = _cartItems
 
     private val _cartSubTotal = MutableStateFlow(0.0)
     val cartSubTotal: Flow<Double> get() = _cartSubTotal
@@ -39,13 +38,15 @@ class CartScreenViewModel @Inject constructor(
         getItems()
     }
 
-    private fun getItems() {
+    fun getItems() {
 
         viewModelScope.launch {
             //list of cartItems
             val cartItems = repository.getCartItems()
-            _cartItems.emit(cartItems!!)
-            _totalItemsInCart.emit(cartItems.size)
+            _cartItems.emit(cartItems ?: emptyList())
+            if (cartItems != null) {
+                _totalItemsInCart.emit(cartItems.size)
+            }
             calculateCartValue()
         }
 
@@ -95,6 +96,8 @@ class CartScreenViewModel @Inject constructor(
                 repository.updateOrderStatus(OrderState.CONFIRMED)
 
                 _orderState.emit(OrderState.CONFIRMED)
+
+                _cartItems.value = emptyList()
 
             } catch (e: Exception) {
                 Log.d("ERROR WHILE PLACING ORDER : ", e.toString())
