@@ -1,4 +1,4 @@
-package com.example.zomatoclone.presentation.homeScreen.OfferAds.components
+package com.example.godeliveryapp.presentation.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

@@ -32,4 +32,6 @@ sealed class Route(val route: String) {
 
     data object MyFavouritesScreen : Route(route = "my_favourites_screen")
 
+    data object OnBoardingScreen : Route(route = "on_boarding_screen")
+
 }

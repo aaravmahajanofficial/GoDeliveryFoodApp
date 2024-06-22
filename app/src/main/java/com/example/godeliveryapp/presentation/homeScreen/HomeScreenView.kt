@@ -51,10 +51,10 @@ import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.common.CategoryButtonView
+import com.example.godeliveryapp.presentation.common.PageIndicator
 import com.example.godeliveryapp.presentation.homeScreen.listings.components.RestaurantListingCardView
 import com.example.godeliveryapp.presentation.homeScreen.slidingAds.SlidingAdBanners
 import com.example.godeliveryapp.presentation.navigation.Route
-import com.example.zomatoclone.presentation.homeScreen.OfferAds.components.PageIndicator
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

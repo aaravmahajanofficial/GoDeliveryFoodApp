@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
                         is ViewState.Success -> {
                             SetupNavGraph(
                                 navController = navController,
-                                startDestination = Route.MyFavouritesScreen.route
+                                startDestination = Route.OnBoardingScreen.route
                             )
                         }
 
