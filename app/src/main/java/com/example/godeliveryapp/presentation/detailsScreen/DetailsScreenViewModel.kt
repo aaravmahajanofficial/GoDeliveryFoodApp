@@ -19,6 +19,10 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Reposit
     private val _isLoading = MutableStateFlow(false)
     val isLoading: Flow<Boolean> get() = _isLoading
 
+    private val _filteredList = MutableStateFlow<List<MenuItemModel>>(listOf())
+    val filteredList: Flow<List<MenuItemModel>> get() = _filteredList
+
+    var isVeg = MutableStateFlow(false)
 
     fun getMenu(restaurantId: Int) {
 
@@ -36,7 +40,8 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Reposit
                         itemDescription = menuItem.description,
                         itemPrice = menuItem.price,
                         itemCategory = menuItem.itemCategory,
-                        restaurantId = menuItem.restaurantId
+                        restaurantId = menuItem.restaurantId,
+                        isVeg = menuItem.isVeg
                     )
 
                 }
@@ -48,6 +53,26 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Reposit
                 _isLoading.emit(true)
             }
         }
+
+    }
+
+    fun applyFilter() {
+
+        viewModelScope.launch {
+
+            val filteredRestaurants = _menuItems.value.filter { item ->
+
+                val isVeg = !isVeg.value || item.isVeg
+
+                isVeg
+
+            }
+
+            _filteredList.emit(filteredRestaurants)
+
+
+        }
+
 
     }
 

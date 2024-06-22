@@ -22,5 +22,9 @@ data class MenuItemsDto(
     val description: String,
 
     @SerialName("categoryId")
-    val itemCategory: Int
+    val itemCategory: Int,
+
+    @SerialName("isVeg")
+    val isVeg: Boolean
+
 )

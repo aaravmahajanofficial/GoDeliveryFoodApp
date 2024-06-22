@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.StarRate
@@ -43,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -54,6 +56,8 @@ import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
+import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemCardView
 import com.example.godeliveryapp.presentation.navigation.Route
@@ -73,11 +77,12 @@ fun DetailsScreen(
 
     val isLoading = viewModel.isLoading.collectAsState(initial = false).value
 
-    val menuItemsCards = viewModel.menuItems.collectAsState(initial = listOf()).value
+    val menuItems = viewModel.menuItems.collectAsState(initial = listOf()).value
     val cartItems = cartScreenViewModel.cartItems.collectAsState(initial = listOf()).value
+    val filteredRestaurants = viewModel.filteredList.collectAsState(initial = listOf()).value
     val totalItems = cartScreenViewModel.totalItemsInCart.collectAsState(initial = 0).value
-    val screenHeight = LocalConfiguration.current.screenHeightDp
-    var checked by remember { mutableStateOf(false) }
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    var onlyVeg by remember { mutableStateOf(false) }
 
     if (isLoading) {
 
@@ -96,20 +101,16 @@ fun DetailsScreen(
                 //Hero Section
                 Box(
                     modifier = Modifier
-                        .height((screenHeight / 3).dp)
+                        .height((screenHeight / 3))
                         .fillMaxWidth()
                         .background(Color.Transparent, shape = RoundedCornerShape(12.dp)),
                 ) {
-                    //            restaurantListingCard.imageId?.let { painterResource(id = it) }?.let {
-
                     Image(
                         modifier = Modifier.fillMaxSize(),
                         painter = rememberAsyncImagePainter(restaurantListingCardModel.imageURL),
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
-
-                    //            }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -325,26 +326,45 @@ fun DetailsScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Switch(
-                            checked = checked,
-                            onCheckedChange = { checked = it },
+                            checked = onlyVeg.also {
+                                viewModel.isVeg.value = it
+                                viewModel.applyFilter()
+                            },
+                            onCheckedChange = { onlyVeg = it },
                             thumbContent = {
+                                if (onlyVeg) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Check,
+                                        contentDescription = null,
+                                        tint = colorResource(id = R.color.secondaryColor)
+                                    )
+                                }
                             },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = Color.White,
-                                checkedTrackColor = colorResource(id = R.color.green),
+                                checkedTrackColor = colorResource(id = R.color.secondaryColor),
                                 uncheckedThumbColor = Color.White,
                                 uncheckedTrackColor = Color.LightGray,
                                 checkedBorderColor = Color.Transparent,
-                                uncheckedBorderColor = Color.Transparent
+                                uncheckedBorderColor = Color.Transparent,
                             ),
                             modifier = Modifier.scale(0.8f)
                         )
                         Text(
                             text = "Only Veg",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray,
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
+                            color = colorResource(id = R.color.black),
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1,
+                        )
+
+                        Spacer(modifier = Modifier.width(ExtraSmallPadding2))
+
+                        Icon(
+                            painter = painterResource(id = R.drawable.veg_only_logo),
+                            contentDescription = null,
+                            tint = colorResource(id = R.color.secondaryColor),
+                            modifier = Modifier.size(screenHeight / 42)
                         )
 
                     }
@@ -363,21 +383,40 @@ fun DetailsScreen(
 
             }
 
-            items(menuItemsCards.size) { index ->
-                val menuItemCardModel = menuItemsCards[index]
+            if (filteredRestaurants.isNotEmpty()) {
+                items(filteredRestaurants.size) { index ->
+                    val menuItem = filteredRestaurants[index]
 
-                MenuItemCardView(
-                    menuItemModel = menuItemCardModel
-                )
+                    MenuItemCardView(
+                        menuItemModel = menuItem
+                    )
 
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = NormalPadding, end = NormalPadding)
-                        .height(1.dp)
-                        .background(color = colorResource(id = R.color.lightGray))
-                )
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = MediumPadding1, end = MediumPadding1)
+                            .height(1.dp)
+                            .background(color = colorResource(id = R.color.lightGray))
+                    )
 
+                }
+            } else {
+                items(menuItems.size) { index ->
+                    val menuItem = menuItems[index]
+
+                    MenuItemCardView(
+                        menuItemModel = menuItem
+                    )
+
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = MediumPadding1, end = MediumPadding1)
+                            .height(1.dp)
+                            .background(color = colorResource(id = R.color.lightGray))
+                    )
+
+                }
             }
 
         }

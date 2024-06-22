@@ -64,19 +64,9 @@ class RepositoryImplementation(
                     filter { eq("itemId", cartItem.itemId) }
                 }.decodeSingle<MenuItemsDto>()
 
-                val menuItemModel = MenuItemModel(
-                    itemId = menuItem.itemId,
-                    itemName = menuItem.itemName,
-                    itemPrice = menuItem.price,
-                    itemDescription = menuItem.description,
-                    itemImageId = R.drawable.restaurant1,
-                    itemCategory = menuItem.itemCategory,
-                    restaurantId = menuItem.restaurantId
-                )
-
                 CartItemModel(
                     restaurantId = cartItem.restaurantId,
-                    menuItemModel = menuItemModel,
+                    menuItemModel = menuItemDtoToModel(menuItem),
                     quantity = cartItem.quantity,
                 )
 
@@ -389,7 +379,8 @@ fun menuItemDtoToModel(menuItem: MenuItemsDto): MenuItemModel {
         itemDescription = menuItem.description,
         itemImageId = R.drawable.restaurant1,
         itemCategory = menuItem.itemCategory,
-        restaurantId = menuItem.restaurantId
+        restaurantId = menuItem.restaurantId,
+        isVeg = menuItem.isVeg
     )
 }
 
