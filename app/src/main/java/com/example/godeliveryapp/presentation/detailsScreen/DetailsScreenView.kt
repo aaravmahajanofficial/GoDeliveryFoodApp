@@ -63,7 +63,7 @@ import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemCa
 import com.example.godeliveryapp.presentation.navigation.Route
 
 @Composable
-fun DetailsScreen(
+fun DetailsScreenView(
     modifier: Modifier = Modifier,
     navController: NavController,
     viewModel: DetailsScreenViewModel = hiltViewModel(),

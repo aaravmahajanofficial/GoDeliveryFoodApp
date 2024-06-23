@@ -9,7 +9,7 @@ import androidx.navigation.navArgument
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.CartScreen.CartScreenView
-import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
+import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreenView
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreenView
 import com.example.godeliveryapp.presentation.homeScreen.foodCategoryScreen.CategoryScreenView
 import com.example.godeliveryapp.presentation.onBoarding.components.boardingScreens.OnBoardingScreenView
@@ -153,7 +153,7 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
                     )
                 }
             if (restaurantListingCardModel != null) {
-                DetailsScreen(
+                DetailsScreenView(
 //                    navigateUp = {
 //                        navController.navigateUp()
 //                    },
