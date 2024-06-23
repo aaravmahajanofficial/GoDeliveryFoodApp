@@ -33,6 +33,9 @@ class CartScreenViewModel @Inject constructor(
     private val _orderState = MutableStateFlow<OrderState>(OrderState.EMPTY)
     val orderState: StateFlow<OrderState> get() = _orderState
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: Flow<Boolean> get() = _isLoading
+
 
     init {
         getItems()
@@ -41,6 +44,8 @@ class CartScreenViewModel @Inject constructor(
     fun getItems() {
 
         viewModelScope.launch {
+
+            _isLoading.value = true
             //list of cartItems
             val cartItems = repository.getCartItems()
             _cartItems.emit(cartItems ?: emptyList())
@@ -48,6 +53,7 @@ class CartScreenViewModel @Inject constructor(
                 _totalItemsInCart.emit(cartItems.size)
             }
             calculateCartValue()
+            _isLoading.value = false
         }
 
     }

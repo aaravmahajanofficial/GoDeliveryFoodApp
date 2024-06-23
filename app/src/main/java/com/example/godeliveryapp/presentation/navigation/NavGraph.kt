@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
-import com.example.godeliveryapp.presentation.CartScreen.CartScreen
+import com.example.godeliveryapp.presentation.CartScreen.CartScreenView
 import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreen
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreenView
 import com.example.godeliveryapp.presentation.homeScreen.foodCategoryScreen.CategoryScreenView
@@ -58,7 +58,7 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
         composable(
             route = Route.CartScreen.route,
         ) {
-            CartScreen(
+            CartScreenView(
                 navController = navController
             )
         }

@@ -1,8 +1,5 @@
 package com.example.godeliveryapp.presentation.onBoarding.components.login_signup
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,12 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
@@ -38,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -56,6 +49,7 @@ import com.example.godeliveryapp.domain.model.SupabaseAuthViewModel
 import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
+import com.example.godeliveryapp.presentation.common.CustomBackArrowButton
 import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.godeliveryapp.utils.ViewState
 
@@ -115,37 +109,23 @@ fun SignUpView(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(NormalPadding),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
 
+            CustomBackArrowButton(navController = navController)
 
             Box(
                 modifier = Modifier
-                    .align(Alignment.Start)
-                    .clickable { navController.navigateUp() }
-                    .background(color = Color.White, shape = CircleShape)
-                    .size(42.dp), contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                    contentDescription = null,
-                    tint = colorResource(id = R.color.black),
-                    modifier = Modifier.scale(1f)
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally)
                     .padding(ExtraSmallPadding3)
                     .height(screenHeight.div(12)), contentAlignment = Alignment.Center
             ) {
-                Image(
-                    modifier = Modifier.fillMaxSize(),
+                Icon(
+                    modifier = Modifier.scale(1.5f),
                     painter = painterResource(id = R.drawable.app_logo),
                     contentDescription = null,
-                    contentScale = ContentScale.Fit
+                    tint = colorResource(id = R.color.black),
                 )
             }
 
