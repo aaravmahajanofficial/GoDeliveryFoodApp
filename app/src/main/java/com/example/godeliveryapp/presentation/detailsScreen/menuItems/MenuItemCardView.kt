@@ -24,11 +24,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -60,9 +63,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
-import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
+import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
+import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,11 +77,13 @@ fun MenuItemCardView(
     cartViewModel: CartScreenViewModel = hiltViewModel(),
 ) {
     val cartItems = cartViewModel.cartItems.collectAsState(initial = emptyList()).value
-    val screenHeight = LocalConfiguration.current.screenHeightDp
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember {
         mutableStateOf(false)
     }
+    val yesCheckBoxState = remember { mutableStateOf(false) }
+    val noCheckBoxState = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     fun onClick() {
@@ -88,11 +94,11 @@ fun MenuItemCardView(
         }
     }
 
-    var existingItem = cartItems?.firstOrNull { it.menuItemModel.itemId == menuItemModel.itemId }
+    var existingItem = cartItems.firstOrNull { it.menuItemModel.itemId == menuItemModel.itemId }
 
     LaunchedEffect(cartItems) {
 
-        existingItem = cartItems?.firstOrNull { it.menuItemModel.itemId == menuItemModel.itemId }
+        existingItem = cartItems.firstOrNull { it.menuItemModel.itemId == menuItemModel.itemId }
 
     }
 
@@ -291,13 +297,13 @@ fun MenuItemCardView(
                     containerColor = Color.White,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height((screenHeight).dp)
+                        .height((screenHeight))
                 ) {
                     Column {
                         //HeroSection
                         Box(
                             modifier = Modifier
-                                .height((screenHeight / 3).dp)
+                                .height((screenHeight / 3))
                                 .fillMaxWidth()
                                 .background(
                                     Color.Transparent,
@@ -344,7 +350,7 @@ fun MenuItemCardView(
                             Column(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalAlignment = Alignment.Start,
-                                verticalArrangement = Arrangement.Center
+                                verticalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -379,14 +385,105 @@ fun MenuItemCardView(
                                     overflow = TextOverflow.Visible,
                                 )
 
-                                Spacer(modifier = Modifier.height(Dimens.MediumPadding2))
+                                CustomLineBreak()
 
-                                Spacer(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(1.dp)
-                                        .background(color = colorResource(id = R.color.lightGray))
-                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "Need Cutlery",
+                                        style = MaterialTheme.typography.titleMedium.copy(
+                                            fontWeight = FontWeight.Bold
+                                        ),
+                                        color = colorResource(id = R.color.black),
+                                    )
+
+                                    Row(
+                                        horizontalArrangement = Arrangement.End,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+
+                                        Icon(
+                                            modifier = Modifier.size(screenHeight.div(38)),
+                                            imageVector = Icons.Rounded.Check,
+                                            contentDescription = null,
+                                            tint = colorResource(id = R.color.secondaryColor)
+                                        )
+                                        Text(
+                                            text = "Required",
+                                            style = MaterialTheme.typography.bodyMedium.copy(
+                                                fontWeight = FontWeight.Normal
+                                            ),
+                                            color = colorResource(
+                                                id = R.color.secondaryColor
+                                            ),
+                                            maxLines = 1,
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(MediumPadding1))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+
+                                    Text(
+                                        text = "Yes",
+                                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Normal),
+                                        color = colorResource(id = R.color.black)
+                                    )
+
+                                    Box(
+                                        modifier = Modifier.size(screenHeight / 52),
+                                        contentAlignment = Alignment.CenterEnd
+                                    ) {
+                                        Checkbox(
+                                            modifier = Modifier.scale(0.8f),
+                                            enabled = !noCheckBoxState.value,
+                                            checked = yesCheckBoxState.value,
+                                            onCheckedChange = { yesCheckBoxState.value = it },
+                                            colors = CheckboxDefaults.colors(
+                                                checkedColor = colorResource(id = R.color.black),
+                                                uncheckedColor = colorResource(id = R.color.gray),
+                                                checkmarkColor = colorResource(id = R.color.white)
+                                            )
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(NormalPadding))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+
+                                    Text(
+                                        text = "No, thank you!!",
+                                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Normal),
+                                        color = colorResource(id = R.color.black)
+                                    )
+
+                                    Box(modifier = Modifier.size(screenHeight / 52)) {
+                                        Checkbox(
+                                            modifier = Modifier.scale(0.8f),
+                                            enabled = !yesCheckBoxState.value,
+                                            checked = noCheckBoxState.value,
+                                            onCheckedChange = { noCheckBoxState.value = it },
+                                            colors = CheckboxDefaults.colors(
+                                                checkedColor = colorResource(id = R.color.black),
+                                                uncheckedColor = colorResource(id = R.color.gray),
+                                                checkmarkColor = colorResource(id = R.color.white)
+                                            )
+                                        )
+                                    }
+                                }
                             }
 
                             val paddingValues =

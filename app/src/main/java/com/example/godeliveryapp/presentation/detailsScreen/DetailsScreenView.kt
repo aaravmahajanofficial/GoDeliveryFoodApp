@@ -260,7 +260,7 @@ fun DetailsScreenView(
                             val ratings: List<String> = listOf(restaurantListingCardModel.rating)
                             val rating = ratings.joinToString(" ")
                             Text(
-                                text = "${rating}(7.4k Ratings)",
+                                text = "${rating} (7.4k Ratings)",
                                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
                                 color = colorResource(id = R.color.black),
                                 overflow = TextOverflow.Ellipsis,
