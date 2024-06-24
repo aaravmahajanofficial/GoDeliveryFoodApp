@@ -34,4 +34,6 @@ sealed class Route(val route: String) {
 
     data object OnBoardingScreen : Route(route = "on_boarding_screen")
 
+    data object SearchScreen : Route(route = "search_screen")
+
 }

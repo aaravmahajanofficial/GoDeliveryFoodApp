@@ -14,6 +14,7 @@ import com.example.godeliveryapp.data.remote.dataTransferObject.UserDto
 import com.example.godeliveryapp.domain.model.APIMODEL.Item
 import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.domain.model.MyOrderModel
+import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.domain.repository.Repository
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemModel
 import com.example.godeliveryapp.presentation.orderScreen.OrderState
@@ -33,12 +34,12 @@ class RepositoryImplementation(
 ) :
 
     Repository {
-    override suspend fun getRestaurants(): List<RestaurantDto> {
+    override suspend fun getRestaurants(): List<RestaurantListingCardModel> {
 
         return withContext(Dispatchers.IO) {
 
-            val restaurants =
-                postgrest.from("Restaurants").select().decodeList<RestaurantDto>()
+            val restaurantDTOs = postgrest.from("Restaurants").select().decodeList<RestaurantDto>()
+            val restaurants = restaurantDTOs.map { restaurantDtoToModel(it) }
 
             restaurants
         }
@@ -111,13 +112,15 @@ class RepositoryImplementation(
 
     }
 
-    override suspend fun getMenu(restaurantId: Int): List<MenuItemsDto> {
+    override suspend fun getMenu(restaurantId: Int): List<MenuItemModel> {
 
         return withContext(Dispatchers.IO) {
 
-            val menuItems =
+            val menuItemDTOs =
                 postgrest.from("MenuItems").select { filter { eq("restaurantId", restaurantId) } }
                     .decodeList<MenuItemsDto>()
+
+            val menuItems = menuItemDTOs.map { menuItemDtoToModel(it) }
 
             menuItems
         }
@@ -395,6 +398,27 @@ fun menuItemDtoToModel(menuItem: MenuItemsDto): MenuItemModel {
         itemCategory = menuItem.itemCategory,
         restaurantId = menuItem.restaurantId,
         isVeg = menuItem.isVeg
+    )
+}
+
+fun restaurantDtoToModel(restaurantDto: RestaurantDto): RestaurantListingCardModel {
+    return RestaurantListingCardModel(
+        about = restaurantDto.about,
+        city = restaurantDto.city,
+        country = restaurantDto.country,
+        cuisines = restaurantDto.cuisines,
+        distance = restaurantDto.distance,
+        features = restaurantDto.features,
+        isPureVeg = restaurantDto.isPureVeg,
+        meals = restaurantDto.meals,
+        name = restaurantDto.name,
+        postalCode = restaurantDto.postalCode,
+        priceRange = restaurantDto.priceRange,
+        rating = restaurantDto.rating,
+        restaurantId = restaurantDto.restaurantId,
+        schedule = restaurantDto.schedule,
+        streetAddress = restaurantDto.streetAddress,
+        imageURL = restaurantDto.imageURL
     )
 }
 

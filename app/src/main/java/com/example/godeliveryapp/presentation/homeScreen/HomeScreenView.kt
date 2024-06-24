@@ -21,12 +21,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MicNone
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -37,8 +35,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,6 +47,7 @@ import com.example.godeliveryapp.R
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.Dimens
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
@@ -157,73 +158,7 @@ fun HomeScreenView(
                     }
 
                     //search bar
-                    Box(
-                        modifier = Modifier
-                            .padding(start = NormalPadding, end = NormalPadding)
-                            .background(
-                                color = colorResource(id = R.color.lightGray),
-                                shape = RoundedCornerShape(32.dp)
-                            )
-                            .fillMaxWidth()
-                            .height(screenHeight / 14), contentAlignment = Alignment.Center
-                    ) {
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 8.dp, end = 8.dp)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Search,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(screenHeight / 32),
-                                    tint = colorResource(id = R.color.black),
-                                )
-
-                                Spacer(modifier = Modifier.width(5.dp))
-
-                                Text(
-                                    "Search for dishes & restaurants",
-                                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Normal),
-                                    color = colorResource(id = R.color.gray)
-                                )
-                            }
-
-                            Row(
-                                modifier = Modifier,
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.MicNone,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(screenHeight / 32),
-                                    tint = colorResource(id = R.color.black)
-                                )
-
-                                Text(
-                                    " | ",
-                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Normal),
-                                    color = colorResource(id = R.color.black)
-                                )
-
-                                Icon(
-                                    imageVector = Icons.Outlined.Tune,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(screenHeight / 32),
-                                    tint = colorResource(id = R.color.black)
-                                )
-                            }
-                        }
-
-
-                    }
+                    SearchBar(navController = navController)
 
                     Spacer(modifier = Modifier.height(MediumPadding2))
 
@@ -356,6 +291,81 @@ fun HomeScreenView(
 
             }
         }
+    }
+
+
+}
+
+@Composable
+fun SearchBar(modifier: Modifier = Modifier, shape : Shape = CircleShape, navController: NavController) {
+
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+
+    Box(
+        modifier = Modifier.clickable { navController.navigate(Route.SearchScreen.route) }
+            .background(
+                color = colorResource(id = R.color.lightGray),
+                shape = shape
+            )
+            .fillMaxWidth()
+            .height(screenHeight / 14), contentAlignment = Alignment.Center
+    ) {
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = ExtraSmallPadding3, end = ExtraSmallPadding3)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Search,
+                    contentDescription = null,
+                    modifier = Modifier.size(screenHeight / 32),
+                    tint = colorResource(id = R.color.black),
+                )
+
+                Spacer(modifier = Modifier.width(5.dp))
+
+                Text(
+                    "Search for dishes & restaurants",
+                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Normal),
+                    color = colorResource(id = R.color.gray)
+                )
+            }
+
+            Row(
+                modifier = Modifier,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.MicNone,
+                    contentDescription = null,
+                    modifier = Modifier.size(screenHeight / 32),
+                    tint = colorResource(id = R.color.black)
+                )
+
+                Text(
+                    " | ",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Normal),
+                    color = colorResource(id = R.color.black)
+                )
+
+                Icon(
+                    painter = painterResource(id = R.drawable.mix_logo),
+                    contentDescription = null,
+                    modifier = Modifier.size(screenHeight / 32),
+                    tint = colorResource(id = R.color.black)
+                )
+            }
+        }
+
+
     }
 
 

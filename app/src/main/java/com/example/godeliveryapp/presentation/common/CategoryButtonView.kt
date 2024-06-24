@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -31,6 +32,8 @@ fun CategoryButtonView(
     navigateToCategoryScreen: (() -> Unit)? = null,
     category: CategoryDto
 ) {
+
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -41,7 +44,7 @@ fun CategoryButtonView(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .size(70.dp)
+                .size(screenHeight / 10)
                 .background(
                     color = colorResource(id = R.color.lightGray),
                     shape = CircleShape
@@ -50,7 +53,7 @@ fun CategoryButtonView(
         ) {
 
             Image(
-                modifier = Modifier.scale(0.6f),
+                modifier = Modifier.scale(0.8f),
                 painter = rememberAsyncImagePainter(model = category.imageUrl),
                 contentScale = ContentScale.FillBounds,
                 contentDescription = null

@@ -92,7 +92,7 @@ class MainActivity : ComponentActivity() {
                         is ViewState.Success -> {
                             SetupNavGraph(
                                 navController = navController,
-                                startDestination = Route.HomeScreen.route
+                                startDestination = Route.SearchScreen.route
                             )
                         }
 

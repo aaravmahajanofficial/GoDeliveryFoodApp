@@ -297,7 +297,7 @@ fun CartScreenView(
                         Spacer(modifier = Modifier.height(MediumPadding1))
                     }
 
-                    items(cartItems?.size ?: 0) {
+                    items(cartItems.size ?: 0) {
                         //List of Items in the Cart
                             index ->
                         val cartItemCardIndex = cartItems?.get(index)
@@ -332,7 +332,9 @@ fun CartScreenView(
                                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
                                     color = colorResource(id = R.color.gray)
                                 )
-                            }
+                            },
+                            maxLines = 1,
+                            singleLine = true
                         )
                         Spacer(modifier = Modifier.height(MediumPadding2))
 

@@ -32,21 +32,7 @@ class DetailsScreenViewModel @Inject constructor(private val repository: Reposit
                 _isLoading.emit(true)
 
                 val menuItems = repository.getMenu(restaurantId)
-                val menuItemCard = menuItems.map { menuItem ->
-
-                    MenuItemModel(
-                        itemId = menuItem.itemId,
-                        itemName = menuItem.itemName,
-                        itemDescription = menuItem.description,
-                        itemPrice = menuItem.price,
-                        itemCategory = menuItem.itemCategory,
-                        restaurantId = menuItem.restaurantId,
-                        isVeg = menuItem.isVeg
-                    )
-
-                }
-
-                _menuItems.emit(menuItemCard)
+                _menuItems.emit(menuItems)
 
                 _isLoading.emit(false)
             } catch (e: Exception) {
