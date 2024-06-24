@@ -1,6 +1,8 @@
 package com.example.godeliveryapp.presentation.homeScreen.searchScreen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +32,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,13 +40,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -73,16 +84,30 @@ fun SearchScreenView(
     val categories = homeScreenViewModel.categories.collectAsState(initial = emptyList()).value
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
+    val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
+
     val searchResults =
         homeScreenViewModel.filterList.collectAsState(initial = emptyList()).value
 
     var textFieldValue by remember { mutableStateOf("") }
 
+    LaunchedEffect(textFieldValue) {
+        homeScreenViewModel.searchKeyWord(textFieldValue)
+    }
+
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
         LazyColumn(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = {
+                            focusManager.clearFocus()
+                        }
+                    )
+                },
             horizontalAlignment = Alignment.Start,
         ) {
 
@@ -100,6 +125,10 @@ fun SearchScreenView(
                 Spacer(modifier = Modifier.height(ExtraSmallPadding3))
 
                 OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester = focusRequester)
+                        .padding(start = NormalPadding, end = NormalPadding),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Search
@@ -107,6 +136,7 @@ fun SearchScreenView(
                     keyboardActions = KeyboardActions(
                         onSearch = {
                             homeScreenViewModel.searchKeyWord(textFieldValue)
+                            focusManager.clearFocus()
                         }
                     ),
                     singleLine = true,
@@ -156,10 +186,6 @@ fun SearchScreenView(
                         }
 
                     },
-
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = NormalPadding, end = NormalPadding),
                     value = textFieldValue,
                     onValueChange = { textFieldValue = it },
                     shape = RoundedCornerShape(5.dp),
@@ -180,21 +206,91 @@ fun SearchScreenView(
             }
 
             if (searchResults != null) {
-                if (searchResults.isNotEmpty() && textFieldValue.isNotEmpty()) {
+                if (textFieldValue.isNotEmpty()) {
 
                     item {
-                        LazyRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(NormalPadding),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            this.items(searchResults.size) { index ->
-                                val result = searchResults[index]
-                                RestaurantListingCardView(
-                                    restaurantListingCardModel = result.restaurant,
-                                    navigateToDetails = { navigateToDetails(result.restaurant) })
-                                Spacer(modifier = Modifier.width(14.dp))
+                        if (searchResults.isNotEmpty()) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+                                horizontalAlignment = Alignment.Start,
+                                verticalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(
+                                        start = NormalPadding,
+                                        end = NormalPadding
+                                    ),
+                                    text = "Search Results",
+                                    color = colorResource(id = R.color.black),
+                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+                                )
+                                LazyRow(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    contentPadding = PaddingValues(NormalPadding),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    this.items(searchResults.size) { index ->
+                                        val result = searchResults[index]
+                                        RestaurantListingCardView(
+                                            restaurantListingCardModel = result.restaurant,
+                                            navigateToDetails = { navigateToDetails(result.restaurant) })
+                                        Spacer(modifier = Modifier.width(14.dp))
+                                    }
+
+                                }
                             }
+                        } else {
+
+                            Column(
+                                modifier = Modifier.padding(
+                                    start = NormalPadding,
+                                    end = NormalPadding
+                                ),
+                                horizontalAlignment = Alignment.Start,
+                                verticalArrangement = Arrangement.SpaceBetween
+                            ) {
+
+                                val annotatedString = buildAnnotatedString {
+
+                                    append("No results for ")
+
+                                    withStyle(
+                                        style = SpanStyle(
+                                            color = colorResource(id = R.color.black),
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+
+                                    ) {
+                                        append("''$textFieldValue''")
+                                    }
+
+
+                                }
+
+                                Text(
+                                    text = annotatedString,
+                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Normal)
+                                )
+
+                                Spacer(modifier = Modifier.height(MediumPadding1))
+
+                                Box(
+                                    modifier = Modifier
+                                        .height(screenHeight / 3)
+                                        .fillMaxWidth(),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.no_search_results_logo),
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Fit,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
+
+                            }
+
 
                         }
                     }
