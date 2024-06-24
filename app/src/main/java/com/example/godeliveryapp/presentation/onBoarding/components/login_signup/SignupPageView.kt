@@ -1,5 +1,6 @@
 package com.example.godeliveryapp.presentation.onBoarding.components.login_signup
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -121,11 +122,10 @@ fun SignUpView(
                     .padding(ExtraSmallPadding3)
                     .height(screenHeight.div(12)), contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    modifier = Modifier.scale(1.5f),
+                Image(
+                    modifier = Modifier.scale(1.2f),
                     painter = painterResource(id = R.drawable.app_logo),
-                    contentDescription = null,
-                    tint = colorResource(id = R.color.black),
+                    contentDescription = null
                 )
             }
 

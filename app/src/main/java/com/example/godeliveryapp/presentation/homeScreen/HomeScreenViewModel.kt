@@ -115,8 +115,6 @@ class HomeScreenViewModel @Inject constructor(private val repository: Repository
                         lowerCaseSearchTerm,
                         ignoreCase = true
                     )
-                } || item.menuItems.any {
-                    it.itemDescription.contains(lowerCaseSearchTerm, ignoreCase = true)
                 }
 
             }
