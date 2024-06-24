@@ -158,7 +158,12 @@ fun HomeScreenView(
                     }
 
                     //search bar
-                    SearchBar(navController = navController)
+                    Box(
+                        modifier = Modifier.padding(start = NormalPadding, end = NormalPadding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        SearchBar(navController = navController)
+                    }
 
                     Spacer(modifier = Modifier.height(MediumPadding2))
 
@@ -297,12 +302,17 @@ fun HomeScreenView(
 }
 
 @Composable
-fun SearchBar(modifier: Modifier = Modifier, shape : Shape = CircleShape, navController: NavController) {
+fun SearchBar(
+    modifier: Modifier = Modifier,
+    shape: Shape = CircleShape,
+    navController: NavController
+) {
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     Box(
-        modifier = Modifier.clickable { navController.navigate(Route.SearchScreen.route) }
+        modifier = Modifier
+            .clickable { navController.navigate(Route.SearchScreen.route) }
             .background(
                 color = colorResource(id = R.color.lightGray),
                 shape = shape
