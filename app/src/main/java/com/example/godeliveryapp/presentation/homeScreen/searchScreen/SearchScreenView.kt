@@ -1,6 +1,7 @@
 package com.example.godeliveryapp.presentation.homeScreen.searchScreen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -42,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -92,6 +95,9 @@ fun SearchScreenView(
 
     var textFieldValue by remember { mutableStateOf("") }
 
+    val searchHistory =
+        homeScreenViewModel.searchHistory.collectAsState(initial = emptyList()).value
+
     LaunchedEffect(textFieldValue) {
         homeScreenViewModel.searchKeyWord(textFieldValue)
     }
@@ -127,6 +133,13 @@ fun SearchScreenView(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .onFocusChanged { focusState ->
+                            run {
+                                if (!focusState.isFocused && textFieldValue.isNotBlank()) {
+                                    homeScreenViewModel.addToSearchHistory(textFieldValue)
+                                }
+                            }
+                        }
                         .focusRequester(focusRequester = focusRequester)
                         .padding(start = NormalPadding, end = NormalPadding),
                     keyboardOptions = KeyboardOptions(
@@ -136,6 +149,7 @@ fun SearchScreenView(
                     keyboardActions = KeyboardActions(
                         onSearch = {
                             homeScreenViewModel.searchKeyWord(textFieldValue)
+                            homeScreenViewModel.addToSearchHistory(textFieldValue)
                             focusManager.clearFocus()
                         }
                     ),
@@ -352,16 +366,21 @@ fun SearchScreenView(
                                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                             )
 
-                            Text(
-                                text = "Clear all",
-                                style = MaterialTheme.typography.bodyMedium.copy(
-                                    fontWeight = FontWeight.Normal
-                                ),
-                                color = colorResource(
-                                    id = R.color.secondaryColor
-                                ),
-                                maxLines = 1,
-                            )
+                            Box(modifier = Modifier
+                                .clickable { homeScreenViewModel.deleteSearchHistory() }
+                                .background(color = Color.Transparent, shape = CircleShape)
+                            ) {
+                                Text(
+                                    text = "Clear all",
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = FontWeight.Normal
+                                    ),
+                                    color = colorResource(
+                                        id = R.color.secondaryColor
+                                    ),
+                                    maxLines = 1,
+                                )
+                            }
 
 
                         }
@@ -369,9 +388,19 @@ fun SearchScreenView(
                         Spacer(modifier = Modifier.height(MediumPadding2))
                     }
 
-                    items(5) {
-                        SearchTerm(screenHeight = screenHeight, searchTitle = "Cake Emporium")
-                        Spacer(modifier = Modifier.height(NormalPadding))
+                    if (searchHistory != null) {
+                        items(searchHistory.size) { index ->
+                            SearchTerm(
+                                screenHeight = screenHeight,
+                                searchTitle = searchHistory[index],
+                                onClick = {
+                                    homeScreenViewModel.deleteSearchHistoryItem(
+                                        searchHistory[index]
+                                    )
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(NormalPadding))
+                        }
                     }
                 }
             }
@@ -393,10 +422,7 @@ private fun SearchTerm(
     Row(
         modifier = Modifier
             .padding(start = NormalPadding, end = NormalPadding)
-            .fillMaxWidth()
-            .clickable {
-                onClick()
-            },
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -421,12 +447,17 @@ private fun SearchTerm(
                 color = colorResource(id = R.color.black)
             )
         }
-        Icon(
-            imageVector = Icons.Rounded.Close,
-            contentDescription = null,
-            tint = colorResource(id = R.color.black),
-            modifier = Modifier.size(screenHeight / 36)
-        )
+        Box(modifier = Modifier.clickable { onClick() }) {
+
+            Icon(
+                imageVector = Icons.Rounded.Close,
+                contentDescription = null,
+                tint = colorResource(id = R.color.black),
+                modifier = Modifier.size(screenHeight / 36)
+            )
+
+        }
+
 
     }
 }

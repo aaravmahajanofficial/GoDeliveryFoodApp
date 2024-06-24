@@ -6,6 +6,7 @@ import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.domain.repository.Repository
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemModel
+import com.example.godeliveryapp.utils.SharedPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,10 @@ data class MergeModel(
 )
 
 @HiltViewModel
-class HomeScreenViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
+class HomeScreenViewModel @Inject constructor(
+    private val repository: Repository,
+    private val sharedPreferences: SharedPreferences
+) : ViewModel() {
 
     private val _restaurants = MutableStateFlow<List<RestaurantListingCardModel>?>(listOf())
     val restaurants: Flow<List<RestaurantListingCardModel>?> get() = _restaurants
@@ -31,8 +35,10 @@ class HomeScreenViewModel @Inject constructor(private val repository: Repository
 
     private val _mergeList = MutableStateFlow<List<MergeModel>?>(listOf())
 
-    private val _isLoading = MutableStateFlow(true)
+    private val _searchHistory = MutableStateFlow<List<String>?>(emptyList())
+    val searchHistory: Flow<List<String>?> get() = _searchHistory
 
+    private val _isLoading = MutableStateFlow(true)
     val isLoading: Flow<Boolean> = _isLoading
 
 
@@ -84,6 +90,52 @@ class HomeScreenViewModel @Inject constructor(private val repository: Repository
 
         }
 
+    }
+
+    fun addToSearchHistory(searchTerm: String) {
+
+        viewModelScope.launch {
+
+            val searchHistoryCopy = _searchHistory.value?.toMutableList()
+
+            if (searchHistoryCopy != null) {
+                if (!searchHistoryCopy.contains(searchTerm)) {
+                    searchHistoryCopy.add(searchTerm)
+                }
+            }
+
+            _searchHistory.emit(searchHistoryCopy)
+            sharedPreferences.saveSearchHistory(_searchHistory.value)
+
+        }
+
+    }
+
+    fun getSearchHistory() {
+        viewModelScope.launch {
+            _searchHistory.emit(sharedPreferences.getSearchHistory())
+        }
+    }
+
+    fun deleteSearchHistoryItem(searchTerm: String) {
+        viewModelScope.launch {
+
+            val searchHistoryCopy = _searchHistory.value?.toMutableList()
+
+            searchHistoryCopy?.remove(searchTerm)
+
+            _searchHistory.emit(searchHistoryCopy)
+            sharedPreferences.saveSearchHistory(_searchHistory.value)
+
+        }
+
+    }
+
+    fun deleteSearchHistory() {
+        viewModelScope.launch {
+            sharedPreferences.clearSearchHistory()
+            _searchHistory.emit(emptyList())
+        }
     }
 
     fun searchKeyWord(searchTerm: String) {

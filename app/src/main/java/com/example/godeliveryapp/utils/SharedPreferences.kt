@@ -8,6 +8,7 @@ class SharedPreferences(private val context: Context) {
         private const val SHARED_PREF_FILE = "APP_FILE"
         private const val MISC_FILE = "MISC_FILE"
         private const val CART_FILE = "CART_FILE"
+        private const val SEARCH_HISTORY = "SEARCH_HISTORY"
     }
 
     fun saveTokenData(key: String, data: String?) {
@@ -76,6 +77,24 @@ class SharedPreferences(private val context: Context) {
     fun setFirstTimeOpen() {
         val sharedPreferences = context.getSharedPreferences(MISC_FILE, Context.MODE_PRIVATE)
         sharedPreferences.edit().putBoolean("IS_FIRST_TIME", false).apply()
+    }
+
+    fun saveSearchHistory(data: List<String>?) {
+
+        val sharedPreferences = context.getSharedPreferences(SEARCH_HISTORY, Context.MODE_PRIVATE)
+        sharedPreferences.edit().putStringSet("SEARCH_HISTORY", data?.toSet()).apply()
+    }
+
+    fun getSearchHistory(): List<String> {
+
+        val sharedPreferences = context.getSharedPreferences(SEARCH_HISTORY, Context.MODE_PRIVATE)
+        return sharedPreferences.getStringSet("SEARCH_HISTORY", emptySet())?.toList() ?: emptyList()
+
+    }
+
+    fun clearSearchHistory() {
+        val sharedPreferences = context.getSharedPreferences(SEARCH_HISTORY, Context.MODE_PRIVATE)
+        return sharedPreferences.edit().clear().apply()
     }
 
 }
