@@ -1,6 +1,5 @@
 package com.example.godeliveryapp.presentation.userProfile.myOrders
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,12 +19,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -51,7 +48,6 @@ import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.common.CustomBackArrowButton
 import com.example.godeliveryapp.presentation.common.CustomLineBreak
-import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.godeliveryapp.presentation.userProfile.ProfileScreenViewModel
 import com.example.godeliveryapp.utils.convertUTCtoIST
 
@@ -83,8 +79,6 @@ fun MyOrdersScreenView(
                     ) {
 
                         CustomBackArrowButton(navController = navController)
-
-                        Spacer(modifier = Modifier.height(screenHeight / 14))
 
                         Box(
                             modifier = Modifier
@@ -128,26 +122,6 @@ fun MyOrdersScreenView(
                         }
 
                         Spacer(modifier = Modifier.height(screenHeight / 8))
-
-                        TextButton(
-                            onClick = { navController.navigate(Route.HomeScreen.route) },
-                            border = BorderStroke(0.5.dp, colorResource(id = R.color.primaryColor)),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(screenHeight / 14),
-                            shape = RoundedCornerShape(5.dp),
-                            colors = ButtonDefaults.textButtonColors(
-                                containerColor = colorResource(id = R.color.primaryColor),
-                            )
-                        ) {
-
-                            Text(
-                                text = "Explore menu",
-                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                                color = colorResource(id = R.color.black)
-                            )
-
-                        }
 
                     }
                 }
