@@ -544,7 +544,7 @@ fun CartScreenView(
 
                         Spacer(modifier = Modifier.height(MediumPadding1))
 
-                        PaymentDetailsCard(cartSubTotal = cartTotalRoundOff(cartSubTotal))
+                        PaymentDetailsCard(cartSubTotal = cartSubTotal.toInt())
 
                         Spacer(modifier = Modifier.height(MediumPadding1))
 
@@ -552,71 +552,40 @@ fun CartScreenView(
                     item {
 
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth(), contentAlignment = Alignment.Center
+                            modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
                         ) {
-                            Column(
+                            OutlinedButton(
+                                onClick = {
+                                    val deliveryInstructions = textFieldValue.value
+                                    cartViewModel.placeOrder(
+                                        totalAmount = cartTotal,
+                                        deliveryInstructions = deliveryInstructions,
+                                        items = cartItems
+                                    )
+
+                                },
+                                shape = RoundedCornerShape(5.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colorResource(
+                                        id = R.color.black
+                                    ),
+                                ),
+                                border = BorderStroke(0.dp, Color.Transparent),
                                 modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
+                                    .height(screenHeight / 14)
+                                    .fillMaxWidth()
                             ) {
 
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = "Total",
-                                        color = colorResource(id = R.color.black),
-                                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                                    )
-                                    Text(
-                                        text = cartTotalRoundOff(cartTotal),
-                                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                        color = colorResource(id = R.color.black)
-                                    )
-                                }
+                                Text(
+                                    "Place Order",
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
+                                )
 
-                                Spacer(modifier = Modifier.height(NormalPadding))
-                                OutlinedButton(
-                                    onClick = {
-                                        val deliveryInstructions = textFieldValue.value
-                                        if (cartItems != null) {
-                                            cartViewModel.placeOrder(
-                                                totalAmount = cartTotal,
-                                                deliveryInstructions = deliveryInstructions,
-                                                items = cartItems
-                                            )
-
-                                        }
-
-                                    },
-                                    shape = RoundedCornerShape(5.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = colorResource(
-                                            id = R.color.black
-                                        ),
-                                    ),
-                                    border = BorderStroke(0.dp, Color.Transparent),
-                                    modifier = Modifier
-                                        .height(screenHeight / 14)
-                                        .fillMaxWidth()
-                                ) {
-
-                                    Text(
-                                        "Place Order",
-                                        color = Color.White,
-                                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
-                                    )
-
-                                }
-
-                                Spacer(modifier = Modifier.height(NormalPadding))
                             }
                         }
+
+                        Spacer(modifier = Modifier.height(NormalPadding))
 
                     }
                 }

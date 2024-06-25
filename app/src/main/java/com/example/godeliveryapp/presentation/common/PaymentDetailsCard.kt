@@ -18,12 +18,13 @@ import androidx.compose.ui.text.font.FontWeight
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
+import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.zomatoclone.utils.Constants.DELIVERY_FEE
 import com.example.zomatoclone.utils.Constants.PROMOCODE
 import com.example.zomatoclone.utils.Constants.TAX
 
 @Composable
-fun PaymentDetailsCard(modifier: Modifier = Modifier, cartSubTotal: String) {
+fun PaymentDetailsCard(modifier: Modifier = Modifier, cartSubTotal: Int) {
 
     Box(
         modifier = Modifier
@@ -49,7 +50,7 @@ fun PaymentDetailsCard(modifier: Modifier = Modifier, cartSubTotal: String) {
                 )
 
                 Text(
-                    text = cartSubTotal,
+                    text = "₹ $cartSubTotal",
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                     color = colorResource(id = R.color.black)
                 )
@@ -119,6 +120,26 @@ fun PaymentDetailsCard(modifier: Modifier = Modifier, cartSubTotal: String) {
                 )
 
 
+            }
+
+            Spacer(modifier = Modifier.height(NormalPadding))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Total",
+                    color = colorResource(id = R.color.black),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
+                Text(
+                    text = "₹ ${cartSubTotal + DELIVERY_FEE + TAX - PROMOCODE}",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = colorResource(id = R.color.black)
+                )
             }
 
 

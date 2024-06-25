@@ -118,12 +118,10 @@ fun MyOrderDetailScreenView(
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                 )
                 Spacer(modifier = Modifier.height(MediumPadding1))
-                PaymentDetailsCard(cartSubTotal = "₹ 599")
+                PaymentDetailsCard(cartSubTotal = myOrderModel.items.sumOf { it.itemPrice }.toInt())
             }
 
             item {
-
-                Spacer(modifier = Modifier.height(NormalPadding))
 
                 Box(
                     modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center
@@ -133,25 +131,6 @@ fun MyOrderDetailScreenView(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Total",
-                                color = colorResource(id = R.color.black),
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                            )
-                            Text(
-                                text = "₹ 1060",
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                                color = colorResource(id = R.color.black)
-                            )
-                        }
-
                         Spacer(modifier = Modifier.height(screenHeight / 18))
                         OutlinedButton(
                             onClick = {
