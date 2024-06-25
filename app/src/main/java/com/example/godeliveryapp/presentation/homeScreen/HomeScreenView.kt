@@ -56,6 +56,7 @@ import com.example.godeliveryapp.presentation.common.PageIndicator
 import com.example.godeliveryapp.presentation.homeScreen.listings.components.RestaurantListingCardView
 import com.example.godeliveryapp.presentation.homeScreen.slidingAds.SlidingAdBanners
 import com.example.godeliveryapp.presentation.navigation.Route
+import com.example.godeliveryapp.presentation.userProfile.myFavourites.FavouritesViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -63,6 +64,7 @@ fun HomeScreenView(
     modifier: Modifier = Modifier, navController: NavController,
     navigateToDetails: (RestaurantListingCardModel) -> Unit,
     navigateToCategory: (CategoryDto) -> Unit,
+    favouritesViewModel: FavouritesViewModel = hiltViewModel(),
     viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
 
@@ -114,7 +116,10 @@ fun HomeScreenView(
 
 
                             )
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Start
+                            ) {
                                 Text(
                                     "Google", style = MaterialTheme.typography.titleLarge.copy(
                                         color = colorResource(
@@ -186,7 +191,7 @@ fun HomeScreenView(
                                             navigateToCategory(
                                                 categoriesList[index]
                                             )
-                                        }
+                                        },
                                     )
                                     Spacer(modifier = Modifier.width(12.dp))
                                 }
@@ -261,6 +266,7 @@ fun HomeScreenView(
                             val restaurantIndex = itemsList[index]
                             RestaurantListingCardView(
                                 restaurantListingCardModel = restaurantIndex,
+                                addToFav = { restaurantId -> favouritesViewModel.addToFavourites(restaurantId) },
                                 navigateToDetails = { navigateToDetails(restaurantIndex) })
                             Spacer(modifier = Modifier.width(14.dp))
                         }
@@ -284,6 +290,7 @@ fun HomeScreenView(
                             val restaurantIndex = itemsList[index]
                             RestaurantListingCardView(
                                 restaurantListingCardModel = restaurantIndex,
+                                addToFav = { restaurantId -> favouritesViewModel.addToFavourites(restaurantId) },
                                 navigateToDetails = { navigateToDetails(restaurantIndex) })
                             Spacer(modifier = Modifier.width(14.dp))
                         }

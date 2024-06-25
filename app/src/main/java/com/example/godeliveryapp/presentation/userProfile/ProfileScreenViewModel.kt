@@ -29,7 +29,6 @@ class ProfileScreenViewModel @Inject constructor(
     init {
         getUserData()
         getOrders()
-
     }
 
     private fun getUserData() {
@@ -43,15 +42,14 @@ class ProfileScreenViewModel @Inject constructor(
         }
     }
 
-    fun getOrders() {
+    private fun getOrders() {
 
         viewModelScope.launch {
 
             try {
                 _isLoading.value = true
                 val orders = repository.getOrderItems()
-                Log.d("Error", "getOrders: $orders")
-                _orders.value = orders
+                _orders.emit(orders)
                 _isLoading.value = false
             } catch (e: Exception) {
                 Log.d("Error", "getOrders: $e")

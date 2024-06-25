@@ -39,7 +39,7 @@ interface Repository {
 
     suspend fun getUserData(): UserDto
 
-    suspend fun getUserDataByEmail(userEmail : String): UserDto
+    suspend fun getUserDataByEmail(userEmail: String): UserDto
 
     suspend fun placeOrder(orderDto: OrderDto, orderItems: List<OrderItemDto>)
 
@@ -52,6 +52,10 @@ interface Repository {
     suspend fun clearCart()
 
     suspend fun getOrderItems(): List<MyOrderModel>
+
+    suspend fun getFavourites(): List<RestaurantListingCardModel>?
+
+    suspend fun addToFavourite(restaurantId: Int)
 
 
 }

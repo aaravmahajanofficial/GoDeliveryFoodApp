@@ -7,6 +7,7 @@ import com.example.godeliveryapp.data.remote.RetrofitAPI
 import com.example.godeliveryapp.data.remote.dataTransferObject.CartDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.CartItemDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
+import com.example.godeliveryapp.data.remote.dataTransferObject.FavouriteDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.MenuItemsDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.OrderDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.OrderItemDto
@@ -411,6 +412,69 @@ class RepositoryImplementation(
             }
         }
 
+    }
+
+    override suspend fun getFavourites(): List<RestaurantListingCardModel>? {
+
+        return withContext(Dispatchers.IO) {
+
+            try {
+
+                val userId = sharedPreferences.getUserData("USER_ID")!!
+
+                val favouriteDTOs = postgrest.from("Favourites").select {
+                    filter { eq("userId", userId) }
+                }.decodeList<FavouriteDto>()
+
+                val restaurants = mutableListOf<RestaurantListingCardModel>()
+
+                favouriteDTOs.forEach { index ->
+                    val restaurantDto = postgrest.from("Restaurants")
+                        .select { filter { eq("restaurantId", index.restaurantId) } }
+                        .decodeSingleOrNull<RestaurantDto>()
+
+                    restaurants.add(restaurantDtoToModel(restaurantDto!!))
+                }
+
+                restaurants
+
+
+            } catch (e: Exception) {
+                Log.d("ERROR WHILE FETCHING FAVOURITES", e.toString())
+                null
+            }
+
+
+        }
+    }
+
+    override suspend fun addToFavourite(restaurantId: Int) {
+        withContext(Dispatchers.IO) {
+            try {
+                val userId = sharedPreferences.getUserData("USER_ID")!!
+
+                val existingItem = postgrest.from("Favourites").select {
+                    filter {
+                        eq("userId", userId)
+                        eq("restaurantId", restaurantId)
+                    }
+                }.decodeSingleOrNull<FavouriteDto>()
+
+                if (existingItem == null) {
+                    postgrest.from("Favourites").insert(
+                        FavouriteDto(
+                            userId = userId,
+                            restaurantId = restaurantId
+                        )
+                    )
+                } else {
+                    null
+                }
+
+            } catch (e: Exception) {
+                Log.d("ERROR WHILE ADDING TO FAVOURITES Repository", e.toString())
+            }
+        }
     }
 
 }

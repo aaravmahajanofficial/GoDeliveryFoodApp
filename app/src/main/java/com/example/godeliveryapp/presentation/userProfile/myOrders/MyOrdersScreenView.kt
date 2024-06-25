@@ -100,7 +100,7 @@ fun MyOrdersScreenView(
                             verticalArrangement = Arrangement.SpaceEvenly
                         ) {
                             Text(
-                                text = "No orders yet!",
+                                text = "No Orders Yet!",
                                 color = colorResource(id = R.color.black),
                                 style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
                                 textAlign = TextAlign.Justify

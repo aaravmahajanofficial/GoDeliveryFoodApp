@@ -74,6 +74,7 @@ import com.example.godeliveryapp.presentation.common.CategoryButtonView
 import com.example.godeliveryapp.presentation.common.CustomBackArrowButton
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreenViewModel
 import com.example.godeliveryapp.presentation.homeScreen.listings.components.RestaurantListingCardView
+import com.example.godeliveryapp.presentation.userProfile.myFavourites.FavouritesViewModel
 
 @Composable
 fun SearchScreenView(
@@ -81,7 +82,8 @@ fun SearchScreenView(
     navController: NavController,
     navigateToCategory: (CategoryDto) -> Unit,
     navigateToDetails: (RestaurantListingCardModel) -> Unit,
-    homeScreenViewModel: HomeScreenViewModel = hiltViewModel()
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
+    favouritesViewModel: FavouritesViewModel = hiltViewModel()
 ) {
 
     val categories = homeScreenViewModel.categories.collectAsState(initial = emptyList()).value
@@ -248,6 +250,11 @@ fun SearchScreenView(
                                         val result = searchResults[index]
                                         RestaurantListingCardView(
                                             restaurantListingCardModel = result.restaurant,
+                                            addToFav = { restaurantId ->
+                                                favouritesViewModel.addToFavourites(
+                                                    restaurantId
+                                                )
+                                            },
                                             navigateToDetails = { navigateToDetails(result.restaurant) })
                                         Spacer(modifier = Modifier.width(14.dp))
                                     }

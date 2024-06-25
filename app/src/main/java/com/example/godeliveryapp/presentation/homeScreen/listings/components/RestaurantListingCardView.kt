@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -37,24 +38,30 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 
 @Composable
 fun RestaurantListingCardView(
     modifier: Modifier = Modifier,
+    addToFav: (Int) -> Unit,
     restaurantListingCardModel: RestaurantListingCardModel,
     navigateToDetails: (() -> Unit)? = null,
 ) {
 
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+
     Column(
         modifier = Modifier
-            .width(170.dp)
+            .width(screenHeight / 4.5f)
             .clickable { navigateToDetails?.invoke() },
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.SpaceEvenly
     ) {
         Box(
             modifier = Modifier
-                .height(175.dp)
+                .height(screenHeight / 4.25f)
                 .background(Color.Transparent, shape = RoundedCornerShape(12.dp))
                 .clip(
                     RoundedCornerShape(12.dp)
@@ -70,6 +77,7 @@ fun RestaurantListingCardView(
             )
             Box(
                 modifier = Modifier
+                    .clickable { addToFav(restaurantListingCardModel.restaurantId) }
                     .align(Alignment.TopEnd)
                     .padding(NormalPadding)
                     .background(color = Color.White, shape = CircleShape)
@@ -85,7 +93,7 @@ fun RestaurantListingCardView(
             }
 
         }
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(ExtraSmallPadding3))
         Text(
             text = restaurantListingCardModel.name,
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
@@ -117,7 +125,7 @@ fun RestaurantListingCardView(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                modifier = Modifier.size(16.dp),
+                modifier = Modifier.size(screenWidth / 20),
                 imageVector = Icons.Filled.StarRate,
                 contentDescription = null,
                 tint = colorResource(id = R.color.orange)

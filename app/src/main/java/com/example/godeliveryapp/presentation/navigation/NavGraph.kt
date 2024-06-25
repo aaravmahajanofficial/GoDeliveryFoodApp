@@ -101,7 +101,14 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
         }
 
         composable(route = Route.MyFavouritesScreen.route) {
-            MyFavouritesScreenView(navController = navController)
+            MyFavouritesScreenView(
+                navController = navController,
+                navigateToDetails = { restaurantListingCardModel ->
+                    navigateToDetailsScreen(
+                        navController,
+                        restaurantListingCardModel
+                    )
+                })
         }
 
         composable(route = Route.OnBoardingScreen.route) {
