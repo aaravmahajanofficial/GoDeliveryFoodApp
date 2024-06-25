@@ -28,7 +28,7 @@ sealed class Route(val route: String) {
 
     data object MyOrdersScreen : Route(route = "my_orders_screen")
 
-    data object MyOrderDetailScreen : Route(route = "my_order_detail_screen/{serializedModel}")
+    data object MyOrderDetailScreen : Route(route = "my_order_detail_screen")
 
     data object MyFavouritesScreen : Route(route = "my_favourites_screen")
 

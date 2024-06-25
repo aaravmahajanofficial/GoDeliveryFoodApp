@@ -70,16 +70,34 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
         }
 
         composable(route = Route.MyOrdersScreen.route) {
-            MyOrdersScreenView(navController = navController)
+            MyOrdersScreenView(
+                navController = navController,
+                navigateToMyOrderDetailScreen = { myOrderModel ->
+                    navigateToMyOrderDetailScreen(
+                        navController = navController,
+                        myOrderModel = myOrderModel
+                    )
+                },
+
+                )
         }
 
         composable(
             route = Route.MyOrderDetailScreen.route,
-            arguments = listOf(navArgument("serializedModel") { type = NavType.StringType })
         ) {
-            val modelJson = it.arguments?.getString("serializedModel")
-            val myOrderModel = Json.decodeFromString<MyOrderModel>(modelJson ?: "")
-            MyOrderDetailScreenView(navController = navController, myOrderModel = myOrderModel)
+
+            val serializedOrder =
+                navController.previousBackStackEntry?.savedStateHandle?.get<String>("myOrderDetail")
+
+            val myOrderModel = serializedOrder?.let { it1 ->
+                Json.decodeFromString<MyOrderModel>(
+                    it1
+                )
+            }
+            if (myOrderModel != null) {
+                MyOrderDetailScreenView(navController = navController, myOrderModel = myOrderModel)
+            }
+
         }
 
         composable(route = Route.MyFavouritesScreen.route) {
@@ -225,4 +243,19 @@ private fun navigateToCategoryScreen(navController: NavHostController, categoryD
         serializedCategory
     )
     navController.navigate(route = Route.CategoryScreen.route)
+}
+
+private fun navigateToMyOrderDetailScreen(
+    navController: NavHostController,
+    myOrderModel: MyOrderModel
+) {
+
+    val serializedOrder = Json.encodeToString(myOrderModel)
+
+    navController.currentBackStackEntry?.savedStateHandle?.set(
+        "myOrderDetail",
+        serializedOrder
+    )
+
+    navController.navigate(route = Route.MyOrderDetailScreen.route)
 }

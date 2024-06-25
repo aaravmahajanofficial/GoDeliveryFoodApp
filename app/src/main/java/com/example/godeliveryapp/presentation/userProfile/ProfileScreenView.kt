@@ -180,7 +180,10 @@ fun ProfileScreenView(
                 OptionRow(
                     screenHeight = screenHeight,
                     optionTitle = "Favourites",
-                    imageVector = Icons.Outlined.FavoriteBorder
+                    imageVector = Icons.Outlined.FavoriteBorder,
+                    onClick = {
+                        navController.navigate(Route.MyFavouritesScreen.route)
+                    }
                 )
 
             }

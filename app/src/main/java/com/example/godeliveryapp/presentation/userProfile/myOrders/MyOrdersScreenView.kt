@@ -28,7 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,13 +54,12 @@ import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.godeliveryapp.presentation.userProfile.ProfileScreenViewModel
 import com.example.godeliveryapp.utils.convertUTCtoIST
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 @Composable
 fun MyOrdersScreenView(
     modifier: Modifier = Modifier,
     navController: NavController,
+    navigateToMyOrderDetailScreen: (MyOrderModel) -> Unit,
     profileScreenViewModel: ProfileScreenViewModel = hiltViewModel()
 ) {
 
@@ -69,10 +67,6 @@ fun MyOrdersScreenView(
     val isLoading = profileScreenViewModel.isLoading.collectAsState(initial = false).value
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-
-    LaunchedEffect(Unit) {
-        profileScreenViewModel.getOrders()
-    }
 
     if (!isLoading) {
         if (orders != null) {
@@ -210,7 +204,12 @@ fun MyOrdersScreenView(
                                 myOrderModel = orders[index],
                                 screenHeight = screenHeight,
                                 screenWidth = screenWidth,
-                                navController = navController
+                                navController = navController,
+                                navigateToMyOrderDetailScreen = {
+                                    navigateToMyOrderDetailScreen(
+                                        orders[index]
+                                    )
+                                }
                             )
 
                         }
@@ -238,7 +237,8 @@ private fun ItemView(
     myOrderModel: MyOrderModel,
     screenHeight: Dp,
     screenWidth: Dp,
-    navController: NavController
+    navController: NavController,
+    navigateToMyOrderDetailScreen: (() -> Unit)? = null,
 ) {
     Box(
         modifier = Modifier
@@ -371,13 +371,7 @@ private fun ItemView(
 
                 Row(
                     modifier = Modifier.clickable {
-                        navController.navigate(
-                            "my_order_detail_screen/${
-                                serializeModel(
-                                    myOrderModel
-                                )
-                            }"
-                        )
+                        navigateToMyOrderDetailScreen?.invoke()
                     },
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
@@ -405,9 +399,4 @@ private fun ItemView(
         }
 
     }
-}
-
-fun serializeModel(myOrderModel: MyOrderModel): String {
-
-    return Json.encodeToString(myOrderModel)
 }
