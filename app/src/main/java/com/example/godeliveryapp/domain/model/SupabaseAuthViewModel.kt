@@ -1,7 +1,6 @@
 package com.example.godeliveryapp.domain.model
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.godeliveryapp.data.remote.dataTransferObject.UserDto
@@ -24,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SupabaseAuthViewModel @Inject constructor(
     private val supabaseClient: SupabaseClient,
-    private val repository: Repository
+    private val repository: Repository,
+    private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
     private val _viewState = MutableStateFlow<ViewState>(ViewState.Empty)
@@ -35,8 +35,7 @@ class SupabaseAuthViewModel @Inject constructor(
         viewModelScope.launch {
 
             val accessToken = supabaseClient.auth.currentAccessTokenOrNull()
-            val sharedPref = SharedPreferences(context)
-            sharedPref.saveTokenData("ACCESS_TOKEN", accessToken)
+            sharedPreferences.saveTokenData("ACCESS_TOKEN", accessToken)
 
         }
 
@@ -44,8 +43,7 @@ class SupabaseAuthViewModel @Inject constructor(
 
     private fun getToken(context: Context): String? {
 
-        val sharedPref = SharedPreferences(context)
-        return sharedPref.getTokenData("ACCESS_TOKEN")
+        return sharedPreferences.getTokenData("ACCESS_TOKEN")
 
     }
 
@@ -55,7 +53,6 @@ class SupabaseAuthViewModel @Inject constructor(
         userPassword: String,
         userName: String
     ) {
-        val sharedPreferences = SharedPreferences(context)
         viewModelScope.launch {
             try {
 
@@ -84,12 +81,7 @@ class SupabaseAuthViewModel @Inject constructor(
                 sharedPreferences.saveUserData("USER_NAME", userName)
                 sharedPreferences.saveUserData("USER_EMAIL", userEmail)
 
-                Log.d("USER_ID", user.id)
-                Log.d("USER_NAME", userName)
-                Log.d("USER_EMAIL", userEmail)
-
                 _viewState.value = ViewState.Success
-
 
             } catch (e: Exception) {
 
@@ -124,6 +116,13 @@ class SupabaseAuthViewModel @Inject constructor(
                 }
 
                 saveToken(context)
+
+                val userDto = repository.getUserDataByEmail(userEmail)
+
+                sharedPreferences.saveUserData("USER_ID", userDto.userId)
+                sharedPreferences.saveUserData("USER_NAME", userDto.userName)
+                sharedPreferences.saveUserData("USER_EMAIL", userDto.userEmail)
+
                 _viewState.value = ViewState.Success
 
             } catch (e: Exception) {
@@ -146,12 +145,13 @@ class SupabaseAuthViewModel @Inject constructor(
     }
 
     fun logOut(context: Context) {
-        val sharedPreferences = SharedPreferences(context)
         viewModelScope.launch {
             try {
                 _viewState.value = ViewState.Loading
                 supabaseClient.auth.signOut()
                 sharedPreferences.clearPreferences()
+                sharedPreferences.clearSearchHistory()
+                sharedPreferences.clearCartPreferences()
                 _viewState.value = ViewState.Success
             } catch (e: Exception) {
                 _viewState.value = ViewState.Error(e.message.toString())
@@ -237,7 +237,6 @@ class SupabaseAuthViewModel @Inject constructor(
     }
 
     fun isUserLoggedIn(context: Context) {
-        val sharedPreferences = SharedPreferences(context)
         viewModelScope.launch {
 
             try {
@@ -258,7 +257,8 @@ class SupabaseAuthViewModel @Inject constructor(
                 _viewState.value = ViewState.Error(e.message.toString())
 
                 sharedPreferences.clearPreferences()
-
+                sharedPreferences.clearCartPreferences()
+                sharedPreferences.clearSearchHistory()
             }
 
 

@@ -33,11 +33,13 @@ interface Repository {
 
     suspend fun insertUserData(userDto: UserDto): Boolean
 
-    suspend fun getOrCreateCart(): String
+    suspend fun getOrCreateCart(): String?
 
-    suspend fun createNewCart(): String
+    suspend fun createNewCart(): String?
 
     suspend fun getUserData(): UserDto
+
+    suspend fun getUserDataByEmail(userEmail : String): UserDto
 
     suspend fun placeOrder(orderDto: OrderDto, orderItems: List<OrderItemDto>)
 

@@ -84,7 +84,7 @@ class RepositoryImplementation(
             postgrest.from("CartItems").delete {
                 filter {
                     eq("itemId", cartItemModel.menuItemModel.itemId)
-                    eq("cartId", cartId)
+                    eq("cartId", cartId!!)
                 }
             }
         }
@@ -99,7 +99,7 @@ class RepositoryImplementation(
                     CartItemDto(
                         itemId = cartItemModel.menuItemModel.itemId,
                         quantity = cartItemModel.quantity,
-                        cartId = cartId,
+                        cartId = cartId!!,
                         restaurantId = cartItemModel.menuItemModel.restaurantId
                     )
                 )
@@ -160,7 +160,7 @@ class RepositoryImplementation(
         }
     }
 
-    override suspend fun getOrCreateCart(): String {
+    override suspend fun getOrCreateCart(): String? {
 
         return withContext(Dispatchers.IO) {
 
@@ -171,18 +171,31 @@ class RepositoryImplementation(
 
     }
 
-    override suspend fun createNewCart(): String {
+    override suspend fun createNewCart(): String? {
 
         return withContext(Dispatchers.IO) {
+            try {
+                val userId = sharedPreferences.getUserData("USER_ID")!!
 
-            val cartId = UUID.randomUUID().toString()
-            postgrest.from("Cart").insert(
-                CartDto(
-                    cartId = cartId,
-                    userId = sharedPreferences.getUserData("USER_ID")!!
-                )
-            )
-            cartId
+                val existingCart = postgrest.from("Cart")
+                    .select { filter { eq("userId", userId) } }
+                    .decodeSingleOrNull<CartDto>()
+                if (existingCart != null) {
+                    existingCart.cartId
+                } else {
+                    val cartId = UUID.randomUUID().toString()
+                    postgrest.from("Cart").insert(
+                        CartDto(
+                            cartId = cartId,
+                            userId = userId
+                        )
+                    )
+                    cartId
+                }
+            } catch (e: Exception) {
+                Log.d("ERROR WHILE CREATING CART", e.toString())
+                null
+            }
 
         }
 
@@ -227,6 +240,20 @@ class RepositoryImplementation(
                 userAddress = "",
                 landmark = ""
             )
+            userDto
+
+        }
+    }
+
+    override suspend fun getUserDataByEmail(userEmail: String): UserDto {
+        return withContext(Dispatchers.IO) {
+
+            val userDto = postgrest.from("Users").select {
+                filter {
+                    eq("userEmail", userEmail)
+                }
+            }.decodeSingle<UserDto>()
+
             userDto
 
         }
@@ -379,7 +406,7 @@ class RepositoryImplementation(
             val cartId = getOrCreateCart()
             postgrest.from("Cart").delete {
                 filter {
-                    eq("cartId", cartId)
+                    eq("cartId", cartId!!)
                 }
             }
         }

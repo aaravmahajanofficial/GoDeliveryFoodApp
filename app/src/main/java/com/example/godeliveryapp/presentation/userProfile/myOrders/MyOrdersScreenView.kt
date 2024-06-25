@@ -41,11 +41,13 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
+import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
@@ -200,18 +202,12 @@ fun MyOrdersScreenView(
                         }
 
 
-                        items(orders.size) {
-                            order ->
+                        items(orders.size) { index ->
                             ItemView(
-                                restaurantName = orders[order].restaurantName,
-                                restaurantAddress = orders[order].restaurantAddress,
-                                restaurantImage = orders[order].restaurantImage,
-                                createdAt = orders[order].createdAt,
-                                orderStatus = orders[order].orderStatus,
-                                totalAmount = orders[order].orderTotal,
-                                totalItems = orders[order].totalItems.toString(),
+                                myOrderModel = orders[index],
                                 screenHeight = screenHeight,
                                 screenWidth = screenWidth,
+                                navController = navController
                             )
 
                         }
@@ -236,15 +232,10 @@ fun MyOrdersScreenView(
 
 @Composable
 private fun ItemView(
-    restaurantName : String,
-    restaurantAddress : String,
-    restaurantImage : Int,
-    createdAt : String,
-    orderStatus : String,
-    totalAmount : String,
-    totalItems : String,
+    myOrderModel: MyOrderModel,
     screenHeight: Dp,
-    screenWidth: Dp
+    screenWidth: Dp,
+    navController: NavController
 ) {
     Box(
         modifier = Modifier
@@ -276,7 +267,7 @@ private fun ItemView(
                 ) {
 
                     Image(
-                        painter = painterResource(id = restaurantImage),
+                        painter = painterResource(id = myOrderModel.restaurantImage),
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
@@ -293,12 +284,13 @@ private fun ItemView(
                 ) {
 
                     Row(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.Start,
+                        modifier = Modifier,
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = restaurantName,
+                            modifier = Modifier.weight(1f),
+                            text = myOrderModel.restaurantName,
                             style = MaterialTheme.typography.titleMedium.copy(
                                 fontWeight = FontWeight.SemiBold
                             ),
@@ -306,10 +298,11 @@ private fun ItemView(
                                 id = R.color.black
                             ),
                             maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
                         )
 
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier,
                             horizontalArrangement = Arrangement.End,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -321,7 +314,7 @@ private fun ItemView(
                                 tint = colorResource(id = R.color.secondaryColor)
                             )
                             Text(
-                                text = orderStatus,
+                                text = myOrderModel.orderStatus,
                                 style = MaterialTheme.typography.bodySmall.copy(
                                     fontWeight = FontWeight.Medium
                                 ),
@@ -336,7 +329,7 @@ private fun ItemView(
                     Spacer(modifier = Modifier.height(ExtraSmallPadding3))
 
                     Text(
-                        text = restaurantAddress,
+                        text = myOrderModel.restaurantAddress,
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
                         color = colorResource(
                             id = R.color.black
@@ -348,7 +341,7 @@ private fun ItemView(
 
 
                     Text(
-                        text = createdAt,
+                        text = myOrderModel.createdAt,
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
                         color = Color.Gray
                     )
@@ -368,13 +361,13 @@ private fun ItemView(
             ) {
 
                 Text(
-                    text = "₹ $totalAmount  |  $totalItems items",
+                    text = "₹ ${myOrderModel.orderTotal}  |  ${myOrderModel.totalItems} items",
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
                     color = colorResource(id = R.color.black)
                 )
 
                 Row(
-                    modifier = Modifier,
+                    modifier = Modifier.clickable { navController.navigate(Route.MyOrderDetailScreen.route) },
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
