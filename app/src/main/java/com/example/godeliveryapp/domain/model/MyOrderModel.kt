@@ -1,7 +1,9 @@
 package com.example.godeliveryapp.domain.model
 
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemModel
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MyOrderModel(
     val orderId: UInt,
     val items: List<MenuItemModel>,
@@ -12,5 +14,5 @@ data class MyOrderModel(
     val orderStatus: String,
     val orderTotal: String,
     val totalItems: Int,
-    val paymentMode: String? = null
+    val paymentMode: String,
 )

@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.godeliveryapp.R
+import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
@@ -47,9 +48,15 @@ import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.common.CustomBackArrowButton
 import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import com.example.godeliveryapp.presentation.common.PaymentDetailsCard
+import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemModel
+import com.example.godeliveryapp.utils.convertUTCtoIST
 
 @Composable
-fun MyOrderDetailScreenView(modifier: Modifier = Modifier, navController: NavController) {
+fun MyOrderDetailScreenView(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    myOrderModel: MyOrderModel
+) {
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
@@ -76,7 +83,11 @@ fun MyOrderDetailScreenView(modifier: Modifier = Modifier, navController: NavCon
 
                 Spacer(modifier = Modifier.height(MediumPadding2))
 
-                DetailCard(screenHeight = screenHeight, screenWidth = screenWidth)
+                DetailCard(
+                    screenHeight = screenHeight,
+                    screenWidth = screenWidth,
+                    myOrderModel = myOrderModel
+                )
             }
 
             item {
@@ -89,9 +100,13 @@ fun MyOrderDetailScreenView(modifier: Modifier = Modifier, navController: NavCon
                 Spacer(modifier = Modifier.height(MediumPadding1))
             }
 
-            items(3) {
+            items(myOrderModel.items.size) {
 
-                ItemCard(screenHeight = screenHeight, screenWidth = screenWidth)
+                ItemCard(
+                    screenHeight = screenHeight,
+                    screenWidth = screenWidth,
+                    menuItemModel = myOrderModel.items[it]
+                )
 
             }
 
@@ -176,6 +191,7 @@ fun MyOrderDetailScreenView(modifier: Modifier = Modifier, navController: NavCon
 @Composable
 private fun DetailCard(
     modifier: Modifier = Modifier,
+    myOrderModel: MyOrderModel,
     screenHeight: Dp,
     screenWidth: Dp
 ) {
@@ -208,7 +224,7 @@ private fun DetailCard(
                 ) {
 
                     Image(
-                        painter = painterResource(id = R.drawable.restaurant2),
+                        painter = painterResource(id = myOrderModel.restaurantImage),
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
@@ -223,7 +239,7 @@ private fun DetailCard(
                 ) {
 
                     Text(
-                        text = "Call me Chow",
+                        text = myOrderModel.restaurantName,
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
@@ -236,7 +252,7 @@ private fun DetailCard(
                     Spacer(modifier = Modifier.height(ExtraSmallPadding2))
 
                     Text(
-                        text = "restaurantAddress",
+                        text = myOrderModel.restaurantAddress,
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
                         color = colorResource(
                             id = R.color.black
@@ -296,7 +312,7 @@ private fun DetailCard(
                 Spacer(modifier = Modifier.height(ExtraSmallPadding1))
 
                 Text(
-                    text = "#0834239849238",
+                    text = "#${myOrderModel.orderId}",
                     color = Color.Gray,
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal)
                 )
@@ -312,7 +328,7 @@ private fun DetailCard(
                 Spacer(modifier = Modifier.height(ExtraSmallPadding1))
 
                 Text(
-                    text = "13/2/2023, 8:45 PM",
+                    text = convertUTCtoIST(myOrderModel.createdAt),
                     color = Color.Gray,
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal)
                 )
@@ -344,7 +360,7 @@ private fun DetailCard(
                 Spacer(modifier = Modifier.height(ExtraSmallPadding1))
 
                 Text(
-                    text = "Cash on Delivery",
+                    text = myOrderModel.paymentMode,
                     color = Color.Gray,
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal)
                 )
@@ -359,7 +375,12 @@ private fun DetailCard(
 }
 
 @Composable
-fun ItemCard(modifier: Modifier = Modifier, screenHeight: Dp, screenWidth: Dp) {
+fun ItemCard(
+    modifier: Modifier = Modifier,
+    screenHeight: Dp,
+    screenWidth: Dp,
+    menuItemModel: MenuItemModel
+) {
 
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
 
@@ -404,7 +425,7 @@ fun ItemCard(modifier: Modifier = Modifier, screenHeight: Dp, screenWidth: Dp) {
 
                     Text(
                         modifier = Modifier.weight(1f),
-                        text = "Lazeez Bhuna Murgh Chicken Dum Biryani",
+                        text = menuItemModel.itemName,
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
@@ -416,7 +437,7 @@ fun ItemCard(modifier: Modifier = Modifier, screenHeight: Dp, screenWidth: Dp) {
                     )
 
                     Text(
-                        text = "₹ 599",
+                        text = "₹ ${menuItemModel.itemPrice}",
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
                         color = Color.Gray,
                         maxLines = 1,

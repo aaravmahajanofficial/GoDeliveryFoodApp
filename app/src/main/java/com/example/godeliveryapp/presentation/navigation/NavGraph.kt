@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
+import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.CartScreen.CartScreenView
 import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreenView
@@ -72,8 +73,13 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
             MyOrdersScreenView(navController = navController)
         }
 
-        composable(route = Route.MyOrderDetailScreen.route) {
-            MyOrderDetailScreenView(navController = navController)
+        composable(
+            route = Route.MyOrderDetailScreen.route,
+            arguments = listOf(navArgument("serializedModel") { type = NavType.StringType })
+        ) {
+            val modelJson = it.arguments?.getString("serializedModel")
+            val myOrderModel = Json.decodeFromString<MyOrderModel>(modelJson ?: "")
+            MyOrderDetailScreenView(navController = navController, myOrderModel = myOrderModel)
         }
 
         composable(route = Route.MyFavouritesScreen.route) {

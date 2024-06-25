@@ -54,6 +54,9 @@ import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.godeliveryapp.presentation.userProfile.ProfileScreenViewModel
+import com.example.godeliveryapp.utils.convertUTCtoIST
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Composable
 fun MyOrdersScreenView(
@@ -341,7 +344,7 @@ private fun ItemView(
 
 
                     Text(
-                        text = myOrderModel.createdAt,
+                        text = convertUTCtoIST(myOrderModel.createdAt),
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
                         color = Color.Gray
                     )
@@ -367,7 +370,15 @@ private fun ItemView(
                 )
 
                 Row(
-                    modifier = Modifier.clickable { navController.navigate(Route.MyOrderDetailScreen.route) },
+                    modifier = Modifier.clickable {
+                        navController.navigate(
+                            "my_order_detail_screen/${
+                                serializeModel(
+                                    myOrderModel
+                                )
+                            }"
+                        )
+                    },
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -394,4 +405,9 @@ private fun ItemView(
         }
 
     }
+}
+
+fun serializeModel(myOrderModel: MyOrderModel): String {
+
+    return Json.encodeToString(myOrderModel)
 }

@@ -43,24 +43,6 @@ class ProfileScreenViewModel @Inject constructor(
         }
     }
 
-//    fun getOrder(orderId: Int) {
-//
-//        viewModelScope.launch {
-//
-//            try {
-//                _isLoading.value = true
-//                val orderDto = repository.getOrder(orderId)
-//                _orderDetails.value = orderDto
-//                _isLoading.value = false
-//            } catch (e: Exception) {
-//                Log.d("Error", "getOrder: $e")
-//            }
-//
-//        }
-//
-//
-//    }
-
     fun getOrders() {
 
         viewModelScope.launch {
