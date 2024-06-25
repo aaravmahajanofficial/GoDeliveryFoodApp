@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.ButtonDefaults
@@ -50,6 +49,7 @@ import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
+import com.example.godeliveryapp.presentation.common.CustomBackArrowButton
 import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.godeliveryapp.presentation.userProfile.ProfileScreenViewModel
@@ -82,18 +82,7 @@ fun MyOrdersScreenView(
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
 
-                        Box(
-                            modifier = Modifier
-                                .clickable { navController.navigateUp() }
-                                .size(42.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                                contentDescription = null,
-                                tint = colorResource(id = R.color.black),
-                                modifier = Modifier.scale(1.2f)
-                            )
-                        }
+                        CustomBackArrowButton(navController = navController)
 
                         Spacer(modifier = Modifier.height(screenHeight / 14))
 
@@ -125,7 +114,10 @@ fun MyOrdersScreenView(
 
                             Spacer(modifier = Modifier.height(ExtraSmallPadding3))
 
-                            Box(modifier = Modifier.width(screenWidth / 2)) {
+                            Box(
+                                modifier = Modifier.width(screenWidth / 1.5f),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 Text(
                                     text = "Explore our menu and get started with your first order.",
                                     color = colorResource(id = R.color.black),
@@ -172,18 +164,7 @@ fun MyOrdersScreenView(
 
                         item {
 
-                            Box(
-                                modifier = Modifier
-                                    .clickable { navController.navigateUp() }
-                                    .size(42.dp),
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                                    contentDescription = null,
-                                    tint = colorResource(id = R.color.black),
-                                    modifier = Modifier.scale(1.2f)
-                                )
-                            }
+                            CustomBackArrowButton(navController = navController)
 
                             Spacer(modifier = Modifier.height(ExtraSmallPadding1))
 
