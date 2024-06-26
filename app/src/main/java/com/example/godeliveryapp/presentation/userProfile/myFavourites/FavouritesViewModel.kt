@@ -17,6 +17,9 @@ class FavouritesViewModel @Inject constructor(private val repository: Repository
     private val _favourites = MutableStateFlow<List<RestaurantListingCardModel>?>(emptyList())
     val favourites: Flow<List<RestaurantListingCardModel>?> get() = _favourites
 
+    private val _favouritesList = MutableStateFlow<List<Int>>(emptyList())
+    val favouritesList: Flow<List<Int>> get() = _favouritesList
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading: Flow<Boolean> get() = _isLoading
 
@@ -27,13 +30,17 @@ class FavouritesViewModel @Inject constructor(private val repository: Repository
     private fun getFavourites() {
 
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                _isLoading.value = true
                 val results = repository.getFavourites()
-                _favourites.emit(results?.distinctBy { it.restaurantId })
-                _isLoading.value = false
+                _favourites.emit(results)
+                val list = results?.map { it.restaurantId } ?: emptyList()
+                _favouritesList.emit(list)
             } catch (e: Exception) {
                 Log.d("Error", "getFavourites: $e")
+            }
+            finally {
+                _isLoading.value = false
             }
         }
 
@@ -42,11 +49,34 @@ class FavouritesViewModel @Inject constructor(private val repository: Repository
     fun addToFavourites(restaurantId: Int) {
         viewModelScope.launch {
             try {
-                repository.addToFavourite(restaurantId)
+                val favouritesListCopy = _favouritesList.value.toMutableList()
+                if (repository.addToFavourite(restaurantId)) {
+                    favouritesListCopy.add(restaurantId)
+                    _favouritesList.emit(favouritesListCopy)
+                }
             } catch (e: Exception) {
                 Log.d("Error", "addToFavourites: $e")
             }
         }
+    }
+
+    fun removeFavourite(restaurantId: Int) {
+
+        viewModelScope.launch {
+
+            try {
+                val favouritesListCopy = _favouritesList.value.toMutableList()
+                if (repository.removeFavourite(restaurantId)) {
+                    favouritesListCopy.remove(restaurantId)
+                    _favouritesList.emit(favouritesListCopy)
+                }
+            } catch (e: Exception) {
+                Log.d("Error", "addToFavourites: $e")
+            }
+
+
+        }
+
     }
 
 }

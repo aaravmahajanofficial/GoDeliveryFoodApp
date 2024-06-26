@@ -100,6 +100,9 @@ fun SearchScreenView(
     val searchHistory =
         homeScreenViewModel.searchHistory.collectAsState(initial = emptyList()).value
 
+    val favouritesList =
+        favouritesViewModel.favouritesList.collectAsState(initial = emptyList()).value
+
     LaunchedEffect(textFieldValue) {
         homeScreenViewModel.searchKeyWord(textFieldValue)
     }
@@ -252,6 +255,12 @@ fun SearchScreenView(
                                             restaurantListingCardModel = result.restaurant,
                                             addToFav = { restaurantId ->
                                                 favouritesViewModel.addToFavourites(
+                                                    restaurantId
+                                                )
+                                            },
+                                            isFavourite = favouritesList.contains(result.restaurant.restaurantId),
+                                            removeFromFav = { restaurantId ->
+                                                favouritesViewModel.removeFavourite(
                                                     restaurantId
                                                 )
                                             },

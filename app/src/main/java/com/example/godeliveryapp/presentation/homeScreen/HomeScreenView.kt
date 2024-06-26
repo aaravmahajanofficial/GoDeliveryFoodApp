@@ -81,6 +81,8 @@ fun HomeScreenView(
     val categoriesList = viewModel.categories.collectAsState(initial = listOf()).value
     val halfSize = categoriesList?.size?.div(2)
 
+    val favouritesList = favouritesViewModel.favouritesList.collectAsState(initial = listOf()).value
+
 // Hero Section
 
     if (isLoading) {
@@ -266,7 +268,17 @@ fun HomeScreenView(
                             val restaurantIndex = itemsList[index]
                             RestaurantListingCardView(
                                 restaurantListingCardModel = restaurantIndex,
-                                addToFav = { restaurantId -> favouritesViewModel.addToFavourites(restaurantId) },
+                                addToFav = { restaurantId ->
+                                    favouritesViewModel.addToFavourites(
+                                        restaurantId
+                                    )
+                                },
+                                isFavourite = favouritesList.contains(restaurantIndex.restaurantId),
+                                removeFromFav = { restaurantId ->
+                                    favouritesViewModel.removeFavourite(
+                                        restaurantId
+                                    )
+                                },
                                 navigateToDetails = { navigateToDetails(restaurantIndex) })
                             Spacer(modifier = Modifier.width(14.dp))
                         }
@@ -290,7 +302,17 @@ fun HomeScreenView(
                             val restaurantIndex = itemsList[index]
                             RestaurantListingCardView(
                                 restaurantListingCardModel = restaurantIndex,
-                                addToFav = { restaurantId -> favouritesViewModel.addToFavourites(restaurantId) },
+                                addToFav = { restaurantId ->
+                                    favouritesViewModel.addToFavourites(
+                                        restaurantId
+                                    )
+                                },
+                                isFavourite = favouritesList.contains(restaurantIndex.restaurantId),
+                                removeFromFav = { restaurantId ->
+                                    favouritesViewModel.removeFavourite(
+                                        restaurantId
+                                    )
+                                },
                                 navigateToDetails = { navigateToDetails(restaurantIndex) })
                             Spacer(modifier = Modifier.width(14.dp))
                         }

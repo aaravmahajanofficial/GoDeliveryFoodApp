@@ -18,7 +18,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.StarRate
-import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -45,6 +46,8 @@ import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 fun RestaurantListingCardView(
     modifier: Modifier = Modifier,
     addToFav: (Int) -> Unit,
+    removeFromFav: (Int) -> Unit,
+    isFavourite: Boolean,
     restaurantListingCardModel: RestaurantListingCardModel,
     navigateToDetails: (() -> Unit)? = null,
 ) {
@@ -77,7 +80,13 @@ fun RestaurantListingCardView(
             )
             Box(
                 modifier = Modifier
-                    .clickable { addToFav(restaurantListingCardModel.restaurantId) }
+                    .clickable {
+                        if (isFavourite) {
+                            removeFromFav(restaurantListingCardModel.restaurantId)
+                        } else {
+                            addToFav(restaurantListingCardModel.restaurantId)
+                        }
+                    }
                     .align(Alignment.TopEnd)
                     .padding(NormalPadding)
                     .background(color = Color.White, shape = CircleShape)
@@ -85,9 +94,9 @@ fun RestaurantListingCardView(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Outlined.FavoriteBorder,
+                    imageVector = if (isFavourite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                     contentDescription = null,
-                    tint = colorResource(id = R.color.black),
+                    tint = if (isFavourite) Color.Red else colorResource(id = R.color.black),
                     modifier = Modifier.scale(1f)
                 )
             }

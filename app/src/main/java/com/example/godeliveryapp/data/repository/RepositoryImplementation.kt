@@ -448,8 +448,8 @@ class RepositoryImplementation(
         }
     }
 
-    override suspend fun addToFavourite(restaurantId: Int) {
-        withContext(Dispatchers.IO) {
+    override suspend fun addToFavourite(restaurantId: Int) : Boolean {
+        return withContext(Dispatchers.IO) {
             try {
                 val userId = sharedPreferences.getUserData("USER_ID")!!
 
@@ -471,10 +471,39 @@ class RepositoryImplementation(
                     null
                 }
 
+                true
+
             } catch (e: Exception) {
                 Log.d("ERROR WHILE ADDING TO FAVOURITES Repository", e.toString())
+                false
             }
         }
+    }
+
+    override suspend fun removeFavourite(restaurantId: Int) : Boolean {
+
+        return withContext(Dispatchers.IO) {
+
+            try {
+
+                val userId = sharedPreferences.getUserData("USER_ID")!!
+
+                postgrest.from("Favourites").delete {
+                    filter {
+                        eq("userId", userId)
+                        eq("restaurantId", restaurantId)
+                    }
+                }
+
+                true
+
+            } catch (e: Exception) {
+                Log.d("ERROR WHILE REMOVING FAVOURITE", e.toString())
+                false
+
+            }
+        }
+
     }
 
 }

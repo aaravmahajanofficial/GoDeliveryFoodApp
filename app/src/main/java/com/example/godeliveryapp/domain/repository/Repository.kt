@@ -55,7 +55,9 @@ interface Repository {
 
     suspend fun getFavourites(): List<RestaurantListingCardModel>?
 
-    suspend fun addToFavourite(restaurantId: Int)
+    suspend fun addToFavourite(restaurantId: Int) : Boolean
+
+    suspend fun removeFavourite(restaurantId: Int) : Boolean
 
 
 }
