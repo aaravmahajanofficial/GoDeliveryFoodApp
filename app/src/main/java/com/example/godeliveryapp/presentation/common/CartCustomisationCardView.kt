@@ -1,5 +1,6 @@
 package com.example.godeliveryapp.presentation.common
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,12 +30,14 @@ import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 @Composable
 fun CartCustomisationCardView(
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
     title: String, description: String, imageVector: ImageVector, showArrow: Boolean?
 ) {
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     Box(
         modifier = Modifier
+            .clickable { onClick?.invoke() }
             .fillMaxWidth()
     ) {
         Row(

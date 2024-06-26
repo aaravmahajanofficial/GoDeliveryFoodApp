@@ -25,7 +25,8 @@ import androidx.compose.material.icons.outlined.Discount
 import androidx.compose.material.icons.outlined.Layers
 import androidx.compose.material.icons.rounded.AccessTime
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.CalendarMonth
+import androidx.compose.material.icons.rounded.Bolt
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -34,12 +35,14 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -64,14 +67,13 @@ import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.common.CartCustomisationCardView
 import com.example.godeliveryapp.presentation.common.CartItemCardView
 import com.example.godeliveryapp.presentation.common.CustomBackArrowButton
+import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import com.example.godeliveryapp.presentation.common.PaymentDetailsCard
 import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.godeliveryapp.presentation.orderScreen.OrderState
 import com.example.zomatoclone.utils.Constants.DELIVERY_FEE
 import com.example.zomatoclone.utils.Constants.PROMOCODE
 import com.example.zomatoclone.utils.Constants.TAX
-import java.math.RoundingMode
-import java.text.DecimalFormat
 
 
 @Composable
@@ -89,8 +91,24 @@ fun CartScreenView(
     val orderState by cartViewModel.orderState.collectAsState()
     val isLoading = cartViewModel.isLoading.collectAsState(initial = false).value
 
-    val textFieldValue = remember {
+    var openDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var deliveryInstructionsValue by remember {
         mutableStateOf("")
+    }
+
+    var textFieldValue by remember {
+        mutableStateOf("")
+    }
+
+    var standardDelivery by remember {
+        mutableStateOf(true)
+    }
+
+    var scheduleDelivery by remember {
+        mutableStateOf(false)
     }
 
     LaunchedEffect(Unit) {
@@ -252,13 +270,7 @@ fun CartScreenView(
                         }
 
 
-                        Spacer(
-                            modifier = Modifier
-                                .padding(top = MediumPadding2, bottom = MediumPadding2)
-                                .fillMaxWidth()
-                                .height(1.dp)
-                                .background(color = colorResource(id = R.color.lightGray))
-                        )
+                        CustomLineBreak()
 
                         Row(
                             modifier = Modifier
@@ -297,16 +309,14 @@ fun CartScreenView(
                         Spacer(modifier = Modifier.height(MediumPadding1))
                     }
 
-                    items(cartItems.size ?: 0) {
+                    items(cartItems.size) {
                         //List of Items in the Cart
                             index ->
-                        val cartItemCardIndex = cartItems?.get(index)
-                        if (cartItemCardIndex != null) {
-                            CartItemCardView(
-                                cartItemModel = cartItemCardIndex,
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
+                        val cartItemCardIndex = cartItems.get(index)
+                        CartItemCardView(
+                            cartItemModel = cartItemCardIndex,
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
 
                     item {
@@ -315,8 +325,8 @@ fun CartScreenView(
 
                         OutlinedTextField(
                             modifier = Modifier.fillMaxWidth(),
-                            value = textFieldValue.value,
-                            onValueChange = { textFieldValue.value = it },
+                            value = textFieldValue,
+                            onValueChange = { textFieldValue = it },
                             shape = RoundedCornerShape(5.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = colorResource(id = R.color.lightGray),
@@ -361,6 +371,10 @@ fun CartScreenView(
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
+                                    .clickable {
+                                        standardDelivery = true
+                                        scheduleDelivery = false
+                                    }
                                     .height(screenHeight.div(10))
                                     .width(screenWidth.div(3))
                                     .background(
@@ -368,10 +382,17 @@ fun CartScreenView(
                                         color = Color.Transparent
                                     )
                                     .border(
-                                        BorderStroke(
-                                            width = (2.dp),
-                                            color = colorResource(id = R.color.black)
-                                        ),
+                                        if (!scheduleDelivery) {
+                                            BorderStroke(
+                                                width = (2.dp),
+                                                color = colorResource(id = R.color.black)
+                                            )
+                                        } else {
+                                            BorderStroke(
+                                                width = (2.dp),
+                                                color = colorResource(id = R.color.lightGray)
+                                            )
+                                        },
                                         shape = RoundedCornerShape(8.dp)
                                     ), contentAlignment = Alignment.Center
                             ) {
@@ -384,10 +405,9 @@ fun CartScreenView(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
 
-
                                     Icon(
-                                        imageVector = Icons.Rounded.AccessTime,
-                                        contentDescription = null, modifier = Modifier.scale(1f),
+                                        imageVector = Icons.Rounded.Bolt,
+                                        contentDescription = null, modifier = Modifier.scale(1.2f),
                                         tint = colorResource(
                                             id = R.color.black
                                         )
@@ -430,6 +450,10 @@ fun CartScreenView(
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
+                                    .clickable {
+                                        scheduleDelivery = true
+                                        standardDelivery = false
+                                    }
                                     .height(screenHeight.div(10))
                                     .width(screenWidth.div(2))
                                     .background(
@@ -437,10 +461,17 @@ fun CartScreenView(
                                         color = Color.Transparent
                                     )
                                     .border(
-                                        BorderStroke(
-                                            width = (2.dp),
-                                            color = colorResource(id = R.color.lightGray)
-                                        ),
+                                        if (!standardDelivery) {
+                                            BorderStroke(
+                                                width = (2.dp),
+                                                color = colorResource(id = R.color.black)
+                                            )
+                                        } else {
+                                            BorderStroke(
+                                                width = (2.dp),
+                                                color = colorResource(id = R.color.lightGray)
+                                            )
+                                        },
                                         shape = RoundedCornerShape(8.dp)
                                     ), contentAlignment = Alignment.Center
                             ) {
@@ -455,7 +486,7 @@ fun CartScreenView(
 
 
                                     Icon(
-                                        imageVector = Icons.Rounded.CalendarMonth,
+                                        imageVector = Icons.Rounded.AccessTime,
                                         contentDescription = null, modifier = Modifier.scale(1f),
                                         tint = colorResource(
                                             id = R.color.black
@@ -496,45 +527,26 @@ fun CartScreenView(
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(MediumPadding2))
-
-
-                        Spacer(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(1.dp)
-                                .background(color = colorResource(id = R.color.lightGray))
-                        )
-
-                        Spacer(modifier = Modifier.height(MediumPadding2))
+                        CustomLineBreak()
 
                         CartCustomisationCardView(
-                            title = "Delivery Options",
-                            description = "Standard Delivery",
+                            title = "Delivery Instructions",
+                            description = deliveryInstructionsValue.ifBlank { "Standard Delivery" },
                             imageVector = Icons.Outlined.Layers,
-                            showArrow = true
+                            showArrow = true,
+                            onClick = {
+                                openDialog = true
+                            }
                         )
-                        Spacer(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = MediumPadding2, bottom = MediumPadding2)
-                                .height(1.dp)
-                                .background(color = colorResource(id = R.color.lightGray))
-                        )
+                        CustomLineBreak()
                         CartCustomisationCardView(
                             title = "Promo code Applied",
                             description = "₹85 coupon savings",
                             imageVector = Icons.Outlined.Discount,
-                            showArrow = true
+                            showArrow = true,
                         )
 
-                        Spacer(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = MediumPadding2, bottom = MediumPadding2)
-                                .height(1.dp)
-                                .background(color = colorResource(id = R.color.lightGray))
-                        )
+                        CustomLineBreak()
 
                         Text(
                             text = "Bill Details",
@@ -556,7 +568,7 @@ fun CartScreenView(
                         ) {
                             OutlinedButton(
                                 onClick = {
-                                    val deliveryInstructions = textFieldValue.value
+                                    val deliveryInstructions = textFieldValue
                                     cartViewModel.placeOrder(
                                         totalAmount = cartTotal,
                                         deliveryInstructions = deliveryInstructions,
@@ -618,16 +630,73 @@ fun CartScreenView(
                 OrderState.PREPARING -> {}
             }
 
+            if (openDialog) {
+                AlertDialog(
+                    shape = MaterialTheme.shapes.extraSmall,
+                    containerColor = colorResource(id = R.color.white),
+                    text = {
+                        OutlinedTextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = deliveryInstructionsValue,
+                            onValueChange = { deliveryInstructionsValue = it },
+                            shape = RoundedCornerShape(5.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = colorResource(id = R.color.lightGray),
+                                unfocusedBorderColor = colorResource(id = R.color.lightGray),
+                                focusedContainerColor = colorResource(id = R.color.lightGray),
+                                unfocusedContainerColor = colorResource(id = R.color.lightGray),
+                                focusedTextColor = colorResource(id = R.color.black),
+                                unfocusedTextColor = colorResource(id = R.color.black)
+                            ),
+                            placeholder = {
+                                Text(
+                                    text = "Add delivery instructions",
+                                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
+                                    color = colorResource(id = R.color.gray)
+                                )
+                            },
+                            maxLines = 1,
+                            singleLine = true
+                        )
+                    },
+                    onDismissRequest = { openDialog = false },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                openDialog = false
+
+                            }) {
+
+                            Text(
+                                text = "Done",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = colorResource(id = R.color.black)
+                            )
+
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = {
+                                openDialog = false
+                            }) {
+
+                            Text(
+                                text = "Cancel",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                color = colorResource(id = R.color.black)
+                            )
+
+                        }
+                    }
+                )
+
+            }
+
         }
     }
 
 
-}
-
-private fun cartTotalRoundOff(cartTotal: Double): String {
-    val df = DecimalFormat("#.##")
-    df.roundingMode = RoundingMode.CEILING
-    return df.format(cartTotal)
 }
 
 

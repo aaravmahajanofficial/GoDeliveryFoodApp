@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.StarRate
@@ -59,8 +60,10 @@ import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
+import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemCardView
 import com.example.godeliveryapp.presentation.navigation.Route
+import com.example.godeliveryapp.presentation.userProfile.myFavourites.FavouritesViewModel
 
 @Composable
 fun DetailsScreenView(
@@ -68,7 +71,8 @@ fun DetailsScreenView(
     navController: NavController,
     viewModel: DetailsScreenViewModel = hiltViewModel(),
     cartScreenViewModel: CartScreenViewModel = hiltViewModel(),
-    restaurantListingCardModel: RestaurantListingCardModel
+    restaurantListingCardModel: RestaurantListingCardModel,
+    favouritesViewModel: FavouritesViewModel = hiltViewModel()
 ) {
 
     LaunchedEffect(Unit) {
@@ -83,6 +87,9 @@ fun DetailsScreenView(
     val totalItems = cartScreenViewModel.totalItemsInCart.collectAsState(initial = 0).value
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     var onlyVeg by remember { mutableStateOf(false) }
+
+    val favouritesList =
+        favouritesViewModel.favouritesList.collectAsState(initial = emptyList()).value
 
     if (isLoading) {
 
@@ -132,7 +139,7 @@ fun DetailsScreenView(
                                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                                 contentDescription = null,
                                 tint = colorResource(id = R.color.black),
-                                modifier = Modifier.scale(1f)
+                                modifier = Modifier.scale(1.2f)
                             )
                         }
                         Row(
@@ -141,13 +148,29 @@ fun DetailsScreenView(
                         ) {
                             Box(
                                 modifier = Modifier
+                                    .clickable {
+                                        if (favouritesList.contains(restaurantListingCardModel.restaurantId)) {
+                                            favouritesViewModel.removeFavourite(
+                                                restaurantListingCardModel.restaurantId
+                                            )
+                                        } else {
+                                            favouritesViewModel.addToFavourites(
+                                                restaurantListingCardModel.restaurantId
+                                            )
+                                        }
+                                    }
                                     .background(color = Color.White, shape = CircleShape)
                                     .size(42.dp), contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = Icons.Rounded.FavoriteBorder,
+                                    imageVector = if (favouritesList.contains(
+                                            restaurantListingCardModel.restaurantId
+                                        )
+                                    ) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                                     contentDescription = null,
-                                    tint = colorResource(id = R.color.black),
+                                    tint = if (favouritesList.contains(restaurantListingCardModel.restaurantId)) Color.Red else colorResource(
+                                        id = R.color.black
+                                    ),
                                     modifier = Modifier.scale(1f)
                                 )
                             }
@@ -310,16 +333,7 @@ fun DetailsScreenView(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(28.dp))
-
-                    Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(color = colorResource(id = R.color.lightGray))
-                    )
-
-                    Spacer(modifier = Modifier.height(10.dp))
+                    CustomLineBreak()
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
