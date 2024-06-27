@@ -23,6 +23,7 @@ import com.example.godeliveryapp.presentation.onBoarding.components.login_signup
 import com.example.godeliveryapp.presentation.onBoarding.components.login_signup.WelcomeScreen
 import com.example.godeliveryapp.presentation.orderScreen.OrderScreenView
 import com.example.godeliveryapp.presentation.orderScreen.OrderSuccessScreenView
+import com.example.godeliveryapp.presentation.promoCodeScreen.PromoCodeScreenView
 import com.example.godeliveryapp.presentation.userProfile.ProfileScreenView
 import com.example.godeliveryapp.presentation.userProfile.myFavourites.MyFavouritesScreenView
 import com.example.godeliveryapp.presentation.userProfile.myOrders.MyOrderDetailScreenView
@@ -59,9 +60,11 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
 
         composable(
             route = Route.CartScreen.route,
+            arguments = listOf(navArgument("coupon_code") { type = NavType.StringType })
         ) {
             CartScreenView(
-                navController = navController
+                navController = navController,
+                couponCodeValue = it.arguments?.getString("coupon_code")
             )
         }
 
@@ -153,6 +156,10 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
 
             )
 
+        }
+
+        composable(route = Route.PromoCodeScreen.route) {
+            PromoCodeScreenView(navController = navController)
         }
 
         composable(route = Route.LoginPage.route) {

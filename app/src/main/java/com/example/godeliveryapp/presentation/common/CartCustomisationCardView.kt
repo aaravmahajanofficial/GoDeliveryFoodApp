@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.godeliveryapp.R
@@ -31,7 +32,8 @@ import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 fun CartCustomisationCardView(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
-    title: String, description: String, imageVector: ImageVector, showArrow: Boolean?
+    annotatedString: AnnotatedString? = null,
+    title: String, description: String? = null, imageVector: ImageVector, showArrow: Boolean?
 ) {
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
@@ -75,11 +77,19 @@ fun CartCustomisationCardView(
                     maxLines = 2,
                 )
 
-                Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
-                    color = colorResource(id = R.color.gray)
-                )
+                if (annotatedString != null) {
+                    Text(
+                        text = annotatedString,
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
+                        color = colorResource(id = R.color.gray)
+                    )
+                } else {
+                    Text(
+                        text = description ?: "",
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
+                        color = colorResource(id = R.color.gray)
+                    )
+                }
 
             }
 

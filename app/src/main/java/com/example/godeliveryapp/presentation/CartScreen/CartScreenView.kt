@@ -14,12 +14,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
 import androidx.compose.material.icons.outlined.Discount
 import androidx.compose.material.icons.outlined.Layers
@@ -51,9 +49,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -79,6 +80,7 @@ import com.example.zomatoclone.utils.Constants.TAX
 @Composable
 fun CartScreenView(
     modifier: Modifier = Modifier,
+    couponCodeValue: String? = null,
     cartViewModel: CartScreenViewModel = hiltViewModel(),
     navController: NavController
 ) {
@@ -200,18 +202,7 @@ fun CartScreenView(
 
                 } else {
                     item {
-                        Box(
-                            modifier = Modifier
-                                .clickable { navController.navigateUp() }
-                                .size(42.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                                contentDescription = null,
-                                tint = colorResource(id = R.color.black),
-                                modifier = Modifier.scale(1f)
-                            )
-                        }
+                        CustomBackArrowButton(navController = navController)
 
                         Spacer(modifier = Modifier.height(ExtraSmallPadding1))
 
@@ -312,7 +303,7 @@ fun CartScreenView(
                     items(cartItems.size) {
                         //List of Items in the Cart
                             index ->
-                        val cartItemCardIndex = cartItems.get(index)
+                        val cartItemCardIndex = cartItems[index]
                         CartItemCardView(
                             cartItemModel = cartItemCardIndex,
                         )
@@ -539,13 +530,47 @@ fun CartScreenView(
                             }
                         )
                         CustomLineBreak()
-                        CartCustomisationCardView(
-                            title = "Promo code Applied",
-                            description = "₹85 coupon savings",
-                            imageVector = Icons.Outlined.Discount,
-                            showArrow = true,
-                        )
-
+                        val annotatedString = buildAnnotatedString {
+                            withStyle(
+                                style = SpanStyle(
+                                    color = colorResource(id = R.color.secondaryColor),
+                                    fontWeight = FontWeight.Normal
+                                )
+                            ) {
+                                append(couponCodeValue)
+                            }
+                            append(" ")
+                            withStyle(
+                                style = SpanStyle(
+                                    color = colorResource(id = R.color.black),
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            ) {
+                                append("₹$cartSubTotal")
+                            }
+                            append(" coupon savings")
+                        }
+                        if (couponCodeValue != "{coupon_code}") {
+                            CartCustomisationCardView(
+                                title = "Promo code Applied",
+                                annotatedString = annotatedString,
+                                imageVector = Icons.Outlined.Discount,
+                                showArrow = true,
+                                onClick = {
+                                    navController.navigate(Route.PromoCodeScreen.route)
+                                }
+                            )
+                        } else {
+                            CartCustomisationCardView(
+                                title = "Apply Promo Code",
+                                description = "Enter code to unlock your discount",
+                                imageVector = Icons.Outlined.Discount,
+                                showArrow = true,
+                                onClick = {
+                                    navController.navigate(Route.PromoCodeScreen.route)
+                                }
+                            )
+                        }
                         CustomLineBreak()
 
                         Text(

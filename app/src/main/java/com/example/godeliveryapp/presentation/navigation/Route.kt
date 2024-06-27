@@ -6,7 +6,7 @@ sealed class Route(val route: String) {
     data object CategoryScreen : Route(route = "category_screen")
 
     data object HomeScreen : Route(route = "home_screen")
-    data object CartScreen : Route(route = "cart_screen")
+    data object CartScreen : Route(route = "cart_screen/{coupon_code}")
 
     data object LoginPage : Route(route = "login_page")
 
@@ -35,5 +35,7 @@ sealed class Route(val route: String) {
     data object OnBoardingScreen : Route(route = "on_boarding_screen")
 
     data object SearchScreen : Route(route = "search_screen")
+
+    data object PromoCodeScreen : Route(route = "promo_code_screen")
 
 }
