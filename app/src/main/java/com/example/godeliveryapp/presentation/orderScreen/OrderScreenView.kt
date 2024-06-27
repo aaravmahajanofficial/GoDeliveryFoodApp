@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -48,8 +49,6 @@ import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.common.CartCustomisationCardView
 import com.example.godeliveryapp.presentation.navigation.Route
-import kotlin.random.Random
-import kotlin.random.nextUInt
 
 @Composable
 fun OrderScreenView(
@@ -60,6 +59,7 @@ fun OrderScreenView(
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val isLoading = orderScreenViewModel.isLoading.collectAsState(initial = false).value
+    val order by orderScreenViewModel.order.collectAsState(initial = null)
 
     if (isLoading) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -218,148 +218,153 @@ fun OrderScreenView(
         }
     } else {
 
-        Box(modifier = Modifier.fillMaxSize()) {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(NormalPadding),
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-
-                Spacer(modifier = Modifier.height(screenHeight / 16))
-                Box(
-                    modifier = Modifier
-                        .height(screenHeight / 3)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.order_success_logo),
-                        contentDescription = null,
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(screenHeight / 16))
+        if (order != null) {
+            Box(modifier = Modifier.fillMaxSize()) {
 
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    horizontalAlignment = Alignment.Start
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(NormalPadding),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = "Order placed!!",
-                        style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                        color = colorResource(
-                            id = R.color.black
-                        )
-                    )
 
-                    Spacer(modifier = Modifier.height(MediumPadding1))
-
-                    Text(
-                        text = "Order ID",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = colorResource(id = R.color.black),
-                    )
-
-                    Spacer(modifier = Modifier.height(ExtraSmallPadding2))
-
-                    Text(
-                        text = "#${Random.nextUInt()}",
-                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
-                        color = colorResource(id = R.color.gray),
-                    )
-
-                    Spacer(modifier = Modifier.height(MediumPadding1))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    Spacer(modifier = Modifier.height(screenHeight / 16))
+                    Box(
+                        modifier = Modifier
+                            .height(screenHeight / 3)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
                     ) {
-                        Text(
-                            text = "Accept your order delivery with OTP",
-                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
-                            color = colorResource(id = R.color.black),
-                        )
-
-                        Text(
-                            text = "${Random.nextUInt(from = 1000u, until = 9999u)}",
-                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
-                            color = colorResource(id = R.color.black),
-                            textAlign = TextAlign.Center,
+                        Image(
+                            painter = painterResource(id = R.drawable.order_success_logo),
+                            contentDescription = null,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(screenHeight / 10))
+                    Spacer(modifier = Modifier.height(screenHeight / 16))
 
                     Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.SpaceEvenly
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        horizontalAlignment = Alignment.Start
                     ) {
+                        Text(
+                            text = "Order placed!!",
+                            style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
+                            color = colorResource(
+                                id = R.color.black
+                            )
+                        )
 
                         Spacer(modifier = Modifier.height(MediumPadding1))
 
-                        TextButton(
-                            onClick = { navController.navigate(Route.LoginPage.route) },
+                        Text(
+                            text = "Order ID",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                            color = colorResource(id = R.color.black),
+                        )
 
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(screenHeight / 14),
-                            shape = RoundedCornerShape(5.dp),
-                            colors = ButtonDefaults.textButtonColors(
-                                containerColor = colorResource(id = R.color.black),
-                            )
+                        Spacer(modifier = Modifier.height(ExtraSmallPadding2))
+
+                        Text(
+                            text = "#${order!!.orderId}",
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
+                            color = colorResource(id = R.color.gray),
+                        )
+
+                        Spacer(modifier = Modifier.height(MediumPadding1))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
+                            Text(
+                                text = "Accept your order delivery with OTP",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
+                                color = colorResource(id = R.color.black),
+                            )
 
                             Text(
-                                text = "Track order",
-                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                                color = colorResource(id = R.color.white)
+                                text = order!!.verificationCode,
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                                color = colorResource(id = R.color.black),
+                                textAlign = TextAlign.Center,
                             )
-
                         }
 
-                        Spacer(modifier = Modifier.height(ExtraSmallPadding3))
+                        Spacer(modifier = Modifier.height(screenHeight / 10))
 
-                        TextButton(
-                            onClick = {
-                                navController.navigate(Route.HomeScreen.route) {
-                                    popUpTo(Route.HomeScreen.route) {
-                                        inclusive = true
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.SpaceEvenly
+                        ) {
+
+                            Spacer(modifier = Modifier.height(MediumPadding1))
+
+                            TextButton(
+                                onClick = { navController.navigate(Route.LoginPage.route) },
+
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(screenHeight / 14),
+                                shape = RoundedCornerShape(5.dp),
+                                colors = ButtonDefaults.textButtonColors(
+                                    containerColor = colorResource(id = R.color.black),
+                                )
+                            ) {
+
+                                Text(
+                                    text = "Track order",
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                                    color = colorResource(id = R.color.white)
+                                )
+
+                            }
+
+                            Spacer(modifier = Modifier.height(ExtraSmallPadding3))
+
+                            TextButton(
+                                onClick = {
+                                    navController.navigate(Route.HomeScreen.route) {
+                                        popUpTo(Route.HomeScreen.route) {
+                                            inclusive = true
+                                        }
                                     }
-                                }
-                            },
-                            border = BorderStroke(0.5.dp, colorResource(id = R.color.lightGray)),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(screenHeight / 14),
-                            shape = RoundedCornerShape(5.dp),
-                            colors = ButtonDefaults.textButtonColors(
-                                containerColor = colorResource(id = R.color.lightGray),
-                            )
-                        ) {
+                                },
+                                border = BorderStroke(
+                                    0.5.dp,
+                                    colorResource(id = R.color.lightGray)
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(screenHeight / 14),
+                                shape = RoundedCornerShape(5.dp),
+                                colors = ButtonDefaults.textButtonColors(
+                                    containerColor = colorResource(id = R.color.lightGray),
+                                )
+                            ) {
 
-                            Text(
-                                text = "Close",
-                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                                color = colorResource(id = R.color.black)
-                            )
+                                Text(
+                                    text = "Close",
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                                    color = colorResource(id = R.color.black)
+                                )
+
+                            }
 
                         }
-
                     }
+
+
                 }
 
 
             }
-
-
         }
 
 

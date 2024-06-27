@@ -20,15 +20,11 @@ class ProfileScreenViewModel @Inject constructor(
     private val _userDetails = MutableStateFlow<UserDto?>(null)
     val userDetails: Flow<UserDto?> get() = _userDetails
 
-    private val _orders = MutableStateFlow<List<MyOrderModel>?>(listOf())
-    val orders: Flow<List<MyOrderModel>?> get() = _orders
-
     private val _isLoading = MutableStateFlow(false)
     val isLoading: Flow<Boolean> get() = _isLoading
 
     init {
         getUserData()
-        getOrders()
     }
 
     private fun getUserData() {
@@ -42,20 +38,5 @@ class ProfileScreenViewModel @Inject constructor(
         }
     }
 
-    private fun getOrders() {
 
-        viewModelScope.launch {
-
-            try {
-                _isLoading.value = true
-                val orders = repository.getOrderItems()
-                _orders.emit(orders)
-                _isLoading.value = false
-            } catch (e: Exception) {
-                Log.d("Error", "getOrders: $e")
-            }
-
-        }
-
-    }
 }

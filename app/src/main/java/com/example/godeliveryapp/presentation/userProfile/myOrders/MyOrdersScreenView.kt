@@ -48,7 +48,7 @@ import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.common.CustomBackArrowButton
 import com.example.godeliveryapp.presentation.common.CustomLineBreak
-import com.example.godeliveryapp.presentation.userProfile.ProfileScreenViewModel
+import com.example.godeliveryapp.presentation.orderScreen.OrderScreenViewModel
 import com.example.godeliveryapp.utils.convertUTCtoIST
 
 @Composable
@@ -56,11 +56,10 @@ fun MyOrdersScreenView(
     modifier: Modifier = Modifier,
     navController: NavController,
     navigateToMyOrderDetailScreen: (MyOrderModel) -> Unit,
-    profileScreenViewModel: ProfileScreenViewModel = hiltViewModel()
+    orderScreenViewModel: OrderScreenViewModel = hiltViewModel(),
 ) {
-
-    val orders = profileScreenViewModel.orders.collectAsState(initial = listOf()).value
-    val isLoading = profileScreenViewModel.isLoading.collectAsState(initial = false).value
+    val orders = orderScreenViewModel.orders.collectAsState(initial = listOf()).value
+    val isLoading = orderScreenViewModel.isLoading.collectAsState(initial = false).value
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 

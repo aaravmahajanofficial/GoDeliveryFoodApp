@@ -17,8 +17,6 @@ interface Repository {
 
     suspend fun getCartItems(): List<CartItemModel>?
 
-//    suspend fun existsInCart(itemId: Int): CartItemModel?
-
     suspend fun deleteCartItem(cartItemModel: CartItemModel)
 
     suspend fun upsertCartItem(cartItemModel: CartItemModel)
@@ -45,19 +43,15 @@ interface Repository {
 
     suspend fun updateOrderStatus(newState: OrderState): Boolean
 
-    suspend fun getOrder(orderId: Int): OrderDto?
-//
-//    suspend fun cancelOrder(orderId: Int): Boolean
-
     suspend fun clearCart()
 
-    suspend fun getOrderItems(): List<MyOrderModel>
+    suspend fun getOrders(): List<MyOrderModel>
 
     suspend fun getFavourites(): List<RestaurantListingCardModel>?
 
-    suspend fun addToFavourite(restaurantId: Int) : Boolean
+    suspend fun addToFavourite(restaurantId: Int): Boolean
 
-    suspend fun removeFavourite(restaurantId: Int) : Boolean
+    suspend fun removeFavourite(restaurantId: Int): Boolean
 
 
 }

@@ -260,7 +260,10 @@ class RepositoryImplementation(
         }
     }
 
-    override suspend fun placeOrder(orderDto: OrderDto, orderItems: List<OrderItemDto>) {
+    override suspend fun placeOrder(
+        orderDto: OrderDto,
+        orderItems: List<OrderItemDto>
+    ) {
 
         val randomId = Random.nextUInt()
 
@@ -271,24 +274,24 @@ class RepositoryImplementation(
                     orderId = randomId,
                     createdAt = Clock.System.now(),
                     userId = sharedPreferences.getUserData("USER_ID")!!,
-                    orderStatus = OrderState.PENDING,
                     verificationCode = (1000..9999).random(),
-                    paymentMode = "COD"
                 )
 
-                postgrest.from("Orders").insert(dto)
+                val insertedOrder = postgrest.from("Orders").upsert(dto) {
+                    select()
+                }.decodeSingleOrNull<OrderDto>()
+
+                Log.d("ORDER ID", insertedOrder.toString())
 
                 orderItems.forEach() {
-                    postgrest.from("OrderItems").insert(it.copy(orderId = randomId))
+                    postgrest.from("OrderItems").insert(it.copy(orderId = insertedOrder?.orderId))
                 }
-                sharedPreferences.saveOrderData("ORDER_ID", randomId)
 
                 clearCart()
 
-
             } catch (e: Exception) {
                 Log.d("ERROR", e.toString())
-
+                null
             }
         }
 
@@ -316,31 +319,7 @@ class RepositoryImplementation(
 
     }
 
-    //    override suspend fun getOrders(): List<OrderDto>? {
-//        TODO("Not yet implemented")
-//    }
-//
-    override suspend fun getOrder(orderId: Int): OrderDto {
-
-        return withContext(Dispatchers.IO) {
-
-            val orderDto = postgrest.from("Orders").select {
-                filter {
-                    eq("orderId", orderId)
-                }
-            }.decodeSingle<OrderDto>()
-
-            orderDto
-
-        }
-
-    }
-
-//    override suspend fun cancelOrder(orderId: Int): Boolean {
-//        TODO("Not yet implemented")
-//    }
-
-    override suspend fun getOrderItems(): List<MyOrderModel> {
+    override suspend fun getOrders(): List<MyOrderModel> {
         return withContext(Dispatchers.IO) {
 
             try {
@@ -375,7 +354,7 @@ class RepositoryImplementation(
                     }
 
                     val myOrderModel = MyOrderModel(
-                        orderId = id.orderId!!,
+                        orderId = id.orderId!!.toString(),
                         items = individualItems.map { menuItemDtoToModel(it) },
                         restaurantName = restaurant.name,
                         restaurantAddress = restaurant.streetAddress.split(",")[0].plus(", ")
@@ -385,14 +364,15 @@ class RepositoryImplementation(
                         orderStatus = id.orderStatus.toString(),
                         orderTotal = id.totalAmount.toString(),
                         totalItems = orderItems.size,
-                        paymentMode = id.paymentMode.toString()
+                        paymentMode = id.paymentMode.toString(),
+                        verificationCode = id.verificationCode.toString()
                     )
 
                     myOrders.add(myOrderModel)
 
                 }
 
-                myOrders
+                myOrders.sortedByDescending { it.createdAt }
 
             } catch (e: Exception) {
                 Log.d("ERROR WHILE FETCHING ORDER ITEMS", e.toString())
@@ -448,7 +428,7 @@ class RepositoryImplementation(
         }
     }
 
-    override suspend fun addToFavourite(restaurantId: Int) : Boolean {
+    override suspend fun addToFavourite(restaurantId: Int): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 val userId = sharedPreferences.getUserData("USER_ID")!!
@@ -480,7 +460,7 @@ class RepositoryImplementation(
         }
     }
 
-    override suspend fun removeFavourite(restaurantId: Int) : Boolean {
+    override suspend fun removeFavourite(restaurantId: Int): Boolean {
 
         return withContext(Dispatchers.IO) {
 

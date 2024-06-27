@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MyOrderModel(
-    val orderId: UInt,
+    val orderId: String,
     val items: List<MenuItemModel>,
     val restaurantName: String,
     val restaurantAddress: String,
@@ -15,4 +15,5 @@ data class MyOrderModel(
     val orderTotal: String,
     val totalItems: Int,
     val paymentMode: String,
+    val verificationCode : String
 )

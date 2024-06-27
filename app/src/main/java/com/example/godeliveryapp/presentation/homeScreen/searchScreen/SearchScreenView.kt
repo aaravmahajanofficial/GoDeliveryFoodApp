@@ -369,36 +369,38 @@ fun SearchScreenView(
 
                         Spacer(modifier = Modifier.height(screenHeight / 12))
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = NormalPadding, end = NormalPadding),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                modifier = Modifier,
-                                text = "Recent Searches",
-                                color = colorResource(id = R.color.black),
-                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
-                            )
-
-                            Box(modifier = Modifier
-                                .clickable { homeScreenViewModel.deleteSearchHistory() }
-                                .background(color = Color.Transparent, shape = CircleShape)
+                        if (!searchHistory.isNullOrEmpty()) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = NormalPadding, end = NormalPadding),
+                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = "Clear all",
-                                    style = MaterialTheme.typography.bodyMedium.copy(
-                                        fontWeight = FontWeight.Normal
-                                    ),
-                                    color = colorResource(
-                                        id = R.color.secondaryColor
-                                    ),
-                                    maxLines = 1,
+                                    modifier = Modifier,
+                                    text = "Recent Searches",
+                                    color = colorResource(id = R.color.black),
+                                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                                 )
+
+                                Box(modifier = Modifier
+                                    .clickable { homeScreenViewModel.deleteSearchHistory() }
+                                    .background(color = Color.Transparent, shape = CircleShape)
+                                ) {
+                                    Text(
+                                        text = "Clear all",
+                                        style = MaterialTheme.typography.bodyMedium.copy(
+                                            fontWeight = FontWeight.Normal
+                                        ),
+                                        color = colorResource(
+                                            id = R.color.secondaryColor
+                                        ),
+                                        maxLines = 1,
+                                    )
+                                }
+
+
                             }
-
-
                         }
 
                         Spacer(modifier = Modifier.height(MediumPadding2))
