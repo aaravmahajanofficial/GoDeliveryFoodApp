@@ -45,6 +45,7 @@ class HomeScreenViewModel @Inject constructor(
     init {
         fetchRestaurants()
         getCategories()
+        getSearchHistory()
     }
 
     private fun fetchRestaurants() {
