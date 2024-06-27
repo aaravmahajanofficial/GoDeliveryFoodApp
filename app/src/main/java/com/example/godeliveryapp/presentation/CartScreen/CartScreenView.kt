@@ -35,7 +35,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -71,7 +70,7 @@ import com.example.godeliveryapp.presentation.common.CustomBackArrowButton
 import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import com.example.godeliveryapp.presentation.common.PaymentDetailsCard
 import com.example.godeliveryapp.presentation.navigation.Route
-import com.example.godeliveryapp.presentation.orderScreen.OrderState
+import com.example.godeliveryapp.presentation.orderScreen.OrderScreenViewModel
 import com.example.zomatoclone.utils.Constants.DELIVERY_FEE
 import com.example.zomatoclone.utils.Constants.PROMOCODE
 import com.example.zomatoclone.utils.Constants.TAX
@@ -82,6 +81,7 @@ fun CartScreenView(
     modifier: Modifier = Modifier,
     couponCodeValue: String? = null,
     cartViewModel: CartScreenViewModel = hiltViewModel(),
+    orderScreenViewModel: OrderScreenViewModel = hiltViewModel(),
     navController: NavController
 ) {
 
@@ -90,7 +90,6 @@ fun CartScreenView(
     val cartItems = cartViewModel.cartItems.collectAsState(initial = emptyList()).value
     val cartSubTotal = cartViewModel.cartSubTotal.collectAsState(initial = 0.0).value
     val cartTotal = (cartSubTotal - PROMOCODE) + DELIVERY_FEE + TAX
-    val orderState by cartViewModel.orderState.collectAsState()
     val isLoading = cartViewModel.isLoading.collectAsState(initial = false).value
 
     var openDialog by remember {
@@ -113,9 +112,6 @@ fun CartScreenView(
         mutableStateOf(false)
     }
 
-    LaunchedEffect(Unit) {
-        cartViewModel.getItems()
-    }
     if (isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -593,8 +589,9 @@ fun CartScreenView(
                         ) {
                             OutlinedButton(
                                 onClick = {
+                                    navController.navigate(Route.OrderScreen.route)
                                     val deliveryInstructions = textFieldValue
-                                    cartViewModel.placeOrder(
+                                    orderScreenViewModel.placeOrder(
                                         totalAmount = cartTotal,
                                         deliveryInstructions = deliveryInstructions,
                                         items = cartItems
@@ -630,30 +627,30 @@ fun CartScreenView(
             }
 
 
-            when (orderState) {
-                OrderState.CANCELLED -> {}
-                OrderState.CONFIRMED -> {
-                    navController.navigate(Route.OrderSuccessScreen.route) {
-                        popUpTo(Route.CartScreen.route) {
-                            inclusive = true
-                        }
-                    }
-                    cartViewModel.resetOrderState()
-                }
-
-                OrderState.DELIVERED -> {}
-                OrderState.DISPATCHED -> {
-                }
-
-                OrderState.EMPTY -> {}
-                OrderState.PENDING -> {
-
-                    navController.navigate(Route.OrderScreen.route)
-
-                }
-
-                OrderState.PREPARING -> {}
-            }
+//            when (orderState) {
+//                OrderState.CANCELLED -> {}
+//                OrderState.CONFIRMED -> {
+//                    navController.navigate(Route.OrderSuccessScreen.route) {
+//                        popUpTo(Route.CartScreen.route) {
+//                            inclusive = true
+//                        }
+//                    }
+//                    orderScreenViewModel.resetOrderState()
+//                }
+//
+//                OrderState.DELIVERED -> {}
+//                OrderState.DISPATCHED -> {
+//                }
+//
+//                OrderState.EMPTY -> {}
+//                OrderState.PENDING -> {
+//
+//                    navController.navigate(Route.OrderScreen.route)
+//
+//                }
+//
+//                OrderState.PREPARING -> {}
+//            }
 
             if (openDialog) {
                 AlertDialog(

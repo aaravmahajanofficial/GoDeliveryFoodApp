@@ -30,9 +30,6 @@ class CartScreenViewModel @Inject constructor(
     private val _totalItemsInCart = MutableStateFlow(0)
     val totalItemsInCart: Flow<Int> get() = _totalItemsInCart
 
-    private val _orderState = MutableStateFlow<OrderState>(OrderState.EMPTY)
-    val orderState: StateFlow<OrderState> get() = _orderState
-
     private val _isLoading = MutableStateFlow(false)
     val isLoading: Flow<Boolean> get() = _isLoading
 
@@ -79,43 +76,5 @@ class CartScreenViewModel @Inject constructor(
             getItems()
         }
     }
-
-    fun placeOrder(totalAmount: Double, deliveryInstructions: String, items: List<CartItemModel>) {
-        viewModelScope.launch {
-            try {
-                _orderState.emit(OrderState.PENDING)
-
-                val orderToPlace = OrderDto(
-                    restaurantId = items.first().restaurantId,
-                    totalAmount = totalAmount,
-                    deliveryInstructions = deliveryInstructions,
-                )
-
-                repository.placeOrder(orderToPlace, items.map {
-                    OrderItemDto(
-                        itemId = it.menuItemModel.itemId,
-                        quantity = it.quantity,
-                        price = (it.menuItemModel.itemPrice * it.quantity)
-                    )
-                })
-
-                repository.updateOrderStatus(OrderState.CONFIRMED)
-
-                _orderState.emit(OrderState.CONFIRMED)
-
-                _cartItems.value = emptyList()
-
-            } catch (e: Exception) {
-                Log.d("ERROR WHILE PLACING ORDER : ", e.toString())
-            }
-
-        }
-
-    }
-
-    fun resetOrderState() {
-        _orderState.value = OrderState.EMPTY
-    }
-
 
 }

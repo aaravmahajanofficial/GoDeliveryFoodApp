@@ -22,7 +22,6 @@ import com.example.godeliveryapp.presentation.onBoarding.components.login_signup
 import com.example.godeliveryapp.presentation.onBoarding.components.login_signup.SignUpView
 import com.example.godeliveryapp.presentation.onBoarding.components.login_signup.WelcomeScreen
 import com.example.godeliveryapp.presentation.orderScreen.OrderScreenView
-import com.example.godeliveryapp.presentation.orderScreen.OrderSuccessScreenView
 import com.example.godeliveryapp.presentation.promoCodeScreen.PromoCodeScreenView
 import com.example.godeliveryapp.presentation.userProfile.ProfileScreenView
 import com.example.godeliveryapp.presentation.userProfile.myFavourites.MyFavouritesScreenView
@@ -194,9 +193,6 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
             OrderScreenView(navController = navController)
         }
 
-        composable(route = Route.OrderSuccessScreen.route) {
-            OrderSuccessScreenView(navController = navController)
-        }
 
 
         composable(route = Route.DetailsScreen.route) {

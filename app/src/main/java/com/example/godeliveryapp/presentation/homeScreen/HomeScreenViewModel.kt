@@ -112,7 +112,7 @@ class HomeScreenViewModel @Inject constructor(
 
     }
 
-    fun getSearchHistory() {
+    private fun getSearchHistory() {
         viewModelScope.launch {
             _searchHistory.emit(sharedPreferences.getSearchHistory())
         }

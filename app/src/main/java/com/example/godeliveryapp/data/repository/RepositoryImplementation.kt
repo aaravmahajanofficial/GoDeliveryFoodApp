@@ -283,7 +283,7 @@ class RepositoryImplementation(
                 }
                 sharedPreferences.saveOrderData("ORDER_ID", randomId)
 
-                clearCart().also { sharedPreferences.clearCartPreferences() }
+                clearCart()
 
 
             } catch (e: Exception) {
@@ -409,7 +409,7 @@ class RepositoryImplementation(
                 filter {
                     eq("cartId", cartId!!)
                 }
-            }
+            }.also { sharedPreferences.clearCartPreferences() }
         }
 
     }
