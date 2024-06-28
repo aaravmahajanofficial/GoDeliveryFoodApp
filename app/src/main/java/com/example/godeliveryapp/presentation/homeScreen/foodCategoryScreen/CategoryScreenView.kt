@@ -74,6 +74,7 @@ import com.example.godeliveryapp.R
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.Dimens
+import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
@@ -213,7 +214,7 @@ fun CategoryScreenView(
                                 modifier = Modifier
                                     .background(color = Color.Transparent, shape = CircleShape)
                                     .height((screenHeight / 24))
-                                    .width((screenHeight / 16))
+                                    .width((screenHeight / 10))
                                     .border(
                                         BorderStroke(color = Color.Gray, width = 0.dp),
                                         shape = CircleShape
@@ -221,11 +222,26 @@ fun CategoryScreenView(
                                     .clickable { onClick() },
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Tune,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp),
-                                )
+
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(start = 6.dp, end = 6.dp),
+                                    horizontalArrangement = Arrangement.SpaceEvenly,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "Filter",
+                                        color = colorResource(id = R.color.black),
+                                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
+                                    )
+
+                                    Icon(
+                                        imageVector = Icons.Rounded.Tune,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp),
+                                    )
+                                }
                             }
 
                             Spacer(modifier = Modifier.width(8.dp))
@@ -248,7 +264,7 @@ fun CategoryScreenView(
                                             showFilterCard = !showFilterCard
                                         }
                                         .padding(start = 6.dp, end = 6.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    horizontalArrangement = Arrangement.SpaceEvenly,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
 
@@ -273,8 +289,6 @@ fun CategoryScreenView(
                                         color = if (pureVeg) colorResource(id = R.color.black) else Color.Transparent,
                                         shape = CircleShape
                                     )
-                                    .height((screenHeight / 24))
-                                    .width((screenHeight / 8))
                                     .border(
                                         BorderStroke(color = Color.Gray, width = 0.dp),
                                         shape = CircleShape
@@ -283,7 +297,8 @@ fun CategoryScreenView(
                                         pureVeg = !pureVeg
                                         viewModel.isPureVeg.value = pureVeg
                                         viewModel.applyFilters()
-                                    },
+                                    }
+                                    .padding(8.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
@@ -301,8 +316,6 @@ fun CategoryScreenView(
                                         color = if (takeout) colorResource(id = R.color.black) else Color.Transparent,
                                         shape = CircleShape
                                     )
-                                    .height((screenHeight / 24))
-                                    .width((screenHeight / 8))
                                     .border(
                                         BorderStroke(color = Color.Gray, width = 0.dp),
                                         shape = CircleShape
@@ -311,7 +324,8 @@ fun CategoryScreenView(
                                         takeout = !takeout
                                         viewModel.takeOut.value = takeout
                                         viewModel.applyFilters()
-                                    },
+                                    }
+                                    .padding(8.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
@@ -329,8 +343,6 @@ fun CategoryScreenView(
                                         color = if (ratingsGreaterThanFour) colorResource(id = R.color.black) else Color.Transparent,
                                         shape = CircleShape
                                     )
-                                    .height((screenHeight / 24))
-                                    .width((screenHeight / 8))
                                     .border(
                                         BorderStroke(color = Color.Gray, width = 0.dp),
                                         shape = CircleShape
@@ -340,7 +352,8 @@ fun CategoryScreenView(
                                         viewModel.ratingGreaterThanFour.value =
                                             ratingsGreaterThanFour
                                         viewModel.applyFilters()
-                                    },
+                                    }
+                                    .padding(8.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
@@ -416,7 +429,7 @@ fun CategoryScreenView(
 
             Box(
                 modifier = Modifier
-                    .padding(screenWidth / 5.5f)
+                    .padding(screenWidth / 4f)
                     .align(Alignment.Center)
                     .height(screenHeight / 3)
                     .width(screenHeight / 2),
@@ -683,6 +696,7 @@ fun CategoryScreenView(
                                 )
 
                             }
+                            Spacer(modifier = Modifier.height(ExtraSmallPadding1))
                             OutlinedButton(
                                 onClick = {},
                                 shape = RoundedCornerShape(5.dp),
