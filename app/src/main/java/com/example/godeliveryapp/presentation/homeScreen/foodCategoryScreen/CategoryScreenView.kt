@@ -1,7 +1,6 @@
 package com.example.godeliveryapp.presentation.homeScreen.foodCategoryScreen
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,8 +26,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.StarRate
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.ButtonDefaults
@@ -60,10 +60,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
@@ -73,6 +74,7 @@ import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
+import com.example.godeliveryapp.presentation.userProfile.myFavourites.FavouritesViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,7 +83,9 @@ fun CategoryScreenView(
     modifier: Modifier = Modifier,
     navController: NavController,
     categoryDto: CategoryDto,
-    viewModel: CategoryScreenViewModel = hiltViewModel()
+    navigateToDetails: (RestaurantListingCardModel) -> Unit,
+    viewModel: CategoryScreenViewModel = hiltViewModel(),
+    favouritesViewModel: FavouritesViewModel = hiltViewModel(),
 ) {
 
     val filterRestaurantList =
@@ -89,6 +93,9 @@ fun CategoryScreenView(
 
     val appliedFilterRestaurants =
         viewModel.appliedFilterRestaurants.collectAsState(initial = listOf()).value
+
+    val favouritesList =
+        favouritesViewModel.favouritesList.collectAsState(initial = emptyList()).value
 
 
     val pureVegCheckBoxState = remember { mutableStateOf(false) }
@@ -100,6 +107,8 @@ fun CategoryScreenView(
     var takeout by remember {
         mutableStateOf(false)
     }
+
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
 
     val isLoading = viewModel.isLoading.collectAsState(initial = false).value
@@ -123,8 +132,6 @@ fun CategoryScreenView(
         viewModel.filterRestaurants(categoryDto.id)
 
     }
-
-    val screenHeight = LocalConfiguration.current.screenHeightDp
     Box(modifier = Modifier.fillMaxSize()) {
         if (isLoading) {
 
@@ -184,8 +191,8 @@ fun CategoryScreenView(
                             Box(
                                 modifier = Modifier
                                     .background(color = Color.Transparent, shape = CircleShape)
-                                    .height((screenHeight / 24).dp)
-                                    .width((screenHeight / 16).dp)
+                                    .height((screenHeight / 24))
+                                    .width((screenHeight / 16))
                                     .border(
                                         BorderStroke(color = Color.Gray, width = 0.dp),
                                         shape = CircleShape
@@ -205,8 +212,8 @@ fun CategoryScreenView(
                             Box(
                                 modifier = Modifier
                                     .background(color = Color.Transparent, shape = CircleShape)
-                                    .height((screenHeight / 24).dp)
-                                    .width((screenHeight / 10).dp)
+                                    .height((screenHeight / 24))
+                                    .width((screenHeight / 10))
                                     .border(
                                         BorderStroke(color = Color.Gray, width = 0.dp),
                                         shape = CircleShape
@@ -242,8 +249,8 @@ fun CategoryScreenView(
                                         color = if (pureVeg) colorResource(id = R.color.black) else Color.Transparent,
                                         shape = CircleShape
                                     )
-                                    .height((screenHeight / 24).dp)
-                                    .width((screenHeight / 8).dp)
+                                    .height((screenHeight / 24))
+                                    .width((screenHeight / 8))
                                     .border(
                                         BorderStroke(color = Color.Gray, width = 0.dp),
                                         shape = CircleShape
@@ -270,8 +277,8 @@ fun CategoryScreenView(
                                         color = if (takeout) colorResource(id = R.color.black) else Color.Transparent,
                                         shape = CircleShape
                                     )
-                                    .height((screenHeight / 24).dp)
-                                    .width((screenHeight / 8).dp)
+                                    .height((screenHeight / 24))
+                                    .width((screenHeight / 8))
                                     .border(
                                         BorderStroke(color = Color.Gray, width = 0.dp),
                                         shape = CircleShape
@@ -298,8 +305,8 @@ fun CategoryScreenView(
                                         color = if (ratingsGreaterThanFour) colorResource(id = R.color.black) else Color.Transparent,
                                         shape = CircleShape
                                     )
-                                    .height((screenHeight / 24).dp)
-                                    .width((screenHeight / 8).dp)
+                                    .height((screenHeight / 24))
+                                    .width((screenHeight / 8))
                                     .border(
                                         BorderStroke(color = Color.Gray, width = 0.dp),
                                         shape = CircleShape
@@ -337,13 +344,45 @@ fun CategoryScreenView(
                 }
                 if (!appliedFilterRestaurants.isNullOrEmpty()) {
                     items(appliedFilterRestaurants.size) { index ->
-                        appliedFilterRestaurants[index]?.let { FoodCard(restaurantListingCardModel = it) }
+                        appliedFilterRestaurants[index]?.let { restaurantIndex ->
+                            FoodCard(
+                                screenHeight = screenHeight,
+                                removeFromFav = { restaurantId ->
+                                    favouritesViewModel.removeFavourite(
+                                        restaurantId
+                                    )
+                                },
+                                addToFav = { restaurantId ->
+                                    favouritesViewModel.addToFavourites(
+                                        restaurantId
+                                    )
+                                },
+                                isFavourite = favouritesList.contains(restaurantIndex.restaurantId),
+                                navigateToDetails = { navigateToDetails(restaurantIndex) },
+                                restaurantListingCardModel = restaurantIndex
+                            )
+                        }
 
                     }
                 } else {
                     if (filterRestaurantList != null) {
                         items(filterRestaurantList.size) { index ->
-                            FoodCard(restaurantListingCardModel = filterRestaurantList[index])
+                            FoodCard(
+                                screenHeight = screenHeight,
+                                removeFromFav = { restaurantId ->
+                                    favouritesViewModel.removeFavourite(
+                                        restaurantId
+                                    )
+                                },
+                                addToFav = { restaurantId ->
+                                    favouritesViewModel.addToFavourites(
+                                        restaurantId
+                                    )
+                                },
+                                isFavourite = favouritesList.contains(filterRestaurantList[index].restaurantId),
+                                navigateToDetails = { navigateToDetails(filterRestaurantList[index]) },
+                                restaurantListingCardModel = filterRestaurantList[index]
+                            )
                         }
                     }
 
@@ -360,7 +399,7 @@ fun CategoryScreenView(
                     containerColor = Color.White,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(screenHeight.dp)
+                        .height(screenHeight)
                 ) {
                     Column(
                         modifier
@@ -602,12 +641,12 @@ fun CategoryScreenView(
 }
 
 @Composable
-private fun RatingButton(screenHeight: Int, buttonText: String) {
+private fun RatingButton(screenHeight: Dp, buttonText: String) {
     Box(
         modifier = Modifier
             .background(color = Color.Transparent, shape = CircleShape)
-            .height((screenHeight / 22).dp)
-            .width((screenHeight / 12).dp)
+            .height((screenHeight / 22))
+            .width((screenHeight / 12))
             .border(
                 BorderStroke(color = Color.Gray, width = 0.dp),
                 shape = CircleShape
@@ -640,12 +679,12 @@ private fun RatingButton(screenHeight: Int, buttonText: String) {
 }
 
 @Composable
-private fun PriceButton(screenHeight: Int, buttonText: String) {
+private fun PriceButton(screenHeight: Dp, buttonText: String) {
     Box(
         modifier = Modifier
             .background(color = Color.Transparent, shape = CircleShape)
-            .height((screenHeight / 22).dp)
-            .width((screenHeight / 12).dp)
+            .height((screenHeight / 22))
+            .width((screenHeight / 12))
             .border(
                 BorderStroke(color = Color.Gray, width = 0.dp),
                 shape = CircleShape
@@ -664,126 +703,145 @@ private fun PriceButton(screenHeight: Int, buttonText: String) {
 }
 
 @Composable
-private fun FoodCard(restaurantListingCardModel: RestaurantListingCardModel) {
-    Column(
+private fun FoodCard(
+    screenHeight: Dp,
+    addToFav: (Int) -> Unit,
+    removeFromFav: (Int) -> Unit,
+    isFavourite: Boolean,
+    navigateToDetails: (() -> Unit)? = null,
+    restaurantListingCardModel: RestaurantListingCardModel
+) {
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(
-                start = NormalPadding,
-                end = NormalPadding,
-                top = NormalPadding,
-                bottom = ExtraSmallPadding2
-            ),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.SpaceBetween
+            .clickable { navigateToDetails?.invoke() },
+        contentAlignment = Alignment.Center
     ) {
-        Box(
+        Column(
             modifier = Modifier
-                .height(180.dp)
-                .background(Color.Transparent, shape = RoundedCornerShape(12.dp))
-                .clip(
-                    RoundedCornerShape(12.dp)
-                )
+                .fillMaxSize()
+                .padding(
+                    start = NormalPadding,
+                    end = NormalPadding,
+                    top = NormalPadding,
+                    bottom = ExtraSmallPadding2
+                ),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-
-            Image(
-                modifier = Modifier.fillMaxSize(),
-                painter = rememberAsyncImagePainter(model = restaurantListingCardModel.imageURL),
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
             Box(
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(NormalPadding)
-                    .background(color = Color.White, shape = CircleShape)
-                    .size(42.dp),
-                contentAlignment = Alignment.Center
+                    .height(screenHeight / 4)
+                    .background(Color.Transparent, shape = RoundedCornerShape(12.dp))
+                    .clip(
+                        RoundedCornerShape(12.dp)
+                    )
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.FavoriteBorder,
+                AsyncImage(
+                    model = restaurantListingCardModel.imageURL,
                     contentDescription = null,
-                    tint = colorResource(id = R.color.black),
-                    modifier = Modifier.scale(1f)
+                    contentScale = ContentScale.Crop
                 )
-            }
-
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier.weight(2f),
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Text(
-                    text = restaurantListingCardModel.name,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    color = colorResource(
-                        id = R.color.black
-                    ),
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                    modifier = Modifier.fillMaxWidth()
-
-                )
-                Spacer(modifier = Modifier.height(5.dp))
-                val items: List<String> = restaurantListingCardModel.cuisines
-                val formattedString = items.joinToString(" | ")
-
-                Text(
-                    text = formattedString,
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
-                    color = colorResource(id = R.color.gray),
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                )
-            }
-
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
+                Box(
+                    modifier = Modifier
+                        .clickable {
+                            if (isFavourite) {
+                                removeFromFav(restaurantListingCardModel.restaurantId)
+                            } else {
+                                addToFav(restaurantListingCardModel.restaurantId)
+                            }
+                        }
+                        .align(Alignment.TopEnd)
+                        .padding(NormalPadding)
+                        .background(color = Color.White, shape = CircleShape)
+                        .size(42.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        modifier = Modifier.size(16.dp),
-                        imageVector = Icons.Filled.StarRate,
+                        imageVector = if (isFavourite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                         contentDescription = null,
-                        tint = colorResource(id = R.color.orange)
+                        tint = if (isFavourite) Color.Red else colorResource(id = R.color.black),
+                        modifier = Modifier.scale(1f)
                     )
-                    Spacer(modifier = Modifier.width(Dimens.ExtraSmallPadding1))
+                }
+
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier.weight(2f),
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Text(
+                        text = restaurantListingCardModel.name,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        color = colorResource(
+                            id = R.color.black
+                        ),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                        modifier = Modifier.fillMaxWidth()
+
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    val items: List<String> = restaurantListingCardModel.cuisines
+                    val formattedString = items.joinToString(" | ")
 
                     Text(
-                        text = restaurantListingCardModel.rating,
-                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                        color = colorResource(id = R.color.black),
+                        text = formattedString,
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
+                        color = colorResource(id = R.color.gray),
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
                     )
                 }
 
-                Spacer(modifier = Modifier.height(5.dp))
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(16.dp),
+                            imageVector = Icons.Filled.StarRate,
+                            contentDescription = null,
+                            tint = colorResource(id = R.color.orange)
+                        )
+                        Spacer(modifier = Modifier.width(Dimens.ExtraSmallPadding1))
 
-                val parameters = listOfNotNull(
-                    "${restaurantListingCardModel.distance}Km",
-                    12.let { "$it Mins" },
-                ).joinToString(" | ")
+                        Text(
+                            text = restaurantListingCardModel.rating,
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                            color = colorResource(id = R.color.black),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
+                        )
+                    }
 
-                Text(
-                    text = parameters,
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
-                    color = Color.Gray,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                )
+                    Spacer(modifier = Modifier.height(5.dp))
+
+                    val parameters = listOfNotNull(
+                        "${restaurantListingCardModel.distance}Km",
+                        12.let { "$it Mins" },
+                    ).joinToString(" | ")
+
+                    Text(
+                        text = parameters,
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
+                        color = Color.Gray,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                    )
+                }
             }
         }
     }

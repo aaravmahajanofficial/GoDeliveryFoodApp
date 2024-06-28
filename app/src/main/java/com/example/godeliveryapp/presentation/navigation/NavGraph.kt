@@ -182,7 +182,15 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
 
             if (categoryDto != null) {
 
-                CategoryScreenView(navController = navController, categoryDto = categoryDto)
+                CategoryScreenView(
+                    navController = navController,
+                    categoryDto = categoryDto,
+                    navigateToDetails = { restaurantModel ->
+                        navigateToDetailsScreen(
+                            navController,
+                            restaurantModel
+                        )
+                    })
 
             }
 
