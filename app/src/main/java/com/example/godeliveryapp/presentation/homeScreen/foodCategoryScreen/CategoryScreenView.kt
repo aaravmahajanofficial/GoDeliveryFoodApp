@@ -35,11 +35,14 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -61,7 +64,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -77,6 +82,7 @@ import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.userProfile.myFavourites.FavouritesViewModel
 import kotlinx.coroutines.launch
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreenView(
@@ -87,6 +93,20 @@ fun CategoryScreenView(
     viewModel: CategoryScreenViewModel = hiltViewModel(),
     favouritesViewModel: FavouritesViewModel = hiltViewModel(),
 ) {
+
+    var showFilterCard by remember {
+        mutableStateOf(false)
+    }
+
+    var selectedOption by remember { mutableStateOf("Relevance(Default)") }
+
+    val options = listOf(
+        "Relevance(Default)",
+        "DeliveryTime",
+        "Rating",
+        "Cost:Low-to-High",
+        "Cost:High-to-Low"
+    )
 
     val filterRestaurantList =
         viewModel.filterRestaurantList.collectAsState(initial = listOf()).value
@@ -109,6 +129,7 @@ fun CategoryScreenView(
     }
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
 
     val isLoading = viewModel.isLoading.collectAsState(initial = false).value
@@ -223,6 +244,9 @@ fun CategoryScreenView(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxSize()
+                                        .clickable {
+                                            showFilterCard = !showFilterCard
+                                        }
                                         .padding(start = 6.dp, end = 6.dp),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
@@ -263,7 +287,7 @@ fun CategoryScreenView(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "Pure Veg",
+                                    text = "Pure veg",
                                     color = if (pureVeg) colorResource(id = R.color.white) else colorResource(
                                         id = R.color.black
                                     ),
@@ -389,6 +413,64 @@ fun CategoryScreenView(
                 }
 
             }
+
+            Box(
+                modifier = Modifier
+                    .padding(screenWidth / 5.5f)
+                    .align(Alignment.Center)
+                    .height(screenHeight / 3)
+                    .width(screenHeight / 2),
+                contentAlignment = Alignment.Center
+            ) {
+                DropdownMenu(
+                    modifier = Modifier
+                        .background(color = colorResource(id = R.color.white)),
+                    offset = DpOffset(5.dp, 5.dp),
+                    expanded = showFilterCard,
+                    properties = PopupProperties(
+                        dismissOnBackPress = true,
+                        dismissOnClickOutside = true
+                    ),
+                    onDismissRequest = { showFilterCard = false }) {
+
+                    options.forEach { option ->
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = ExtraSmallPadding3),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = option,
+                                style = if (option == selectedOption) MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.SemiBold
+                                ) else MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.Normal
+                                ),
+                                color = colorResource(id = R.color.black)
+                            )
+
+                            RadioButton(
+                                selected = selectedOption == option,
+                                onClick = { selectedOption = option },
+                                colors = RadioButtonDefaults.colors(
+                                    selectedColor = colorResource(id = R.color.secondaryColor),
+                                    unselectedColor = colorResource(id = R.color.gray)
+                                )
+                            )
+
+                        }
+
+
+                    }
+
+
+                }
+            }
+
+
 
             if (showBottomSheet) {
 
@@ -845,4 +927,13 @@ private fun FoodCard(
             }
         }
     }
+}
+
+@Composable
+fun FilterCard(modifier: Modifier = Modifier) {
+
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+
+
 }
