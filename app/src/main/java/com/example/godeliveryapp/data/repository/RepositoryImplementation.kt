@@ -18,7 +18,6 @@ import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.domain.repository.Repository
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemModel
-import com.example.godeliveryapp.presentation.orderScreen.OrderState
 import com.example.godeliveryapp.utils.SharedPreferences
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.Dispatchers
@@ -57,6 +56,11 @@ class RepositoryImplementation(
                     }
                 }
             }.decodeList<CartItemDto>()
+
+            // if the cartItems is empty, delete the cart
+            if (cartId != null && cartItems.isEmpty()) {
+                clearCart()
+            }
 
             //need to match the itemId to MenuItems Table to fetch the desired food item details from the MenuItems Table
             val addedItems: List<CartItemModel> = cartItems.map { cartItem ->
@@ -293,28 +297,6 @@ class RepositoryImplementation(
                 Log.d("ERROR", e.toString())
                 null
             }
-        }
-
-    }
-
-    override suspend fun updateOrderStatus(newState: OrderState): Boolean {
-
-        return withContext(Dispatchers.IO) {
-
-            try {
-                postgrest.from("Orders").update({
-                    set("orderStatus", newState)
-                }) {
-                    filter {
-                        eq("orderId", sharedPreferences.getOrderData("ORDER_ID"))
-                    }
-                }
-                true
-            } catch (e: Exception) {
-                Log.d("ERROR WHILE UPDATING ORDER STATUS", e.toString())
-                false
-            }
-
         }
 
     }

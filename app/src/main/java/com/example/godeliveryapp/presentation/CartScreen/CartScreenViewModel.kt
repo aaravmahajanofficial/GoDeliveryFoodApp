@@ -1,17 +1,12 @@
 package com.example.godeliveryapp.presentation.CartScreen
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.godeliveryapp.data.remote.dataTransferObject.OrderDto
-import com.example.godeliveryapp.data.remote.dataTransferObject.OrderItemDto
 import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.domain.repository.Repository
-import com.example.godeliveryapp.presentation.orderScreen.OrderState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

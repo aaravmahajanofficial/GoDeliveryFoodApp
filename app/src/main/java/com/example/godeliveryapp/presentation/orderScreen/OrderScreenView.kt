@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -60,6 +61,10 @@ fun OrderScreenView(
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val isLoading = orderScreenViewModel.isLoading.collectAsState(initial = false).value
     val order by orderScreenViewModel.order.collectAsState(initial = null)
+
+    LaunchedEffect(Unit) {
+        orderScreenViewModel.loadOrders()
+    }
 
     if (isLoading) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

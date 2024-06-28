@@ -10,7 +10,6 @@ import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemModel
-import com.example.godeliveryapp.presentation.orderScreen.OrderState
 
 interface Repository {
     suspend fun getRestaurants(): List<RestaurantListingCardModel>?
@@ -40,8 +39,6 @@ interface Repository {
     suspend fun getUserDataByEmail(userEmail: String): UserDto
 
     suspend fun placeOrder(orderDto: OrderDto, orderItems: List<OrderItemDto>)
-
-    suspend fun updateOrderStatus(newState: OrderState): Boolean
 
     suspend fun clearCart()
 

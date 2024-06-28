@@ -9,6 +9,7 @@ import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.domain.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OrderScreenViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
-    private val _orders = MutableStateFlow<List<MyOrderModel>?>(listOf())
+    private val _orders = MutableStateFlow<List<MyOrderModel>?>(emptyList())
     val orders: Flow<List<MyOrderModel>?> get() = _orders
 
     private val _order = MutableStateFlow<MyOrderModel?>(null)
@@ -26,10 +27,6 @@ class OrderScreenViewModel @Inject constructor(private val repository: Repositor
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: Flow<Boolean> get() = _isLoading
-
-    init {
-        loadOrders()
-    }
 
     fun placeOrder(totalAmount: Double, deliveryInstructions: String, items: List<CartItemModel>) {
         viewModelScope.launch {
@@ -57,14 +54,17 @@ class OrderScreenViewModel @Inject constructor(private val repository: Repositor
 
     }
 
-    private fun loadOrders() {
+    fun loadOrders() {
 
         viewModelScope.launch {
             _isLoading.value = true
             try {
                 val orders = repository.getOrders()
                 _orders.emit(orders)
-                _order.emit(_orders.value?.first())
+                if (_orders.value?.isNotEmpty() == true) {
+                    _order.emit(_orders.value?.first())
+                    delay(3500L)
+                }
                 _isLoading.value = false
             } catch (e: Exception) {
                 Log.d("Error", "getOrders: $e")

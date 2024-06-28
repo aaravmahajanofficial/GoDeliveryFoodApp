@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,10 +59,14 @@ fun MyOrdersScreenView(
     navigateToMyOrderDetailScreen: (MyOrderModel) -> Unit,
     orderScreenViewModel: OrderScreenViewModel = hiltViewModel(),
 ) {
-    val orders = orderScreenViewModel.orders.collectAsState(initial = listOf()).value
+    val orders = orderScreenViewModel.orders.collectAsState(initial = emptyList()).value
     val isLoading = orderScreenViewModel.isLoading.collectAsState(initial = false).value
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+
+    LaunchedEffect(Unit) {
+        orderScreenViewModel.loadOrders()
+    }
 
     if (!isLoading) {
         if (orders != null) {
