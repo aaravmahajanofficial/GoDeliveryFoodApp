@@ -1,5 +1,6 @@
 package com.example.godeliveryapp.presentation.homeScreen.foodCategoryScreen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
@@ -14,30 +15,35 @@ import javax.inject.Inject
 class CategoryScreenViewModel @Inject constructor(private val repository: Repository) :
     ViewModel() {
 
-    private val _filterRestaurantList =
-        MutableStateFlow<List<RestaurantListingCardModel>?>(listOf())
-    val filterRestaurantList: Flow<List<RestaurantListingCardModel>?> get() = _filterRestaurantList
+    private val _categoryRestaurants =
+        MutableStateFlow<List<RestaurantListingCardModel>?>(emptyList())
 
-    private val _applyFilterRestaurant =
-        MutableStateFlow<List<RestaurantListingCardModel?>?>(listOf())
-
-    val appliedFilterRestaurants: Flow<List<RestaurantListingCardModel?>?> get() = _applyFilterRestaurant
+    private val _filteredList =
+        MutableStateFlow<List<RestaurantListingCardModel?>?>(emptyList())
+    val filteredList: Flow<List<RestaurantListingCardModel?>?> get() = _filteredList
 
 
-    private val _isPureVeg = MutableStateFlow<Boolean>(false)
+    private val _isPureVeg = MutableStateFlow(false)
     val isPureVeg: Flow<Boolean> get() = _isPureVeg
 
-    private val _ratingGreaterThanFour = MutableStateFlow<Boolean>(false)
-    val ratingGreaterThanFour: Flow<Boolean> get() = _ratingGreaterThanFour
+    private val _rating = MutableStateFlow(0.0)
+    val rating: Flow<Double> get() = _rating
 
-    private val _isNonVeg = MutableStateFlow<Boolean>(false)
+    private val _isNonVeg = MutableStateFlow(false)
     val isNonVeg: Flow<Boolean> get() = _isNonVeg
 
-    private val _takeOut = MutableStateFlow<Boolean>(false)
+    private val _takeOut = MutableStateFlow(false)
     val takeOut: Flow<Boolean> get() = _takeOut
 
-    fun setRatingGreaterThanFour() {
-        _ratingGreaterThanFour.value = !_ratingGreaterThanFour.value
+    private val _priceRange = MutableStateFlow("")
+    val priceRange: Flow<String> get() = _priceRange
+
+    fun setRatingState(rate: Double) {
+        _rating.value = rate
+    }
+
+    fun setPriceRange(priceRange: String) {
+        _priceRange.value = priceRange
     }
 
     fun setTakeOut() {
@@ -53,77 +59,47 @@ class CategoryScreenViewModel @Inject constructor(private val repository: Reposi
     }
 
 
-    private val _isLoading = MutableStateFlow<Boolean>(false)
+    private val _isLoading = MutableStateFlow(false)
     val isLoading: Flow<Boolean> get() = _isLoading
 
-    fun filterRestaurants(categoryId: Int) {
-
+    fun getRestaurantByCategory(categoryId: Int) {
         _isLoading.value = true
-
         viewModelScope.launch {
             try {
                 val results = repository.getRestaurantsByCategory(categoryId)
-
-                val restaurants = results?.map { item ->
-
-                    RestaurantListingCardModel(
-                        about = item.about,
-                        city = item.city,
-                        country = item.country,
-                        cuisines = item.cuisines,
-                        distance = item.distance,
-                        features = item.features,
-                        isPureVeg = item.isPureVeg,
-                        meals = item.meals,
-                        name = item.name,
-                        postalCode = item.postalCode,
-                        priceRange = item.priceRange,
-                        rating = item.rating,
-                        restaurantId = item.restaurantId,
-                        schedule = item.schedule,
-                        streetAddress = item.streetAddress,
-                        imageURL = item.imageURL
-                    )
-
-                }
-
-                if (restaurants != null) {
-                    _filterRestaurantList.emit(restaurants.sortedByDescending { it.rating })
-                }
+                _categoryRestaurants.emit(results.sortedByDescending { it.rating })
+                _filteredList.emit(results.sortedByDescending { it.rating })
+            } catch (e: Exception) {
+                Log.d("CategoryScreenViewModel", "results: ${e.message}")
             } finally {
-
                 _isLoading.emit(false)
             }
-
-
         }
-
     }
 
     fun applyFilters() {
 
         viewModelScope.launch {
 
-            val applyFilterList = _filterRestaurantList.value?.filter { restaurant ->
+            val applyFilterList = _categoryRestaurants.value?.filter { restaurant ->
+
                 val isPureVegMatch = !_isPureVeg.value || restaurant.isPureVeg
                 val isRatingMatch =
-                    !_ratingGreaterThanFour.value || restaurant.rating >= (4.0).toString()
+                    _rating.value == 0.0 || restaurant.rating >= _rating.value.toString()
                 val isTakeOutMatch = !_takeOut.value || restaurant.features.contains("Takeout")
                 val isNonVegMatch = !_isNonVeg.value || !restaurant.isPureVeg
+                val isPriceMatch = _priceRange.value == "" || restaurant.priceRange.equals(
+                    _priceRange.value,
+                    ignoreCase = true
+                )
 
-                //only return those cards which satisfy all the three conditions
-                isPureVegMatch && isRatingMatch && isTakeOutMatch && isNonVegMatch
-            }
+                isPureVegMatch && isRatingMatch && isTakeOutMatch && isNonVegMatch && isPriceMatch
+            }?.sortedByDescending { it.rating }
 
-            if (applyFilterList != null) {
-                _applyFilterRestaurant.emit(applyFilterList.sortedByDescending { it.rating })
-            }
-
+            _filteredList.emit(applyFilterList)
 
         }
 
-
     }
-
 
 }

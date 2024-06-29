@@ -49,7 +49,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -73,7 +72,6 @@ import coil.compose.AsyncImage
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
-import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
@@ -82,6 +80,9 @@ import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import com.example.godeliveryapp.presentation.userProfile.myFavourites.FavouritesViewModel
+import com.example.godeliveryapp.utils.PriceOptions.priceOptions
+import com.example.godeliveryapp.utils.RateOptions.ratingOptions
+import com.example.godeliveryapp.utils.SortOptions.sortOptions
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,71 +96,45 @@ fun CategoryScreenView(
     favouritesViewModel: FavouritesViewModel = hiltViewModel(),
 ) {
 
-    var showFilterCard by remember {
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+
+    var showFilterCard by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+
+    var selectedOption by remember { mutableStateOf("Relevance(Default)") }
+    var showBottomSheet by remember {
         mutableStateOf(false)
     }
 
-    var selectedOption by remember { mutableStateOf("Relevance(Default)") }
-
-    val options = listOf(
-        "Relevance(Default)",
-        "DeliveryTime",
-        "Rating",
-        "Cost:Low-to-High",
-        "Cost:High-to-Low"
-    )
-
-    var selectedRate by remember { mutableDoubleStateOf(0.0) }
-
-    val ratingOptions = listOf(3.5, 4.0, 4.5, 5.0)
-
-    var selectedPrice by remember { mutableStateOf("") }
-
-    val priceOptions = listOf("₹₹", "₹₹₹", "₹₹₹₹")
-
-    val filterRestaurantList =
-        viewModel.filterRestaurantList.collectAsState(initial = listOf()).value
-
-    val appliedFilterRestaurants =
-        viewModel.appliedFilterRestaurants.collectAsState(initial = listOf()).value
+    val filteredList =
+        viewModel.filteredList.collectAsState(initial = emptyList()).value
 
     val favouritesList =
         favouritesViewModel.favouritesList.collectAsState(initial = emptyList()).value
 
     val pureVegState by viewModel.isPureVeg.collectAsState(initial = false)
     val nonVegState by viewModel.isNonVeg.collectAsState(initial = false)
-    val ratingsGreaterThanFour by viewModel.ratingGreaterThanFour.collectAsState(initial = false)
+    val ratingState by viewModel.rating.collectAsState(initial = 0.0)
+    val priceRange by viewModel.priceRange.collectAsState(initial = "")
     val takeOutState by viewModel.takeOut.collectAsState(initial = false)
-
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-
     val isLoading = viewModel.isLoading.collectAsState(initial = false).value
 
-    val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember {
-        mutableStateOf(false)
-    }
-
-    fun onClick() {
-        showBottomSheet = !showBottomSheet
-    }
-
     LaunchedEffect(Unit) {
-
-        viewModel.filterRestaurants(categoryDto.id)
-
+        viewModel.getRestaurantByCategory(categoryDto.id)
     }
 
     LaunchedEffect(
         nonVegState,
         pureVegState,
-        ratingsGreaterThanFour,
+        ratingState,
         takeOutState,
+        priceRange
     ) {
         viewModel.applyFilters()
     }
-    Box(modifier = Modifier.fillMaxSize()) {
+
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if (isLoading) {
 
             CircularProgressIndicator(
@@ -224,7 +199,7 @@ fun CategoryScreenView(
                                         BorderStroke(color = Color.Gray, width = 0.dp),
                                         shape = CircleShape
                                     )
-                                    .clickable { onClick() },
+                                    .clickable { showBottomSheet = !showBottomSheet },
                                 contentAlignment = Alignment.Center
                             ) {
 
@@ -299,8 +274,6 @@ fun CategoryScreenView(
                                         shape = CircleShape
                                     )
                                     .clickable {
-//                                        pureVegState = !pureVegState
-//                                        viewModel.isPureVeg.value = pureVegState
                                         viewModel.setPureVeg()
                                     }
                                     .padding(8.dp),
@@ -343,7 +316,9 @@ fun CategoryScreenView(
                             Box(
                                 modifier = Modifier
                                     .background(
-                                        color = if (ratingsGreaterThanFour) colorResource(id = R.color.black) else Color.Transparent,
+                                        color = if (
+                                            ratingState == 4.0
+                                        ) colorResource(id = R.color.black) else Color.Transparent,
                                         shape = CircleShape
                                     )
                                     .border(
@@ -351,14 +326,19 @@ fun CategoryScreenView(
                                         shape = CircleShape
                                     )
                                     .clickable {
-                                        viewModel.setRatingGreaterThanFour()
+                                        if (ratingState == 4.0) {
+                                            viewModel.setRatingState(0.0)
+                                        } else {
+                                            viewModel.setRatingState(4.0)
+
+                                        }
                                     }
                                     .padding(8.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = "Rating 4.0+",
-                                    color = if (ratingsGreaterThanFour) colorResource(id = R.color.white) else colorResource(
+                                    color = if (ratingState == 4.0) colorResource(id = R.color.white) else colorResource(
                                         id = R.color.black
                                     ),
                                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
@@ -370,18 +350,18 @@ fun CategoryScreenView(
 
                     Spacer(modifier = Modifier.height(MediumPadding2))
 
-                    Text(
-                        text = "Popular Restaurants",
-                        color = colorResource(id = R.color.black),
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                        modifier = Modifier.padding(start = NormalPadding)
-                    )
-
-
                 }
-                if (!appliedFilterRestaurants.isNullOrEmpty()) {
-                    items(appliedFilterRestaurants.size) { index ->
-                        appliedFilterRestaurants[index]?.let { restaurantIndex ->
+                if (!filteredList.isNullOrEmpty()) {
+                    item {
+                        Text(
+                            text = "Popular Restaurants",
+                            color = colorResource(id = R.color.black),
+                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                            modifier = Modifier.padding(start = NormalPadding)
+                        )
+                    }
+                    items(filteredList.size) { index ->
+                        filteredList[index]?.let { restaurantIndex ->
                             FoodCard(
                                 screenHeight = screenHeight,
                                 removeFromFav = { restaurantId ->
@@ -400,31 +380,9 @@ fun CategoryScreenView(
                             )
                         }
 
-                    }
-                } else {
-                    if (filterRestaurantList != null) {
-                        items(filterRestaurantList.size) { index ->
-                            FoodCard(
-                                screenHeight = screenHeight,
-                                removeFromFav = { restaurantId ->
-                                    favouritesViewModel.removeFavourite(
-                                        restaurantId
-                                    )
-                                },
-                                addToFav = { restaurantId ->
-                                    favouritesViewModel.addToFavourites(
-                                        restaurantId
-                                    )
-                                },
-                                isFavourite = favouritesList.contains(filterRestaurantList[index].restaurantId),
-                                navigateToDetails = { navigateToDetails(filterRestaurantList[index]) },
-                                restaurantListingCardModel = filterRestaurantList[index]
-                            )
-                        }
-                    }
 
+                    }
                 }
-
             }
 
             Box(
@@ -446,7 +404,7 @@ fun CategoryScreenView(
                     ),
                     onDismissRequest = { showFilterCard = false }) {
 
-                    options.forEach { option ->
+                    sortOptions.forEach { option ->
 
                         Row(
                             modifier = Modifier
@@ -535,7 +493,7 @@ fun CategoryScreenView(
                                     tint = colorResource(id = R.color.black),
                                     modifier = Modifier
                                         .scale(1f)
-                                        .clickable { onClick() }
+                                        .clickable { showBottomSheet = !showBottomSheet }
                                 )
                             }
 
@@ -559,8 +517,6 @@ fun CategoryScreenView(
                                     modifier = Modifier.scale(0.8f),
                                     checked = pureVegState,
                                     onCheckedChange = {
-//                                        pureVegState = !pureVegState
-//                                        viewModel.isPureVeg.value = pureVegState
                                         viewModel.setPureVeg()
                                     },
                                     colors = CheckboxDefaults.colors(
@@ -619,12 +575,19 @@ fun CategoryScreenView(
                                     Box(
                                         modifier = Modifier
                                             .background(
-                                                color = if (selectedRate == ratingOption) colorResource(
+                                                color = if (ratingState == ratingOption) colorResource(
                                                     id = R.color.black
                                                 ) else Color.Transparent,
                                                 shape = CircleShape
                                             )
-                                            .clickable { selectedRate = ratingOption }
+                                            .clickable {
+                                                if (ratingState == ratingOption) {
+                                                    viewModel.setRatingState(0.0)
+                                                } else {
+                                                    viewModel.setRatingState(ratingOption)
+
+                                                }
+                                            }
                                             .height((screenHeight / 22))
                                             .width((screenHeight / 12))
                                             .border(
@@ -645,7 +608,7 @@ fun CategoryScreenView(
                                                 imageVector = Icons.Filled.StarRate,
                                                 contentDescription = null,
                                                 modifier = Modifier.scale(0.6f),
-                                                tint = if (selectedRate == ratingOption) colorResource(
+                                                tint = if (ratingState == ratingOption) colorResource(
                                                     id = R.color.white
                                                 ) else colorResource(
                                                     id = R.color.black
@@ -654,7 +617,7 @@ fun CategoryScreenView(
 
                                             Text(
                                                 text = ratingOption.toString(),
-                                                color = if (selectedRate == ratingOption) colorResource(
+                                                color = if (ratingState == ratingOption) colorResource(
                                                     id = R.color.white
                                                 ) else colorResource(
                                                     id = R.color.black
@@ -695,12 +658,18 @@ fun CategoryScreenView(
                                     Box(
                                         modifier = Modifier
                                             .background(
-                                                color = if (selectedPrice == priceOption) colorResource(
+                                                color = if (priceRange == priceOption) colorResource(
                                                     id = R.color.black
                                                 ) else Color.Transparent,
                                                 shape = CircleShape
                                             )
-                                            .clickable { selectedPrice = priceOption }
+                                            .clickable {
+                                                if (priceRange == selectedOption) {
+                                                    viewModel.setPriceRange("")
+                                                } else {
+                                                    viewModel.setPriceRange(priceOption)
+                                                }
+                                            }
                                             .height((screenHeight / 22))
                                             .width((screenHeight / 12))
                                             .border(
@@ -712,7 +681,7 @@ fun CategoryScreenView(
 
                                         Text(
                                             text = priceOption,
-                                            color = if (selectedPrice == priceOption) colorResource(
+                                            color = if (priceRange == priceOption) colorResource(
                                                 id = R.color.white
                                             ) else colorResource(
                                                 id = R.color.black
@@ -917,7 +886,7 @@ private fun FoodCard(
                             contentDescription = null,
                             tint = colorResource(id = R.color.orange)
                         )
-                        Spacer(modifier = Modifier.width(Dimens.ExtraSmallPadding1))
+                        Spacer(modifier = Modifier.width(ExtraSmallPadding1))
 
                         Text(
                             text = restaurantListingCardModel.rating,

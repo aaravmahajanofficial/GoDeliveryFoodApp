@@ -1,6 +1,5 @@
 package com.example.godeliveryapp.domain.repository
 
-import com.example.godeliveryapp.data.remote.RestaurantDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.OrderDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.OrderItemDto
@@ -26,7 +25,7 @@ interface Repository {
 
     suspend fun getCategories(): List<CategoryDto>?
 
-    suspend fun getRestaurantsByCategory(id: Int): List<RestaurantDto>?
+    suspend fun getRestaurantsByCategory(id: Int): List<RestaurantListingCardModel>
 
     suspend fun insertUserData(userDto: UserDto): Boolean
 

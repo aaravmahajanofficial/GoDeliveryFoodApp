@@ -142,26 +142,22 @@ class RepositoryImplementation(
         }
     }
 
-    override suspend fun getRestaurantsByCategory(id: Int): List<RestaurantDto> {
+    override suspend fun getRestaurantsByCategory(id: Int): List<RestaurantListingCardModel> {
         return withContext(Dispatchers.IO) {
 
             val menuItems =
                 postgrest.from("MenuItems").select { filter { eq("categoryId", id) } }
                     .decodeList<MenuItemsDto>()
 
-            //now filter this menuItems to get the restaurantId
-
-            val filterRestaurant = menuItems.map { menuItem ->
+            //now filter these menuItems to get the restaurant having these items
+            val categoryRestaurants = menuItems.map { menuItem ->
 
                 postgrest.from("Restaurants")
                     .select { filter { eq("restaurantId", menuItem.restaurantId) } }
                     .decodeSingle<RestaurantDto>()
 
             }
-
-            //how to return a list of unique restaurant objects, without duplicates
-            filterRestaurant.distinctBy { it.restaurantId }
-
+            categoryRestaurants.distinctBy { it.restaurantId }.map { restaurantDtoToModel(it) }
         }
     }
 
