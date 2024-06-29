@@ -28,8 +28,6 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -102,12 +100,11 @@ fun MenuItemCardView(
 
     }
 
-    Card(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(160.dp),
-        elevation = CardDefaults.cardElevation(0.dp),
-        colors = CardDefaults.cardColors(Color.Transparent)
+            .height(screenHeight / 4.5f)
+            .background(Color.Transparent),
     ) {
         Row(
             modifier = Modifier
@@ -120,36 +117,49 @@ fun MenuItemCardView(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(),
-                verticalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.Start
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Text(
-                        text = menuItemModel.itemName,
-                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-                        color = colorResource(
-                            id = R.color.black
-                        ),
-                        maxLines = 2,
-                        overflow = TextOverflow.Visible,
-                        modifier = Modifier.fillMaxWidth()
+                if (menuItemModel.isVeg) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.veg_only_logo),
+                        contentDescription = null,
+                        tint = colorResource(id = R.color.secondaryColor),
+                        modifier = Modifier.size(screenHeight / 42)
+                    )
+                } else {
+
+                    Image(
+                        painter = painterResource(id = R.drawable.non_veg_logo),
+                        contentDescription = null,
+                        modifier = Modifier.size(screenHeight / 42)
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = menuItemModel.itemDescription,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.fillMaxWidth()
-                    )
                 }
+
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(
+                    text = menuItemModel.itemName,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                    color = colorResource(
+                        id = R.color.black
+                    ),
+                    maxLines = 2,
+                    overflow = TextOverflow.Visible,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = menuItemModel.itemDescription,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(ExtraSmallPadding3))
 
                 Text(
                     text = "₹ ${menuItemModel.itemPrice}",
@@ -191,8 +201,8 @@ fun MenuItemCardView(
                                     color = colorResource(id = R.color.lightGray),
                                     shape = RoundedCornerShape(18.dp)
                                 )
-                                .height(35.dp)
-                                .width(80.dp),
+                                .height(screenHeight / 22)
+                                .width(screenHeight / 9),
                             contentAlignment = Alignment.Center
                         ) {
                             Row(
@@ -262,7 +272,7 @@ fun MenuItemCardView(
                                 .align(Alignment.BottomEnd)
                                 .padding(ExtraSmallPadding3)
                                 .background(color = Color.White, shape = CircleShape)
-                                .size(32.dp),
+                                .size(screenHeight / 22),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
