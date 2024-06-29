@@ -49,9 +49,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -80,8 +80,8 @@ import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
+import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import com.example.godeliveryapp.presentation.userProfile.myFavourites.FavouritesViewModel
-import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,6 +109,14 @@ fun CategoryScreenView(
         "Cost:High-to-Low"
     )
 
+    var selectedRate by remember { mutableDoubleStateOf(0.0) }
+
+    val ratingOptions = listOf(3.5, 4.0, 4.5, 5.0)
+
+    var selectedPrice by remember { mutableStateOf("") }
+
+    val priceOptions = listOf("₹₹", "₹₹₹", "₹₹₹₹")
+
     val filterRestaurantList =
         viewModel.filterRestaurantList.collectAsState(initial = listOf()).value
 
@@ -118,20 +126,13 @@ fun CategoryScreenView(
     val favouritesList =
         favouritesViewModel.favouritesList.collectAsState(initial = emptyList()).value
 
-
-    val pureVegCheckBoxState = remember { mutableStateOf(false) }
-    val nonVegCheckBoxState = remember { mutableStateOf(false) }
-    var ratingsGreaterThanFour by remember { mutableStateOf(false) }
-    var pureVeg by remember {
-        mutableStateOf(false)
-    }
-    var takeout by remember {
-        mutableStateOf(false)
-    }
+    val pureVegState by viewModel.isPureVeg.collectAsState(initial = false)
+    val nonVegState by viewModel.isNonVeg.collectAsState(initial = false)
+    val ratingsGreaterThanFour by viewModel.ratingGreaterThanFour.collectAsState(initial = false)
+    val takeOutState by viewModel.takeOut.collectAsState(initial = false)
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-
 
     val isLoading = viewModel.isLoading.collectAsState(initial = false).value
 
@@ -139,20 +140,24 @@ fun CategoryScreenView(
     var showBottomSheet by remember {
         mutableStateOf(false)
     }
-    val scope = rememberCoroutineScope()
 
     fun onClick() {
-        scope.launch { sheetState.hide() }.invokeOnCompletion {
-            if (!sheetState.isVisible) {
-                showBottomSheet = true
-            }
-        }
+        showBottomSheet = !showBottomSheet
     }
 
     LaunchedEffect(Unit) {
 
         viewModel.filterRestaurants(categoryDto.id)
 
+    }
+
+    LaunchedEffect(
+        nonVegState,
+        pureVegState,
+        ratingsGreaterThanFour,
+        takeOutState,
+    ) {
+        viewModel.applyFilters()
     }
     Box(modifier = Modifier.fillMaxSize()) {
         if (isLoading) {
@@ -239,7 +244,7 @@ fun CategoryScreenView(
                                     Icon(
                                         imageVector = Icons.Rounded.Tune,
                                         contentDescription = null,
-                                        modifier = Modifier.size(18.dp),
+                                        modifier = Modifier.size(16.dp),
                                     )
                                 }
                             }
@@ -276,7 +281,7 @@ fun CategoryScreenView(
                                     Icon(
                                         imageVector = Icons.Rounded.KeyboardArrowDown,
                                         contentDescription = null,
-                                        modifier = Modifier.size(18.dp)
+                                        modifier = Modifier.size(16.dp)
                                     )
 
 
@@ -286,7 +291,7 @@ fun CategoryScreenView(
                             Box(
                                 modifier = Modifier
                                     .background(
-                                        color = if (pureVeg) colorResource(id = R.color.black) else Color.Transparent,
+                                        color = if (pureVegState) colorResource(id = R.color.black) else Color.Transparent,
                                         shape = CircleShape
                                     )
                                     .border(
@@ -294,16 +299,16 @@ fun CategoryScreenView(
                                         shape = CircleShape
                                     )
                                     .clickable {
-                                        pureVeg = !pureVeg
-                                        viewModel.isPureVeg.value = pureVeg
-                                        viewModel.applyFilters()
+//                                        pureVegState = !pureVegState
+//                                        viewModel.isPureVeg.value = pureVegState
+                                        viewModel.setPureVeg()
                                     }
                                     .padding(8.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = "Pure veg",
-                                    color = if (pureVeg) colorResource(id = R.color.white) else colorResource(
+                                    color = if (pureVegState) colorResource(id = R.color.white) else colorResource(
                                         id = R.color.black
                                     ),
                                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
@@ -313,7 +318,7 @@ fun CategoryScreenView(
                             Box(
                                 modifier = Modifier
                                     .background(
-                                        color = if (takeout) colorResource(id = R.color.black) else Color.Transparent,
+                                        color = if (takeOutState) colorResource(id = R.color.black) else Color.Transparent,
                                         shape = CircleShape
                                     )
                                     .border(
@@ -321,16 +326,14 @@ fun CategoryScreenView(
                                         shape = CircleShape
                                     )
                                     .clickable {
-                                        takeout = !takeout
-                                        viewModel.takeOut.value = takeout
-                                        viewModel.applyFilters()
+                                        viewModel.setTakeOut()
                                     }
                                     .padding(8.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = "Take-Out",
-                                    color = if (takeout) colorResource(id = R.color.white) else colorResource(
+                                    color = if (takeOutState) colorResource(id = R.color.white) else colorResource(
                                         id = R.color.black
                                     ),
                                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
@@ -348,10 +351,7 @@ fun CategoryScreenView(
                                         shape = CircleShape
                                     )
                                     .clickable {
-                                        ratingsGreaterThanFour = !ratingsGreaterThanFour
-                                        viewModel.ratingGreaterThanFour.value =
-                                            ratingsGreaterThanFour
-                                        viewModel.applyFilters()
+                                        viewModel.setRatingGreaterThanFour()
                                     }
                                     .padding(8.dp),
                                 contentAlignment = Alignment.Center
@@ -488,7 +488,10 @@ fun CategoryScreenView(
             if (showBottomSheet) {
 
                 ModalBottomSheet(
-                    onDismissRequest = { showBottomSheet = false },
+                    onDismissRequest = {
+                        showBottomSheet = false
+                        viewModel.applyFilters()
+                    },
                     sheetState = sheetState,
                     dragHandle = ({}),
                     containerColor = Color.White,
@@ -554,8 +557,12 @@ fun CategoryScreenView(
                             ) {
                                 Checkbox(
                                     modifier = Modifier.scale(0.8f),
-                                    checked = pureVegCheckBoxState.value,
-                                    onCheckedChange = { pureVegCheckBoxState.value = it },
+                                    checked = pureVegState,
+                                    onCheckedChange = {
+//                                        pureVegState = !pureVegState
+//                                        viewModel.isPureVeg.value = pureVegState
+                                        viewModel.setPureVeg()
+                                    },
                                     colors = CheckboxDefaults.colors(
                                         checkedColor = colorResource(id = R.color.black),
                                         uncheckedColor = colorResource(id = R.color.gray),
@@ -572,8 +579,8 @@ fun CategoryScreenView(
 
                                 Checkbox(
                                     modifier = Modifier.scale(0.8f),
-                                    checked = nonVegCheckBoxState.value,
-                                    onCheckedChange = { nonVegCheckBoxState.value = it },
+                                    checked = nonVegState,
+                                    onCheckedChange = { viewModel.setNonVeg() },
                                     colors = CheckboxDefaults.colors(
                                         checkedColor = colorResource(id = R.color.black),
                                         uncheckedColor = colorResource(id = R.color.gray),
@@ -591,16 +598,7 @@ fun CategoryScreenView(
 
                             }
 
-                            Spacer(modifier = Modifier.height(NormalPadding))
-
-                            Spacer(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(1.dp)
-                                    .background(color = colorResource(id = R.color.lightGray))
-                            )
-
-                            Spacer(modifier = Modifier.height(MediumPadding2))
+                            CustomLineBreak()
 
                             Text(
                                 text = "Rating",
@@ -617,27 +615,65 @@ fun CategoryScreenView(
                                 horizontalArrangement = Arrangement.Start,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
+                                ratingOptions.forEach { ratingOption ->
+                                    Box(
+                                        modifier = Modifier
+                                            .background(
+                                                color = if (selectedRate == ratingOption) colorResource(
+                                                    id = R.color.black
+                                                ) else Color.Transparent,
+                                                shape = CircleShape
+                                            )
+                                            .clickable { selectedRate = ratingOption }
+                                            .height((screenHeight / 22))
+                                            .width((screenHeight / 12))
+                                            .border(
+                                                BorderStroke(color = Color.Gray, width = 0.dp),
+                                                shape = CircleShape
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
 
-                                RatingButton(screenHeight = screenHeight, buttonText = "3.5")
-                                Spacer(modifier = Modifier.width(ExtraSmallPadding3))
-                                RatingButton(screenHeight = screenHeight, buttonText = "4.0")
-                                Spacer(modifier = Modifier.width(ExtraSmallPadding3))
-                                RatingButton(screenHeight = screenHeight, buttonText = "4.5")
-                                Spacer(modifier = Modifier.width(ExtraSmallPadding3))
-                                RatingButton(screenHeight = screenHeight, buttonText = "5.0")
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .padding(start = 5.dp, end = 5.dp),
+                                            horizontalArrangement = Arrangement.Start,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Filled.StarRate,
+                                                contentDescription = null,
+                                                modifier = Modifier.scale(0.6f),
+                                                tint = if (selectedRate == ratingOption) colorResource(
+                                                    id = R.color.white
+                                                ) else colorResource(
+                                                    id = R.color.black
+                                                )
+                                            )
+
+                                            Text(
+                                                text = ratingOption.toString(),
+                                                color = if (selectedRate == ratingOption) colorResource(
+                                                    id = R.color.white
+                                                ) else colorResource(
+                                                    id = R.color.black
+                                                ),
+                                                style = MaterialTheme.typography.bodyMedium.copy(
+                                                    fontWeight = FontWeight.Medium
+                                                )
+                                            )
+                                        }
+
+                                    }
+
+                                    Spacer(modifier = Modifier.width(ExtraSmallPadding3))
+                                }
+
 
                             }
 
-                            Spacer(modifier = Modifier.height(MediumPadding2))
-
-                            Spacer(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(1.dp)
-                                    .background(color = colorResource(id = R.color.lightGray))
-                            )
-
-                            Spacer(modifier = Modifier.height(MediumPadding2))
+                            CustomLineBreak()
 
                             Text(
                                 text = "Price",
@@ -655,11 +691,40 @@ fun CategoryScreenView(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
 
-                                PriceButton(screenHeight = screenHeight, buttonText = "₹₹")
-                                Spacer(modifier = Modifier.width(ExtraSmallPadding3))
-                                PriceButton(screenHeight = screenHeight, buttonText = "₹₹₹")
-                                Spacer(modifier = Modifier.width(ExtraSmallPadding3))
-                                PriceButton(screenHeight = screenHeight, buttonText = "₹₹₹₹")
+                                priceOptions.forEach { priceOption ->
+                                    Box(
+                                        modifier = Modifier
+                                            .background(
+                                                color = if (selectedPrice == priceOption) colorResource(
+                                                    id = R.color.black
+                                                ) else Color.Transparent,
+                                                shape = CircleShape
+                                            )
+                                            .clickable { selectedPrice = priceOption }
+                                            .height((screenHeight / 22))
+                                            .width((screenHeight / 12))
+                                            .border(
+                                                BorderStroke(color = Color.Gray, width = 0.dp),
+                                                shape = CircleShape
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+
+                                        Text(
+                                            text = priceOption,
+                                            color = if (selectedPrice == priceOption) colorResource(
+                                                id = R.color.white
+                                            ) else colorResource(
+                                                id = R.color.black
+                                            ),
+                                            style = MaterialTheme.typography.bodyMedium.copy(
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                        )
+                                    }
+
+                                    Spacer(modifier = Modifier.width(ExtraSmallPadding3))
+                                }
 
                             }
 
@@ -674,7 +739,9 @@ fun CategoryScreenView(
                             verticalArrangement = Arrangement.SpaceEvenly
                         ) {
                             OutlinedButton(
-                                onClick = {},
+                                onClick = {
+                                    showBottomSheet = false
+                                },
                                 shape = RoundedCornerShape(5.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = colorResource(
@@ -734,68 +801,6 @@ fun CategoryScreenView(
     }
 
 
-}
-
-@Composable
-private fun RatingButton(screenHeight: Dp, buttonText: String) {
-    Box(
-        modifier = Modifier
-            .background(color = Color.Transparent, shape = CircleShape)
-            .height((screenHeight / 22))
-            .width((screenHeight / 12))
-            .border(
-                BorderStroke(color = Color.Gray, width = 0.dp),
-                shape = CircleShape
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 5.dp, end = 5.dp),
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Filled.StarRate,
-                contentDescription = null,
-                modifier = Modifier.scale(0.6f),
-            )
-
-            Text(
-                text = buttonText,
-                color = colorResource(id = R.color.black),
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.Medium
-                )
-            )
-        }
-    }
-}
-
-@Composable
-private fun PriceButton(screenHeight: Dp, buttonText: String) {
-    Box(
-        modifier = Modifier
-            .background(color = Color.Transparent, shape = CircleShape)
-            .height((screenHeight / 22))
-            .width((screenHeight / 12))
-            .border(
-                BorderStroke(color = Color.Gray, width = 0.dp),
-                shape = CircleShape
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-
-        Text(
-            text = buttonText,
-            color = colorResource(id = R.color.black),
-            style = MaterialTheme.typography.bodyMedium.copy(
-                fontWeight = FontWeight.Medium
-            )
-        )
-    }
 }
 
 @Composable
@@ -941,13 +946,4 @@ private fun FoodCard(
             }
         }
     }
-}
-
-@Composable
-fun FilterCard(modifier: Modifier = Modifier) {
-
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-
-
 }

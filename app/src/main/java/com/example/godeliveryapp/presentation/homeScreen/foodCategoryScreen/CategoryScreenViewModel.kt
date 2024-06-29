@@ -23,11 +23,34 @@ class CategoryScreenViewModel @Inject constructor(private val repository: Reposi
 
     val appliedFilterRestaurants: Flow<List<RestaurantListingCardModel?>?> get() = _applyFilterRestaurant
 
-    var isPureVeg = MutableStateFlow<Boolean>(false)
 
-    val ratingGreaterThanFour = MutableStateFlow<Boolean>(false)
+    private val _isPureVeg = MutableStateFlow<Boolean>(false)
+    val isPureVeg: Flow<Boolean> get() = _isPureVeg
 
-    val takeOut = MutableStateFlow<Boolean>(false)
+    private val _ratingGreaterThanFour = MutableStateFlow<Boolean>(false)
+    val ratingGreaterThanFour: Flow<Boolean> get() = _ratingGreaterThanFour
+
+    private val _isNonVeg = MutableStateFlow<Boolean>(false)
+    val isNonVeg: Flow<Boolean> get() = _isNonVeg
+
+    private val _takeOut = MutableStateFlow<Boolean>(false)
+    val takeOut: Flow<Boolean> get() = _takeOut
+
+    fun setRatingGreaterThanFour() {
+        _ratingGreaterThanFour.value = !_ratingGreaterThanFour.value
+    }
+
+    fun setTakeOut() {
+        _takeOut.value = !_takeOut.value
+    }
+
+    fun setPureVeg() {
+        _isPureVeg.value = !_isPureVeg.value
+    }
+
+    fun setNonVeg() {
+        _isNonVeg.value = !_isNonVeg.value
+    }
 
 
     private val _isLoading = MutableStateFlow<Boolean>(false)
@@ -82,13 +105,14 @@ class CategoryScreenViewModel @Inject constructor(private val repository: Reposi
         viewModelScope.launch {
 
             val applyFilterList = _filterRestaurantList.value?.filter { restaurant ->
-                val isPureVegMatch = !isPureVeg.value || restaurant.isPureVeg
+                val isPureVegMatch = !_isPureVeg.value || restaurant.isPureVeg
                 val isRatingMatch =
-                    !ratingGreaterThanFour.value || restaurant.rating >= (4.0).toString()
-                val isTakeOutMatch = !takeOut.value || restaurant.features.contains("Takeout")
+                    !_ratingGreaterThanFour.value || restaurant.rating >= (4.0).toString()
+                val isTakeOutMatch = !_takeOut.value || restaurant.features.contains("Takeout")
+                val isNonVegMatch = !_isNonVeg.value || !restaurant.isPureVeg
 
                 //only return those cards which satisfy all the three conditions
-                isPureVegMatch && isRatingMatch && isTakeOutMatch
+                isPureVegMatch && isRatingMatch && isTakeOutMatch && isNonVegMatch
             }
 
             if (applyFilterList != null) {
