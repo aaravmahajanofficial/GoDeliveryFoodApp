@@ -21,9 +21,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.godeliveryapp.domain.model.SupabaseAuthViewModel
 import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.godeliveryapp.presentation.navigation.SetupNavGraph
+import com.example.godeliveryapp.ui.theme.GoDeliveryApp
 import com.example.godeliveryapp.utils.SharedPreferences
 import com.example.godeliveryapp.utils.ViewState
-import com.example.zomatoclone.ui.theme.GoDeliveryApp
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

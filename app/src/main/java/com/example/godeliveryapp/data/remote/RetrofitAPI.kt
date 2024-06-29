@@ -1,8 +1,8 @@
 package com.example.godeliveryapp.data.remote
 
 import com.example.godeliveryapp.data.remote.dataTransferObject.APIresponse
-import com.example.zomatoclone.utils.Constants.API_KEY
-import com.example.zomatoclone.utils.Constants.LANGUAGE
+import com.example.godeliveryapp.utils.Constants.API_KEY
+import com.example.godeliveryapp.utils.Constants.LANGUAGE
 import retrofit2.http.GET
 import retrofit2.http.Query
 

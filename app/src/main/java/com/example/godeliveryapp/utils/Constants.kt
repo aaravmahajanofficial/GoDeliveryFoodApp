@@ -1,4 +1,4 @@
-package com.example.zomatoclone.utils
+package com.example.godeliveryapp.utils
 
 object Constants {
     const val BASE_URL = "https://yfgkksopggwagkrxjgrv.supabase.co"
@@ -7,7 +7,6 @@ object Constants {
 
     const val DELIVERY_FEE = 28
     const val TAX = 40
-    const val PROMOCODE = 85
 
     const val BASE_API_URL = "https://revgeocode.search.hereapi.com/v1/"
     const val LANGUAGE = "en-US"

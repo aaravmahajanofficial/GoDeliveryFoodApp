@@ -1,4 +1,4 @@
-package com.example.zomatoclone.ui.theme
+package com.example.godeliveryapp.ui.theme
 
 import android.app.Activity
 import android.os.Build

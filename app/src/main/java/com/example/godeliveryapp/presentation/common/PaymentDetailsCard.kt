@@ -19,9 +19,9 @@ import com.example.godeliveryapp.R
 import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
-import com.example.zomatoclone.utils.Constants.DELIVERY_FEE
-import com.example.zomatoclone.utils.Constants.PROMOCODE
-import com.example.zomatoclone.utils.Constants.TAX
+import com.example.godeliveryapp.utils.Constants.DELIVERY_FEE
+import com.example.godeliveryapp.utils.Constants.PROMOCODE
+import com.example.godeliveryapp.utils.Constants.TAX
 
 @Composable
 fun PaymentDetailsCard(modifier: Modifier = Modifier, cartSubTotal: Int) {

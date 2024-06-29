@@ -37,6 +37,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -71,9 +72,8 @@ import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import com.example.godeliveryapp.presentation.common.PaymentDetailsCard
 import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.godeliveryapp.presentation.orderScreen.OrderScreenViewModel
-import com.example.zomatoclone.utils.Constants.DELIVERY_FEE
-import com.example.zomatoclone.utils.Constants.PROMOCODE
-import com.example.zomatoclone.utils.Constants.TAX
+import com.example.godeliveryapp.utils.Constants.DELIVERY_FEE
+import com.example.godeliveryapp.utils.Constants.TAX
 
 
 @Composable
@@ -89,8 +89,14 @@ fun CartScreenView(
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val cartItems = cartViewModel.cartItems.collectAsState(initial = emptyList()).value
     val cartSubTotal = cartViewModel.cartSubTotal.collectAsState(initial = 0.0).value
-    val cartTotal = (cartSubTotal - PROMOCODE) + DELIVERY_FEE + TAX
+    var cartTotal by remember {
+        mutableDoubleStateOf(0.0)
+    }
     val isLoading = cartViewModel.isLoading.collectAsState(initial = false).value
+
+    fun calculateCartTotal(promocode: Int) {
+        cartTotal = (cartSubTotal - promocode) + DELIVERY_FEE + TAX
+    }
 
     var openDialog by remember {
         mutableStateOf(false)
@@ -625,32 +631,6 @@ fun CartScreenView(
                 }
 
             }
-
-
-//            when (orderState) {
-//                OrderState.CANCELLED -> {}
-//                OrderState.CONFIRMED -> {
-//                    navController.navigate(Route.OrderSuccessScreen.route) {
-//                        popUpTo(Route.CartScreen.route) {
-//                            inclusive = true
-//                        }
-//                    }
-//                    orderScreenViewModel.resetOrderState()
-//                }
-//
-//                OrderState.DELIVERED -> {}
-//                OrderState.DISPATCHED -> {
-//                }
-//
-//                OrderState.EMPTY -> {}
-//                OrderState.PENDING -> {
-//
-//                    navController.navigate(Route.OrderScreen.route)
-//
-//                }
-//
-//                OrderState.PREPARING -> {}
-//            }
 
             if (openDialog) {
                 AlertDialog(

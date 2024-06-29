@@ -4,9 +4,9 @@ import android.content.Context
 import com.example.godeliveryapp.data.remote.RetrofitAPI
 import com.example.godeliveryapp.data.repository.RepositoryImplementation
 import com.example.godeliveryapp.domain.repository.Repository
+import com.example.godeliveryapp.utils.Constants
+import com.example.godeliveryapp.utils.Constants.BASE_API_URL
 import com.example.godeliveryapp.utils.SharedPreferences
-import com.example.zomatoclone.utils.Constants
-import com.example.zomatoclone.utils.Constants.BASE_API_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

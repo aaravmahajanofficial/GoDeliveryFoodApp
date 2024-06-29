@@ -35,7 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
-import com.example.zomatoclone.ui.theme.GoDeliveryApp
+import com.example.godeliveryapp.ui.theme.GoDeliveryApp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
