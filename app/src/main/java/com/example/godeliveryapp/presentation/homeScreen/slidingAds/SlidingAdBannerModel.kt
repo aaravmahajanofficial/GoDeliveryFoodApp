@@ -27,8 +27,15 @@ val SlidingAdBanners = listOf(
         title = "Gold Membership",
         description = "Free delivery on all orders",
         buttonColor = R.color.orderNowButtonColor,
-        background = R.color.offerAD1Color,
-        imageId = R.drawable.foodoffer,
+        background = R.color.offerAD2Color,
+        imageId = R.drawable.giftcard,
         buttonTitle = "Know more",
     ),
+    SlidingAdBanner(
+        title = "Special deals on birthday!",
+        description = "Get 50% off on all orders",
+        buttonColor = R.color.orderNowButtonColor,
+        background = R.color.offerAD3Color,
+        imageId = R.drawable.fastfood,
+        buttonTitle = "Order Now",)
 )

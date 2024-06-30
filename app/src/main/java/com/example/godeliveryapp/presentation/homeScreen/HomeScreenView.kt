@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +58,7 @@ import com.example.godeliveryapp.presentation.homeScreen.listings.components.Res
 import com.example.godeliveryapp.presentation.homeScreen.slidingAds.SlidingAdBanners
 import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.godeliveryapp.presentation.userProfile.myFavourites.FavouritesViewModel
+import com.example.godeliveryapp.utils.SharedPreferences
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -65,10 +67,13 @@ fun HomeScreenView(
     navigateToDetails: (RestaurantListingCardModel) -> Unit,
     navigateToCategory: (CategoryDto) -> Unit,
     favouritesViewModel: FavouritesViewModel = hiltViewModel(),
-    viewModel: HomeScreenViewModel = hiltViewModel()
+    viewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
 
+    val sharedPreferences = SharedPreferences(context = LocalContext.current)
     val isLoading = viewModel.isLoading.collectAsState(initial = true).value
+
+    val currentLocation = sharedPreferences.getUserData("userCurrentLocation")
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
@@ -122,13 +127,16 @@ fun HomeScreenView(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Start
                             ) {
-                                Text(
-                                    "Google", style = MaterialTheme.typography.titleLarge.copy(
-                                        color = colorResource(
-                                            id = R.color.black
+                                if (currentLocation != null) {
+                                    Text(
+                                        text = currentLocation,
+                                        style = MaterialTheme.typography.titleLarge.copy(
+                                            color = colorResource(
+                                                id = R.color.black
+                                            )
                                         )
                                     )
-                                )
+                                }
                                 Icon(
                                     imageVector = Icons.Rounded.KeyboardArrowDown,
                                     contentDescription = null,

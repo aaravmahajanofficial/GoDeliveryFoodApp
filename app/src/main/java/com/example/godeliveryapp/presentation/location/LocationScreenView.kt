@@ -376,10 +376,10 @@ fun LocationScreenView(
 
                                     LocationCard(
                                         locationCardModel = locationCard,
-                                        navController = navController,
                                         onClick = {
                                             val encodedModel = Json.encodeToString(locationCard)
                                             navController.navigate("address_screen/$encodedModel")
+                                            locationScreenViewModel.selectLocation(locationCard)
                                         }
                                     )
 
@@ -404,7 +404,6 @@ fun LocationScreenView(
 @Composable
 fun LocationCard(
     locationCardModel: LocationCardModel,
-    navController: NavController,
     onClick: (() -> Unit)? = null
 ) {
 

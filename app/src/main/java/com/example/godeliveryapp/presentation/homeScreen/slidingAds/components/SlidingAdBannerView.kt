@@ -24,8 +24,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.godeliveryapp.R
-import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
-import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.presentation.homeScreen.slidingAds.SlidingAdBanner
 
@@ -71,22 +69,21 @@ fun SlidingAdBannerView(modifier: Modifier = Modifier, slidingAdBanner: SlidingA
                 if (slidingAdBanner.description != null) {
                     Text(
                         text = slidingAdBanner.description,
-                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Normal),
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Normal),
                         color = colorResource(
                             id = slidingAdBanner.buttonColor
                         ),
                     )
                 }
 
-                Spacer(modifier = Modifier.height(MediumPadding2))
+                Spacer(modifier = Modifier.height(NormalPadding))
 
                 Box(
                     modifier = Modifier
                         .background(
                             color = colorResource(id = slidingAdBanner.buttonColor),
                             shape = RoundedCornerShape(5.dp)
-                        )
-                        .padding(ExtraSmallPadding2),
+                        ).padding(8.dp),
                     contentAlignment = Alignment.Center
                 ) {
 
@@ -101,9 +98,9 @@ fun SlidingAdBannerView(modifier: Modifier = Modifier, slidingAdBanner: SlidingA
             }
 
             Image(
-                painter = painterResource(id = R.drawable.giftcard),
+                painter = painterResource(id = slidingAdBanner.imageId),
                 contentDescription = null,
-                modifier = Modifier.size(screenHeight / 6),
+                modifier = Modifier.size(screenHeight / 6.5f),
                 alignment = Alignment.Center,
                 contentScale = ContentScale.Fit
             )

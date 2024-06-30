@@ -53,7 +53,7 @@ fun CategoryButtonView(
 
             AsyncImage(
                 model = category.imageUrl,
-                modifier = Modifier.scale(0.8f),
+                modifier = Modifier.scale(0.6f),
                 contentScale = ContentScale.FillBounds,
                 contentDescription = null
             )
