@@ -1,6 +1,5 @@
 package com.example.godeliveryapp.presentation.homeScreen.listings.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +34,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
@@ -72,9 +71,9 @@ fun RestaurantListingCardView(
         ) {
 
 
-            Image(
+            AsyncImage(
+                model = restaurantListingCardModel.imageURL,
                 modifier = Modifier.fillMaxSize(),
-                painter = rememberAsyncImagePainter(restaurantListingCardModel.imageURL),
                 contentDescription = null,
                 contentScale = ContentScale.Crop
             )

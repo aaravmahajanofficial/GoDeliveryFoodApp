@@ -1,6 +1,5 @@
 package com.example.godeliveryapp.presentation.common
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +21,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 
@@ -52,9 +51,9 @@ fun CategoryButtonView(
             contentAlignment = Alignment.Center
         ) {
 
-            Image(
+            AsyncImage(
+                model = category.imageUrl,
                 modifier = Modifier.scale(0.8f),
-                painter = rememberAsyncImagePainter(model = category.imageUrl),
                 contentScale = ContentScale.FillBounds,
                 contentDescription = null
             )

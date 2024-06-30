@@ -15,9 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.godeliveryapp.R
-import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.utils.Constants.DELIVERY_FEE
@@ -29,12 +27,7 @@ fun PaymentDetailsCard(
     subTotal: Double,
     total : Double,
     totalSavings: Double,
-    cartScreenViewModel: CartScreenViewModel = hiltViewModel()
 ) {
-
-//    val cartSubTotal by cartScreenViewModel.cartSubTotal.collectAsState(initial = 0.0)
-//    val cartTotal by cartScreenViewModel.cartTotal.collectAsState(initial = 0.0)
-//    val totalSavings by cartScreenViewModel.totalSavings.collectAsState(initial = 0.0)
 
     Box(
         modifier = Modifier

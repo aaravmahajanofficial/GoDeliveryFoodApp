@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.CartScreen
+package com.example.godeliveryapp.presentation.cart
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CartScreenViewModel @Inject constructor(
+class CartViewModel @Inject constructor(
     private val repository: Repository,
 ) : ViewModel() {
 

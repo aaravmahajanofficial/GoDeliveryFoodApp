@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.CartScreen
+package com.example.godeliveryapp.presentation.cart
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -77,18 +77,18 @@ import com.example.godeliveryapp.presentation.orderScreen.OrderScreenViewModel
 fun CartScreenView(
     modifier: Modifier = Modifier,
     couponCodeValue: String,
-    cartScreenViewModel: CartScreenViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel(),
     orderScreenViewModel: OrderScreenViewModel = hiltViewModel(),
     navController: NavController
 ) {
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val cartItems by cartScreenViewModel.cartItems.collectAsState(initial = emptyList())
-    val cartSubTotal by cartScreenViewModel.cartSubTotal.collectAsState(initial = 0.0)
-    val cartTotal by cartScreenViewModel.cartTotal.collectAsState(initial = 0.0)
-    val totalSavings by cartScreenViewModel.totalSavings.collectAsState(initial = 0.0)
-    val isLoading by cartScreenViewModel.isLoading.collectAsState(initial = false)
+    val cartItems by cartViewModel.cartItems.collectAsState(initial = emptyList())
+    val cartSubTotal by cartViewModel.cartSubTotal.collectAsState(initial = 0.0)
+    val cartTotal by cartViewModel.cartTotal.collectAsState(initial = 0.0)
+    val totalSavings by cartViewModel.totalSavings.collectAsState(initial = 0.0)
+    val isLoading by cartViewModel.isLoading.collectAsState(initial = false)
 
     var openDialog by remember {
         mutableStateOf(false)
@@ -545,7 +545,7 @@ fun CartScreenView(
                             append(" coupon savings")
                         }
                         if (couponCodeValue != "{coupon_code}") {
-                            cartScreenViewModel.setPromoCode(couponCodeValue)
+                            cartViewModel.setPromoCode(couponCodeValue)
                             CartCustomisationCardView(
                                 title = "Promo code Applied",
                                 annotatedString = annotatedString,

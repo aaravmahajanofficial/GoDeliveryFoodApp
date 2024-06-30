@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.presentation.AddressDetails
+package com.example.godeliveryapp.presentation.addressScreen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image

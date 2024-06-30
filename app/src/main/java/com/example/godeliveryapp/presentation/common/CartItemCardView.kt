@@ -37,15 +37,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.CartItemModel
-import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
+import com.example.godeliveryapp.presentation.cart.CartViewModel
 
 @Composable
 fun CartItemCardView(
     modifier: Modifier = Modifier,
     cartItemModel: CartItemModel,
-    viewModel: CartScreenViewModel = hiltViewModel()
+    viewModel: CartViewModel = hiltViewModel()
 ) {
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp

@@ -1,6 +1,5 @@
 package com.example.godeliveryapp.presentation.detailsScreen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -52,14 +51,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
-import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding2
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
+import com.example.godeliveryapp.presentation.cart.CartViewModel
 import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemCardView
 import com.example.godeliveryapp.presentation.navigation.Route
@@ -70,21 +69,21 @@ fun DetailsScreenView(
     modifier: Modifier = Modifier,
     navController: NavController,
     viewModel: DetailsScreenViewModel = hiltViewModel(),
-    cartScreenViewModel: CartScreenViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel(),
     restaurantListingCardModel: RestaurantListingCardModel,
     favouritesViewModel: FavouritesViewModel = hiltViewModel()
 ) {
 
     LaunchedEffect(Unit) {
         viewModel.getMenu(restaurantListingCardModel.restaurantId)
-        cartScreenViewModel.getItems()
+        cartViewModel.getItems()
     }
 
     val isLoading = viewModel.isLoading.collectAsState(initial = false).value
 
     val menuItems = viewModel.menuItems.collectAsState(initial = listOf()).value
     val filteredRestaurants = viewModel.filteredList.collectAsState(initial = listOf()).value
-    val totalItems = cartScreenViewModel.totalItemsInCart.collectAsState(initial = 0).value
+    val totalItems = cartViewModel.totalItemsInCart.collectAsState(initial = 0).value
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     var onlyVeg by remember { mutableStateOf(false) }
 
@@ -112,9 +111,9 @@ fun DetailsScreenView(
                         .fillMaxWidth()
                         .background(Color.Transparent, shape = RoundedCornerShape(12.dp)),
                 ) {
-                    Image(
+                    AsyncImage(
+                        model = restaurantListingCardModel.imageURL,
                         modifier = Modifier.fillMaxSize(),
-                        painter = rememberAsyncImagePainter(restaurantListingCardModel.imageURL),
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )

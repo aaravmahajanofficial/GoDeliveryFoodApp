@@ -9,7 +9,7 @@ import androidx.navigation.navArgument
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
-import com.example.godeliveryapp.presentation.CartScreen.CartScreenView
+import com.example.godeliveryapp.presentation.cart.CartScreenView
 import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreenView
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreenView
 import com.example.godeliveryapp.presentation.homeScreen.foodCategoryScreen.CategoryScreenView
