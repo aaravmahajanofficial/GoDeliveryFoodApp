@@ -11,7 +11,7 @@ data class PromoCodeModel(
 val codes = listOf(
     PromoCodeModel(
         couponCode = "AXIOSBNK40",
-        couponDescription = "50% OFF on all orders",
+        couponDescription = "40% OFF on all orders",
         couponImage = R.drawable.bank_logo_1
     ),
     PromoCodeModel(

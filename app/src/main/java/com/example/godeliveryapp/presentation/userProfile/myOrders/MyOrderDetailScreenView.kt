@@ -118,7 +118,11 @@ fun MyOrderDetailScreenView(
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                 )
                 Spacer(modifier = Modifier.height(MediumPadding1))
-                PaymentDetailsCard(cartSubTotal = myOrderModel.items.sumOf { it.itemPrice }.toInt())
+                PaymentDetailsCard(
+                    subTotal = myOrderModel.items.sumOf { it.itemPrice },
+                    total = 1060.0,
+                    totalSavings = 0.0
+                )
             }
 
             item {

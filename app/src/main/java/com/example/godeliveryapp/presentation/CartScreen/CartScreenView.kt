@@ -37,7 +37,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -72,31 +71,24 @@ import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import com.example.godeliveryapp.presentation.common.PaymentDetailsCard
 import com.example.godeliveryapp.presentation.navigation.Route
 import com.example.godeliveryapp.presentation.orderScreen.OrderScreenViewModel
-import com.example.godeliveryapp.utils.Constants.DELIVERY_FEE
-import com.example.godeliveryapp.utils.Constants.TAX
 
 
 @Composable
 fun CartScreenView(
     modifier: Modifier = Modifier,
-    couponCodeValue: String? = null,
-    cartViewModel: CartScreenViewModel = hiltViewModel(),
+    couponCodeValue: String,
+    cartScreenViewModel: CartScreenViewModel = hiltViewModel(),
     orderScreenViewModel: OrderScreenViewModel = hiltViewModel(),
     navController: NavController
 ) {
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val cartItems = cartViewModel.cartItems.collectAsState(initial = emptyList()).value
-    val cartSubTotal = cartViewModel.cartSubTotal.collectAsState(initial = 0.0).value
-    var cartTotal by remember {
-        mutableDoubleStateOf(0.0)
-    }
-    val isLoading = cartViewModel.isLoading.collectAsState(initial = false).value
-
-    fun calculateCartTotal(promocode: Int) {
-        cartTotal = (cartSubTotal - promocode) + DELIVERY_FEE + TAX
-    }
+    val cartItems by cartScreenViewModel.cartItems.collectAsState(initial = emptyList())
+    val cartSubTotal by cartScreenViewModel.cartSubTotal.collectAsState(initial = 0.0)
+    val cartTotal by cartScreenViewModel.cartTotal.collectAsState(initial = 0.0)
+    val totalSavings by cartScreenViewModel.totalSavings.collectAsState(initial = 0.0)
+    val isLoading by cartScreenViewModel.isLoading.collectAsState(initial = false)
 
     var openDialog by remember {
         mutableStateOf(false)
@@ -548,11 +540,12 @@ fun CartScreenView(
                                     fontWeight = FontWeight.SemiBold
                                 )
                             ) {
-                                append("₹$cartSubTotal")
+                                append("₹${totalSavings}")
                             }
                             append(" coupon savings")
                         }
                         if (couponCodeValue != "{coupon_code}") {
+                            cartScreenViewModel.setPromoCode(couponCodeValue)
                             CartCustomisationCardView(
                                 title = "Promo code Applied",
                                 annotatedString = annotatedString,
@@ -583,7 +576,11 @@ fun CartScreenView(
 
                         Spacer(modifier = Modifier.height(MediumPadding1))
 
-                        PaymentDetailsCard(cartSubTotal = cartSubTotal.toInt())
+                        PaymentDetailsCard(
+                            subTotal = cartSubTotal,
+                            total = cartTotal,
+                            totalSavings = totalSavings
+                        )
 
                         Spacer(modifier = Modifier.height(MediumPadding1))
 

@@ -63,7 +63,7 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
         ) {
             CartScreenView(
                 navController = navController,
-                couponCodeValue = it.arguments?.getString("coupon_code")
+                couponCodeValue = it.arguments?.getString("coupon_code") ?: ""
             )
         }
 
@@ -214,9 +214,6 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
                 }
             if (restaurantListingCardModel != null) {
                 DetailsScreenView(
-//                    navigateUp = {
-//                        navController.navigateUp()
-//                    },
                     navController = navController,
                     restaurantListingCardModel = restaurantListingCardModel
                 )

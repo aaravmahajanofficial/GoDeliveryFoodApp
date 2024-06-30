@@ -15,16 +15,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.godeliveryapp.R
-import com.example.godeliveryapp.presentation.Dimens
+import com.example.godeliveryapp.presentation.CartScreen.CartScreenViewModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
 import com.example.godeliveryapp.utils.Constants.DELIVERY_FEE
-import com.example.godeliveryapp.utils.Constants.PROMOCODE
 import com.example.godeliveryapp.utils.Constants.TAX
 
 @Composable
-fun PaymentDetailsCard(modifier: Modifier = Modifier, cartSubTotal: Int) {
+fun PaymentDetailsCard(
+    modifier: Modifier = Modifier,
+    subTotal: Double,
+    total : Double,
+    totalSavings: Double,
+    cartScreenViewModel: CartScreenViewModel = hiltViewModel()
+) {
+
+//    val cartSubTotal by cartScreenViewModel.cartSubTotal.collectAsState(initial = 0.0)
+//    val cartTotal by cartScreenViewModel.cartTotal.collectAsState(initial = 0.0)
+//    val totalSavings by cartScreenViewModel.totalSavings.collectAsState(initial = 0.0)
 
     Box(
         modifier = Modifier
@@ -50,7 +60,7 @@ fun PaymentDetailsCard(modifier: Modifier = Modifier, cartSubTotal: Int) {
                 )
 
                 Text(
-                    text = "₹ $cartSubTotal",
+                    text = "₹ $subTotal",
                     style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
                     color = colorResource(id = R.color.black)
                 )
@@ -58,28 +68,29 @@ fun PaymentDetailsCard(modifier: Modifier = Modifier, cartSubTotal: Int) {
 
             }
 
-            Spacer(modifier = Modifier.height(ExtraSmallPadding3))
+            if (totalSavings > 0.0) {
+                Spacer(modifier = Modifier.height(ExtraSmallPadding3))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+                    Text(
+                        text = "Promocode",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
+                        color = colorResource(id = R.color.gray)
+                    )
 
-                Text(
-                    text = "Promocode",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
-                    color = colorResource(id = R.color.gray)
-                )
+                    Text(
+                        text = "₹ $totalSavings",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+                        color = colorResource(id = R.color.secondaryColor)
+                    )
 
-                Text(
-                    text = "- ₹ $PROMOCODE",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                    color = colorResource(id = R.color.secondaryColor)
-                )
-
+                }
             }
-            Spacer(modifier = Modifier.height(Dimens.ExtraSmallPadding3))
+            Spacer(modifier = Modifier.height(ExtraSmallPadding3))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -136,7 +147,7 @@ fun PaymentDetailsCard(modifier: Modifier = Modifier, cartSubTotal: Int) {
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = "₹ ${cartSubTotal + DELIVERY_FEE + TAX - PROMOCODE}",
+                    text = "₹ $total",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     color = colorResource(id = R.color.black)
                 )
