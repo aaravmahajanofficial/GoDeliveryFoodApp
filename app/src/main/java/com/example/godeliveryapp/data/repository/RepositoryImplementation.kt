@@ -12,10 +12,10 @@ import com.example.godeliveryapp.data.remote.dataTransferObject.MenuItemsDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.OrderDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.OrderItemDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.UserDto
-import com.example.godeliveryapp.domain.model.APIMODEL.Item
 import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
+import com.example.godeliveryapp.domain.model.removeAPI.Item
 import com.example.godeliveryapp.domain.repository.Repository
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemModel
 import com.example.godeliveryapp.utils.SharedPreferences
@@ -205,22 +205,26 @@ class RepositoryImplementation(
     override suspend fun getNearbyLocations(coordinates: String): List<Item> {
         return withContext(Dispatchers.IO) {
 
-            val apiResponse = retrofitAPI.getNearbyLocations(coordinates = coordinates)
+            try {
+                val apiResponse = retrofitAPI.getNearbyLocations(coordinates = coordinates)
 
-            apiResponse.items
+                apiResponse.items.sortedBy { it.distance }
+            } catch (e: Exception) {
+                Log.d("ERROR WHILE FETCHING LOCATIONS", e.toString())
+                emptyList()
+            }
 
         }
 
     }
 
-    override suspend fun insertUserData(userDto: UserDto): Boolean {
+    override suspend fun upsertUserData(userDto: UserDto): Boolean {
 
         return withContext(Dispatchers.IO) {
 
             try {
-                postgrest.from("Users").insert(userDto)
+                postgrest.from("Users").upsert(userDto)
                 true
-
             } catch (e: Exception) {
                 Log.d("ERROR WHILE INSERTING USER DATA", e.toString())
                 false
@@ -237,9 +241,6 @@ class RepositoryImplementation(
                 userId = sharedPreferences.getUserData("USER_ID")!!,
                 userName = sharedPreferences.getUserData("USER_NAME")!!,
                 userEmail = sharedPreferences.getUserData("USER_EMAIL")!!,
-                userPhone = "",
-                userAddress = "",
-                landmark = ""
             )
             userDto
 

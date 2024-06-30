@@ -1,4 +1,4 @@
-package com.example.godeliveryapp.domain.model.APIMODEL
+package com.example.godeliveryapp.domain.model.removeAPI
 
 data class Item(
     val access: List<Access>,

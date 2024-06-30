@@ -13,7 +13,7 @@ interface RetrofitAPI {
         @Query("at") coordinates: String,
         @Query("lang") language: String = LANGUAGE,
         @Query("apiKey") apiKey: String = API_KEY,
-        @Query("limit") limit: String = "20"
+        @Query("limit") limit: String = "10"
 
     ): APIresponse
 

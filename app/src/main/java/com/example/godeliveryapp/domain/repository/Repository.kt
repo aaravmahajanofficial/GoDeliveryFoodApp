@@ -4,10 +4,10 @@ import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.OrderDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.OrderItemDto
 import com.example.godeliveryapp.data.remote.dataTransferObject.UserDto
-import com.example.godeliveryapp.domain.model.APIMODEL.Item
 import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
+import com.example.godeliveryapp.domain.model.removeAPI.Item
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemModel
 
 interface Repository {
@@ -27,7 +27,7 @@ interface Repository {
 
     suspend fun getRestaurantsByCategory(id: Int): List<RestaurantListingCardModel>
 
-    suspend fun insertUserData(userDto: UserDto): Boolean
+    suspend fun upsertUserData(userDto: UserDto): Boolean
 
     suspend fun getOrCreateCart(): String?
 

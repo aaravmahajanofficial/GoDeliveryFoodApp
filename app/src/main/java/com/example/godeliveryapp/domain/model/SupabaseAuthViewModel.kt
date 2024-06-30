@@ -75,7 +75,7 @@ class SupabaseAuthViewModel @Inject constructor(
                     landmark = ""
                 )
 
-                repository.insertUserData(userDto)
+                repository.upsertUserData(userDto)
 
                 sharedPreferences.saveUserData("USER_ID", user.id)
                 sharedPreferences.saveUserData("USER_NAME", userName)

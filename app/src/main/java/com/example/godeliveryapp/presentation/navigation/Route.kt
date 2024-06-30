@@ -38,6 +38,8 @@ sealed class Route(val route: String) {
 
     data object PromoCodeScreen : Route(route = "promo_code_screen")
 
-    data object AddressScreen : Route(route = "address_screen")
+    data object AddressScreen : Route(route = "address_screen/{locationCardModel}")
+
+    data object LocationScreen : Route(route = "location_screen")
 
 }

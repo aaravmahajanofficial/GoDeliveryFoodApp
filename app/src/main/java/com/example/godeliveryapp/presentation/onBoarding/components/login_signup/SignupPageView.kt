@@ -351,7 +351,7 @@ fun SignUpView(
         }
 
         ViewState.Success -> {
-            navController.navigate(Route.HomeScreen.route) {
+            navController.navigate(Route.LocationScreen.route) {
                 popUpTo(Route.WelcomeScreen.route) { inclusive = true }
             }
             viewModel.resetUserState()

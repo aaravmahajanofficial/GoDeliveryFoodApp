@@ -7,13 +7,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
+import com.example.godeliveryapp.domain.model.LocationCardModel
 import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
+import com.example.godeliveryapp.presentation.addressScreen.AddressScreenView
 import com.example.godeliveryapp.presentation.cart.CartScreenView
 import com.example.godeliveryapp.presentation.detailsScreen.DetailsScreenView
 import com.example.godeliveryapp.presentation.homeScreen.HomeScreenView
 import com.example.godeliveryapp.presentation.homeScreen.foodCategoryScreen.CategoryScreenView
 import com.example.godeliveryapp.presentation.homeScreen.searchScreen.SearchScreenView
+import com.example.godeliveryapp.presentation.location.LocationScreenView
 import com.example.godeliveryapp.presentation.onBoarding.components.boardingScreens.OnBoardingScreenView
 import com.example.godeliveryapp.presentation.onBoarding.components.login_signup.CreateNewPasswordPageView
 import com.example.godeliveryapp.presentation.onBoarding.components.login_signup.ForgotPasswordPageView
@@ -201,6 +204,22 @@ fun SetupNavGraph(navController: NavHostController, startDestination: String) {
             OrderScreenView(navController = navController)
         }
 
+        composable(route = Route.LocationScreen.route) {
+            LocationScreenView(navController = navController)
+        }
+
+        composable(
+            route = Route.AddressScreen.route,
+            arguments = listOf(navArgument("locationCardModel") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val deSerializedModel = Json.decodeFromString<LocationCardModel>(
+                backStackEntry.arguments?.getString("locationCardModel") ?: ""
+            )
+            AddressScreenView(
+                navController = navController,
+                locationModel = deSerializedModel
+            )
+        }
 
 
         composable(route = Route.DetailsScreen.route) {

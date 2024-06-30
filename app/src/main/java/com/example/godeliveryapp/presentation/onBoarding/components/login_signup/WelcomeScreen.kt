@@ -178,7 +178,6 @@ fun WelcomeScreen(modifier: Modifier = Modifier, navController: NavController) {
 
                 Spacer(modifier = Modifier.padding(NormalPadding))
 
-
             }
 
         }

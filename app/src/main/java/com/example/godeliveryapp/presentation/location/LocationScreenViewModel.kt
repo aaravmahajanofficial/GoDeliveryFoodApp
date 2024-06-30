@@ -1,31 +1,29 @@
 package com.example.godeliveryapp.presentation.location
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Location
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.godeliveryapp.domain.model.LocationCardModel
 import com.example.godeliveryapp.domain.repository.Repository
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LocationScreenViewModel @Inject constructor(private val repository: Repository) :
+class LocationScreenViewModel @Inject constructor(
+    private val repository: Repository,
+) :
     ViewModel() {
 
-    private val _nearbyLocationsCards = MutableStateFlow<List<LocationCardModel>?>(listOf())
-    val nearbyLocationsCards: Flow<List<LocationCardModel>?> get() = _nearbyLocationsCards
+    private val _nearbyLocationsCards = MutableStateFlow<List<LocationCardModel>?>(emptyList())
+
+    private val _filteredList = MutableStateFlow<List<LocationCardModel>?>(emptyList())
+    val filteredList: Flow<List<LocationCardModel>?> get() = _nearbyLocationsCards
+
+    private val _locationModel = MutableStateFlow<LocationCardModel?>(null)
+    val locationModel: StateFlow<LocationCardModel?> get() = _locationModel
 
 
     fun getNearbyLocations(coordinates: String) {
@@ -42,8 +40,21 @@ class LocationScreenViewModel @Inject constructor(private val repository: Reposi
             }
 
             _nearbyLocationsCards.emit(locationCards)
+            _locationModel.emit(locationCards?.get(0))
 
         }
+    }
+
+    fun filterLocations(query: String) {
+
+        viewModelScope.launch {
+            val results = _nearbyLocationsCards.value?.filter {
+                it.address.label?.contains(query, ignoreCase = true) ?: false
+            }
+
+            _filteredList.emit(results)
+        }
+
     }
 
 
