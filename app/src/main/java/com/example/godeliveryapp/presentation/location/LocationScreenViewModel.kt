@@ -1,5 +1,7 @@
 package com.example.godeliveryapp.presentation.location
 
+import android.util.Log
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.godeliveryapp.domain.model.LocationCardModel
@@ -10,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,27 +30,38 @@ class LocationScreenViewModel @Inject constructor(
     private val _locationModel = MutableStateFlow<LocationCardModel?>(null)
     val locationModel: StateFlow<LocationCardModel?> get() = _locationModel
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> get() = _isLoading
+
 
     fun getNearbyLocations(coordinates: String) {
         viewModelScope.launch {
-            val items = repository.getNearbyLocations(coordinates = coordinates)
+            _isLoading.emit(true)
+            try {
+                val items = repository.getNearbyLocations(coordinates = coordinates)
 
-            val locationCards = items?.map { item ->
+                val locationCards = items?.map { item ->
 
-                LocationCardModel(
-                    title = item.title,
-                    address = item.address
+                    LocationCardModel(
+                        title = item.title,
+                        address = item.address
+                    )
+
+                }
+
+                _nearbyLocationsCards.emit(locationCards)
+                _filteredList.emit(locationCards)
+                _locationModel.emit(locationCards?.get(0))
+                sharedPreferences.saveUserData(
+                    "userCurrentLocation",
+                    _locationModel.value?.address?.district.plus(", ")
+                        .plus(_locationModel.value?.address?.state)
                 )
-
+            } catch (e: Exception) {
+                Log.d("LocationScreenViewModel", "getNearbyLocations: ${e.message}")
+            } finally {
+                _isLoading.emit(false)
             }
-
-            _nearbyLocationsCards.emit(locationCards)
-            _locationModel.emit(locationCards?.get(0))
-            sharedPreferences.saveUserData(
-                "userCurrentLocation",
-                _locationModel.value?.address?.district.plus(", ")
-                    .plus(_locationModel.value?.address?.state)
-            )
 
         }
     }
@@ -65,12 +79,16 @@ class LocationScreenViewModel @Inject constructor(
 
     fun filterLocations(query: String) {
 
+        val lowerCase = query.lowercase()
+
         viewModelScope.launch {
-            val results = _nearbyLocationsCards.value?.filter {
-                it.address.label?.contains(query, ignoreCase = true) ?: false
+
+            val filteredList = _filteredList.value?.filter { locationCardModel ->
+                locationCardModel.title.contains(lowerCase, ignoreCase = true) || locationCardModel.address.label?.contains(lowerCase, ignoreCase = true) ?: false
             }
 
-            _filteredList.emit(results)
+            _filteredList.emit(filteredList ?: emptyList())
+
         }
 
     }

@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.domain.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,19 +15,19 @@ import javax.inject.Inject
 class FavouritesViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
     private val _favourites = MutableStateFlow<List<RestaurantListingCardModel>?>(emptyList())
-    val favourites: Flow<List<RestaurantListingCardModel>?> get() = _favourites
+    val favourites: StateFlow<List<RestaurantListingCardModel>?> get() = _favourites
 
     private val _favouritesList = MutableStateFlow<List<Int>>(emptyList())
-    val favouritesList: Flow<List<Int>> get() = _favouritesList
+    val favouritesList: StateFlow<List<Int>> get() = _favouritesList
 
     private val _isLoading = MutableStateFlow(false)
-    val isLoading: Flow<Boolean> get() = _isLoading
+    val isLoading: StateFlow<Boolean> get() = _isLoading
 
     init {
         getFavourites()
     }
 
-    private fun getFavourites() {
+    fun getFavourites() {
 
         viewModelScope.launch {
             _isLoading.value = true

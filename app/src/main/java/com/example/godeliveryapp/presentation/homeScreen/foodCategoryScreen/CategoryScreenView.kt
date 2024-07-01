@@ -122,6 +122,7 @@ fun CategoryScreenView(
 
     LaunchedEffect(Unit) {
         viewModel.getRestaurantByCategory(categoryDto.id)
+        favouritesViewModel.getFavourites()
     }
 
     LaunchedEffect(

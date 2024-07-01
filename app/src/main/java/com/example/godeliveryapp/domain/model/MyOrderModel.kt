@@ -9,7 +9,7 @@ data class MyOrderModel(
     val items: List<MenuItemModel>,
     val restaurantName: String,
     val restaurantAddress: String,
-    val restaurantImage: Int,
+    val restaurantImage: String,
     val createdAt: String,
     val orderStatus: String,
     val orderTotal: String,

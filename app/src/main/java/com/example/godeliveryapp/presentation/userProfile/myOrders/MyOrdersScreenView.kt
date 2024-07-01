@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
@@ -228,8 +229,8 @@ private fun ItemView(
                         ), contentAlignment = Alignment.Center
                 ) {
 
-                    Image(
-                        painter = painterResource(id = myOrderModel.restaurantImage),
+                    AsyncImage(
+                        model = myOrderModel.restaurantImage,
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )

@@ -161,12 +161,13 @@ class SupabaseAuthViewModel @Inject constructor(
 
     }
 
-    fun forgotPassword(userEmail: String) {
+    fun forgotPassword(context: Context, userEmail: String) {
 
         viewModelScope.launch {
             try {
                 _viewState.value = ViewState.Loading
                 supabaseClient.auth.resetPasswordForEmail(userEmail)
+
                 _viewState.value = ViewState.Success
             } catch (e: Exception) {
                 when (e) {
@@ -194,6 +195,14 @@ class SupabaseAuthViewModel @Inject constructor(
                     email = userEmail,
                     token = token
                 )
+                saveToken(context)
+
+                val userDto = repository.getUserDataByEmail(userEmail)
+
+                sharedPreferences.saveUserData("USER_ID", userDto.userId)
+                sharedPreferences.saveUserData("USER_NAME", userDto.userName)
+                sharedPreferences.saveUserData("USER_EMAIL", userDto.userEmail)
+
                 _viewState.value = ViewState.Success
 
             } catch (e: Exception) {

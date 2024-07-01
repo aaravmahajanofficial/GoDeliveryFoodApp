@@ -1,7 +1,6 @@
 package com.example.godeliveryapp.presentation.userProfile.myOrders
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,12 +30,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.MyOrderModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
@@ -206,8 +205,8 @@ private fun DetailCard(
                         ), contentAlignment = Alignment.Center
                 ) {
 
-                    Image(
-                        painter = painterResource(id = myOrderModel.restaurantImage),
+                    AsyncImage(
+                        model = myOrderModel.restaurantImage,
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
@@ -327,7 +326,7 @@ private fun DetailCard(
                 Spacer(modifier = Modifier.height(ExtraSmallPadding1))
 
                 Text(
-                    text = "4th Cross Street, 2nd Main Road, Chennai",
+                    text = "Sector 6, Panchkula, Haryana",
                     color = Color.Gray,
                     style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal)
                 )
@@ -391,8 +390,8 @@ fun ItemCard(
                         ), contentAlignment = Alignment.Center
                 ) {
 
-                    Image(
-                        painter = painterResource(id = R.drawable.restaurant3),
+                    AsyncImage(
+                        model = menuItemModel.imageId,
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )

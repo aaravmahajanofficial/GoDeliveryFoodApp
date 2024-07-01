@@ -2,8 +2,6 @@ package com.example.godeliveryapp.presentation.onBoarding.components.login_signu
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,12 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
@@ -36,10 +31,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,6 +47,7 @@ import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.SupabaseAuthViewModel
 import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
+import com.example.godeliveryapp.presentation.common.CustomBackArrowButton
 import com.example.godeliveryapp.utils.ViewState
 
 @Composable
@@ -65,34 +61,22 @@ fun ForgotPasswordPageView(
             ""
         )
     }
+    val context = LocalContext.current
     val openDialog = remember { mutableStateOf(false) }
     val viewState = authViewModel.viewState.collectAsState(initial = ViewState.Empty).value
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(NormalPadding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
 
-            Box(
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .clickable { navController.navigateUp() }
-                    .background(color = Color.White, shape = CircleShape)
-                    .size(42.dp), contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                    contentDescription = null,
-                    tint = colorResource(id = R.color.black),
-                    modifier = Modifier.scale(1f)
-                )
-            }
+            CustomBackArrowButton(navController = navController)
 
             Box(
                 modifier = Modifier
@@ -154,16 +138,20 @@ fun ForgotPasswordPageView(
                     cursorColor = colorResource(id = R.color.black),
                     errorCursorColor = Color.Red,
                     errorBorderColor = Color.Red,
-
-                    )
-
+                    unfocusedTextColor = colorResource(id = R.color.black)
+                )
             )
 
             Spacer(modifier = Modifier.padding(1.dp))
 
             TextButton(
                 elevation = ButtonDefaults.elevatedButtonElevation(),
-                onClick = { authViewModel.forgotPassword(emailFieldController) },
+                onClick = {
+                    authViewModel.forgotPassword(
+                        context = context,
+                        userEmail = emailFieldController
+                    )
+                },
 
                 modifier = Modifier
                     .fillMaxWidth()

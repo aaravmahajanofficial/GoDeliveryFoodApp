@@ -58,6 +58,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
@@ -187,8 +188,8 @@ fun MenuItemCardView(
                         ), contentAlignment = Alignment.Center
                 ) {
 
-                    Image(
-                        painter = painterResource(id = R.drawable.restaurant2),
+                    AsyncImage(
+                        model = menuItemModel.imageId,
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )
@@ -321,8 +322,8 @@ fun MenuItemCardView(
                                 )
                         ) {
 
-                            Image(
-                                painter = painterResource(id = R.drawable.restaurant2),
+                            AsyncImage(
+                                model = menuItemModel.imageId,
                                 contentDescription = null,
                                 modifier = Modifier.fillMaxWidth(),
                                 contentScale = ContentScale.Crop

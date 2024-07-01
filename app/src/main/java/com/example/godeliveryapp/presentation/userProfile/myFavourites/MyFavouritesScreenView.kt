@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding1
@@ -59,6 +61,10 @@ fun MyFavouritesScreenView(
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val favourites = favouritesViewModel.favourites.collectAsState(initial = emptyList()).value
     val isLoading = favouritesViewModel.isLoading.collectAsState(initial = false).value
+
+    LaunchedEffect(Unit) {
+        favouritesViewModel.getFavourites()
+    }
 
     if (!isLoading) {
         if (favourites != null) {
@@ -217,8 +223,8 @@ fun ItemCard(
                         ), contentAlignment = Alignment.Center
                 ) {
 
-                    Image(
-                        painter = painterResource(id = R.drawable.restaurant3),
+                    AsyncImage(
+                        model = restaurantListingCardModel.imageURL,
                         contentDescription = null,
                         contentScale = ContentScale.Crop
                     )

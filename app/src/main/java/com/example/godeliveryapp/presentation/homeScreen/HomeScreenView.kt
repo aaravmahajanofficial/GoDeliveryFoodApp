@@ -31,7 +31,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -47,7 +49,6 @@ import androidx.navigation.NavController
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.data.remote.dataTransferObject.CategoryDto
 import com.example.godeliveryapp.domain.model.RestaurantListingCardModel
-import com.example.godeliveryapp.presentation.Dimens
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding2
@@ -86,7 +87,11 @@ fun HomeScreenView(
     val categoriesList = viewModel.categories.collectAsState(initial = listOf()).value
     val halfSize = categoriesList?.size?.div(2)
 
-    val favouritesList = favouritesViewModel.favouritesList.collectAsState(initial = listOf()).value
+    val favouritesList by favouritesViewModel.favouritesList.collectAsState()
+
+    LaunchedEffect(Unit) {
+        favouritesViewModel.getFavourites()
+    }
 
 // Hero Section
 
@@ -109,43 +114,54 @@ fun HomeScreenView(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(Dimens.NormalPadding),
+                            .padding(NormalPadding),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
 
-                        Column(modifier = Modifier) {
-                            Text(
-                                "Deliver Now", style = MaterialTheme.typography.labelLarge.copy(
-                                    color = colorResource(
-                                        id = R.color.gray
-                                    )
-                                )
-
-
-                            )
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Start
-                            ) {
-                                if (currentLocation != null) {
-                                    Text(
-                                        text = currentLocation,
-                                        style = MaterialTheme.typography.titleLarge.copy(
-                                            color = colorResource(
-                                                id = R.color.black
-                                            )
+                        Box(modifier = Modifier.clickable {navController.navigate(Route.LocationScreen.route)}) {
+                            Column(modifier = Modifier) {
+                                Text(
+                                    "Deliver Now", style = MaterialTheme.typography.labelLarge.copy(
+                                        color = colorResource(
+                                            id = R.color.gray
                                         )
                                     )
-                                }
-                                Icon(
-                                    imageVector = Icons.Rounded.KeyboardArrowDown,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(screenWidth / 12)
+
+
                                 )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Start
+                                ) {
+                                    if (currentLocation != null) {
+                                        Text(
+                                            text = currentLocation,
+                                            style = MaterialTheme.typography.titleLarge.copy(
+                                                color = colorResource(
+                                                    id = R.color.black
+                                                )
+                                            )
+                                        )
+                                    } else {
+                                        Text(
+                                            text = "Select Location",
+                                            style = MaterialTheme.typography.titleLarge.copy(
+                                                color = colorResource(
+                                                    id = R.color.black
+                                                )
+                                            )
+                                        )
+                                    }
+                                    Icon(
+                                        imageVector = Icons.Rounded.KeyboardArrowDown,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(screenWidth / 12)
+                                    )
+
+                                }
+
 
                             }
-
-
                         }
 
                         Box(
@@ -257,9 +273,9 @@ fun HomeScreenView(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(Dimens.MediumPadding2))
+                    Spacer(modifier = Modifier.height(MediumPadding2))
 
-                    Box(modifier = Modifier.padding(start = Dimens.NormalPadding)) {
+                    Box(modifier = Modifier.padding(start = NormalPadding)) {
                         Text(
                             text = "Popular Restaurants",
                             style = MaterialTheme.typography.titleLarge
@@ -272,7 +288,7 @@ fun HomeScreenView(
                         contentPadding = PaddingValues(NormalPadding),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        this.items(itemsList.size) { index ->
+                        this.items(4) { index ->
                             val restaurantIndex = itemsList[index]
                             RestaurantListingCardView(
                                 restaurantListingCardModel = restaurantIndex,
@@ -293,7 +309,7 @@ fun HomeScreenView(
 
                     }
 
-                    Spacer(modifier = Modifier.height(Dimens.MediumPadding1))
+                    Spacer(modifier = Modifier.height(MediumPadding1))
 
                     Box(modifier = Modifier.padding(start = NormalPadding)) {
                         Text(
@@ -306,8 +322,8 @@ fun HomeScreenView(
                         contentPadding = PaddingValues(NormalPadding),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        this.items(itemsList.size) { index ->
-                            val restaurantIndex = itemsList[index]
+                        this.items(3) { index ->
+                            val restaurantIndex = itemsList[index + 4]
                             RestaurantListingCardView(
                                 restaurantListingCardModel = restaurantIndex,
                                 addToFav = { restaurantId ->

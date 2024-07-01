@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,6 +31,7 @@ import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -99,6 +99,7 @@ fun LocationScreenView(
         Manifest.permission.ACCESS_FINE_LOCATION
     )
     val filteredLocations by locationScreenViewModel.filteredList.collectAsState(initial = emptyList())
+    val isLoading by locationScreenViewModel.isLoading.collectAsState()
     val context = LocalContext.current
     var fusedLocationClient by remember { mutableStateOf<FusedLocationProviderClient?>(null) }
     var currentLocation by remember { mutableStateOf(LocationDetails(0.toDouble(), 0.toDouble())) }
@@ -130,20 +131,6 @@ fun LocationScreenView(
         }
     }
 
-    LaunchedEffect(Unit) {
-        if (permissions.all {
-                ContextCompat.checkSelfPermission(
-                    context,
-                    it
-                ) == PackageManager.PERMISSION_GRANTED
-            }) {
-            startLocationUpdates(context, fusedLocationClient!!)
-
-        } else {
-            launcherMultiplePermissions.launch(permissions)
-        }
-    }
-
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
     locationCallback = object : LocationCallback() {
@@ -156,246 +143,271 @@ fun LocationScreenView(
             }
         }
     }
-
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(NormalPadding),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.SpaceBetween
+    if(isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-
-            Spacer(modifier = Modifier.height(screenHeight / 12))
-
-            Box(
+            CircularProgressIndicator(color = colorResource(id = R.color.primaryColor))
+        }
+    }
+    else{
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(
                 modifier = Modifier
-                    .height(screenHeight / 2.5f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.delivery_location_logo),
-                    contentDescription = null,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-
-            Spacer(modifier = Modifier.height(screenHeight / 8))
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Text(
-                    text = "Grant current location",
-                    color = colorResource(id = R.color.black),
-                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold),
-                    textAlign = TextAlign.Justify
-                )
-
-                Spacer(modifier = Modifier.height(ExtraSmallPadding2))
-
-                Box(modifier = Modifier.width(screenWidth / 1.5f)) {
-                    Text(
-                        text = "This let us show nearby restaurants, stores you can order from",
-                        color = Color.Gray,
-                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(screenHeight / 16))
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceEvenly
+                    .fillMaxSize()
+                    .padding(NormalPadding),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
 
-                Spacer(modifier = Modifier.height(MediumPadding1))
+                Spacer(modifier = Modifier.height(screenHeight / 12))
 
-                TextButton(
-                    onClick = {
-
-                        val encodedModel = Json.encodeToString(locationModel)
-                        navController.navigate("address_screen/$encodedModel")
-                        Log.d("LocationScreenView", "Current Location: $currentLocation")
-                    },
-
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(screenHeight / 14),
-                    shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        containerColor = colorResource(id = R.color.black),
-                    )
+                        .height(screenHeight / 2.5f)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center,
                 ) {
-
-                    Text(
-                        text = "Use current location",
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = colorResource(id = R.color.white)
+                    Image(
+                        painter = painterResource(id = R.drawable.delivery_location_logo),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.fillMaxSize()
                     )
-
                 }
 
-                Spacer(modifier = Modifier.height(ExtraSmallPadding3))
+                Spacer(modifier = Modifier.height(screenHeight / 8))
 
-                TextButton(
-                    onClick = { showBottomSheet = !showBottomSheet },
-                    border = BorderStroke(0.5.dp, colorResource(id = R.color.black)),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(screenHeight / 14),
-                    shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.textButtonColors(
-                        containerColor = colorResource(id = R.color.white),
-                    )
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceEvenly
                 ) {
-
                     Text(
-                        text = "Enter manually",
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = colorResource(id = R.color.black)
+                        text = "Grant current location",
+                        color = colorResource(id = R.color.black),
+                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold),
+                        textAlign = TextAlign.Justify
                     )
 
+                    Spacer(modifier = Modifier.height(ExtraSmallPadding2))
+
+                    Box(modifier = Modifier.width(screenWidth / 1.5f)) {
+                        Text(
+                            text = "This let us show nearby restaurants, stores you can order from",
+                            color = Color.Gray,
+                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Normal),
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.padding(NormalPadding))
+                Spacer(modifier = Modifier.height(screenHeight / 16))
 
-
-            }
-
-            if (showBottomSheet) {
-
-                ModalBottomSheet(
-                    onDismissRequest = { showBottomSheet = false },
-                    sheetState = sheetState,
-                    dragHandle = ({}),
-                    containerColor = Color.White,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height((screenHeight)),
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceEvenly
                 ) {
 
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                NormalPadding
-                            ),
-                        horizontalAlignment = Alignment.Start,
-                        verticalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        item {
+                    Spacer(modifier = Modifier.height(MediumPadding1))
 
-                            Spacer(modifier = Modifier.height(NormalPadding))
+                    TextButton(
+                        onClick = {
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Search for location",
-                                    style = MaterialTheme.typography.headlineSmall.copy(
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    color = colorResource(
-                                        id = R.color.black
-                                    ),
-                                )
+                            if (locationModel != null) {
+                                val encodedModel = Json.encodeToString(locationModel)
+                                navController.navigate("address_screen/$encodedModel")
+                            } else {
+                                if (permissions.all {
+                                        ContextCompat.checkSelfPermission(
+                                            context,
+                                            it
+                                        ) == PackageManager.PERMISSION_GRANTED
+                                    }) {
+                                    startLocationUpdates(context, fusedLocationClient!!)
 
-                                Icon(
-                                    imageVector = Icons.Rounded.Close,
-                                    contentDescription = null,
-                                    tint = colorResource(id = R.color.black),
-                                    modifier = Modifier
-                                        .scale(1f)
-                                        .clickable { showBottomSheet = !showBottomSheet }
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(NormalPadding))
-
-                            OutlinedTextField(
-                                modifier = Modifier.fillMaxWidth(),
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Text,
-                                    imeAction = ImeAction.Search
-                                ),
-                                keyboardActions = KeyboardActions(
-                                    onSearch = {
-                                        locationScreenViewModel.filterLocations(textFieldValue)
-                                    }
-                                ),
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Search,
-                                        contentDescription = null,
-                                        tint = Color.DarkGray
-                                    )
-                                },
-                                placeholder = {
-                                    Text(
-                                        text = "e.g. Panchkula, Haryana",
-                                        color = Color.Gray,
-                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Normal),
-                                        textAlign = TextAlign.Start,
-                                    )
-                                },
-                                maxLines = 1,
-                                singleLine = true,
-                                value = textFieldValue,
-                                onValueChange = { textFieldValue = it },
-                                shape = RoundedCornerShape(5.dp),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    unfocusedBorderColor = Color.LightGray,
-                                    focusedBorderColor = colorResource(id = R.color.black),
-                                    focusedTextColor = colorResource(id = R.color.black),
-                                    cursorColor = colorResource(id = R.color.black),
-                                    errorCursorColor = Color.Red,
-                                    errorBorderColor = Color.Red,
-                                    unfocusedTextColor = colorResource(id = R.color.black)
-                                )
-
-                            )
-
-                            Spacer(modifier = Modifier.height(MediumPadding1))
-                        }
-
-                        if (textFieldValue != "") {
-                            if (filteredLocations != null) {
-                                items(filteredLocations!!.size) { index ->
-
-                                    val locationCard = filteredLocations!![index]
-
-                                    LocationCard(
-                                        locationCardModel = locationCard,
-                                        onClick = {
-                                            val encodedModel = Json.encodeToString(locationCard)
-                                            navController.navigate("address_screen/$encodedModel")
-                                            locationScreenViewModel.selectLocation(locationCard)
-                                        }
-                                    )
-
-                                    Spacer(modifier = Modifier.height(MediumPadding2))
-
+                                } else {
+                                    launcherMultiplePermissions.launch(permissions)
                                 }
                             }
+
+                        },
+
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(screenHeight / 14),
+                        shape = RoundedCornerShape(5.dp),
+                        colors = ButtonDefaults.textButtonColors(
+                            containerColor = colorResource(id = R.color.black),
+                        )
+                    ) {
+
+                        Text(
+                            text = "Use current location",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                            color = colorResource(id = R.color.white)
+                        )
+
+                    }
+
+                    Spacer(modifier = Modifier.height(ExtraSmallPadding3))
+
+                    TextButton(
+                        onClick = { showBottomSheet = !showBottomSheet },
+                        border = BorderStroke(0.5.dp, colorResource(id = R.color.black)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(screenHeight / 14),
+                        shape = RoundedCornerShape(5.dp),
+                        colors = ButtonDefaults.textButtonColors(
+                            containerColor = colorResource(id = R.color.white),
+                        )
+                    ) {
+
+                        Text(
+                            text = "Enter manually",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                            color = colorResource(id = R.color.black)
+                        )
+
+                    }
+
+                    Spacer(modifier = Modifier.padding(NormalPadding))
+
+
+                }
+
+                if (showBottomSheet) {
+
+                    ModalBottomSheet(
+                        onDismissRequest = { showBottomSheet = false },
+                        sheetState = sheetState,
+                        dragHandle = ({}),
+                        containerColor = Color.White,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height((screenHeight)),
+                    ) {
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    NormalPadding
+                                ),
+                            horizontalAlignment = Alignment.Start,
+                            verticalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            item {
+
+                                Spacer(modifier = Modifier.height(NormalPadding))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "Search for location",
+                                        style = MaterialTheme.typography.headlineSmall.copy(
+                                            fontWeight = FontWeight.Bold
+                                        ),
+                                        color = colorResource(
+                                            id = R.color.black
+                                        ),
+                                    )
+
+                                    Icon(
+                                        imageVector = Icons.Rounded.Close,
+                                        contentDescription = null,
+                                        tint = colorResource(id = R.color.black),
+                                        modifier = Modifier
+                                            .scale(1f)
+                                            .clickable { showBottomSheet = !showBottomSheet }
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.height(NormalPadding))
+
+                                OutlinedTextField(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Text,
+                                        imeAction = ImeAction.Search
+                                    ),
+                                    keyboardActions = KeyboardActions(
+                                        onSearch = {
+                                            locationScreenViewModel.filterLocations(textFieldValue)
+                                        }
+                                    ),
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Search,
+                                            contentDescription = null,
+                                            tint = Color.DarkGray
+                                        )
+                                    },
+                                    placeholder = {
+                                        Text(
+                                            text = "e.g. Panchkula, Haryana",
+                                            color = Color.Gray,
+                                            style = MaterialTheme.typography.bodyMedium.copy(
+                                                fontWeight = FontWeight.Normal
+                                            ),
+                                            textAlign = TextAlign.Start,
+                                        )
+                                    },
+                                    maxLines = 1,
+                                    singleLine = true,
+                                    value = textFieldValue,
+                                    onValueChange = { textFieldValue = it },
+                                    shape = RoundedCornerShape(5.dp),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        unfocusedBorderColor = Color.LightGray,
+                                        focusedBorderColor = colorResource(id = R.color.black),
+                                        focusedTextColor = colorResource(id = R.color.black),
+                                        cursorColor = colorResource(id = R.color.black),
+                                        errorCursorColor = Color.Red,
+                                        errorBorderColor = Color.Red,
+                                        unfocusedTextColor = colorResource(id = R.color.black)
+                                    )
+
+                                )
+
+                                Spacer(modifier = Modifier.height(MediumPadding1))
+                            }
+
+                            if (textFieldValue != "") {
+                                if (filteredLocations != null) {
+                                    items(filteredLocations!!.size) { index ->
+
+                                        val locationCard = filteredLocations!![index]
+
+                                        LocationCard(
+                                            locationCardModel = locationCard,
+                                            onClick = {
+                                                val encodedModel = Json.encodeToString(locationCard)
+                                                navController.navigate("address_screen/$encodedModel")
+                                                locationScreenViewModel.selectLocation(locationCard)
+                                            }
+                                        )
+
+                                        Spacer(modifier = Modifier.height(MediumPadding2))
+
+                                    }
+                                }
+                            }
+
                         }
 
                     }
 
                 }
 
+
             }
-
-
         }
     }
 

@@ -1,6 +1,5 @@
 package com.example.godeliveryapp.presentation.common
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,10 +30,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.example.godeliveryapp.R
 import com.example.godeliveryapp.domain.model.CartItemModel
 import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
@@ -73,8 +72,8 @@ fun CartItemCardView(
                     ), contentAlignment = Alignment.Center
             ) {
 
-                Image(
-                    painter = painterResource(id = R.drawable.restaurant2),
+                AsyncImage(
+                    model = cartItemModel.menuItemModel.imageId,
                     contentDescription = null,
                     contentScale = ContentScale.Crop
                 )

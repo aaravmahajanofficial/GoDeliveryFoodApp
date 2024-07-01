@@ -1,7 +1,6 @@
 package com.example.godeliveryapp.data.repository
 
 import android.util.Log
-import com.example.godeliveryapp.R
 import com.example.godeliveryapp.data.remote.RestaurantDto
 import com.example.godeliveryapp.data.remote.RetrofitAPI
 import com.example.godeliveryapp.data.remote.dataTransferObject.CartDto
@@ -338,7 +337,7 @@ class RepositoryImplementation(
                         restaurantName = restaurant.name,
                         restaurantAddress = restaurant.streetAddress.split(",")[0].plus(", ")
                             .plus(restaurant.city),
-                        restaurantImage = R.drawable.restaurant1,
+                        restaurantImage = restaurant.imageURL,
                         createdAt = id.createdAt.toString(),
                         orderStatus = id.orderStatus.toString(),
                         orderTotal = id.totalAmount.toString(),
@@ -473,10 +472,10 @@ fun menuItemDtoToModel(menuItem: MenuItemsDto): MenuItemModel {
         itemName = menuItem.itemName,
         itemPrice = menuItem.price,
         itemDescription = menuItem.description,
-        itemImageId = R.drawable.restaurant1,
         itemCategory = menuItem.itemCategory,
         restaurantId = menuItem.restaurantId,
-        isVeg = menuItem.isVeg
+        isVeg = menuItem.isVeg,
+        imageId = menuItem.imageId
     )
 }
 

@@ -107,6 +107,10 @@ fun SearchScreenView(
         homeScreenViewModel.searchKeyWord(textFieldValue)
     }
 
+    LaunchedEffect(Unit) {
+        favouritesViewModel.getFavourites()
+    }
+
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
         LazyColumn(
