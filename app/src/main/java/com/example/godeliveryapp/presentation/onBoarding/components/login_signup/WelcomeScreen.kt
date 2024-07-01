@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -92,7 +93,7 @@ fun WelcomeScreen(modifier: Modifier = Modifier, navController: NavController) {
                     }
                     Spacer(modifier = Modifier.width(5.dp))
                     Text(
-                        text = "GoDelivery",
+                        text = stringResource(id = R.string.app_name),
                         style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
 
                         color = colorResource(
