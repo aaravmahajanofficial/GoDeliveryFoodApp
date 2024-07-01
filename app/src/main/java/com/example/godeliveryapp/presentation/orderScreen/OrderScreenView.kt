@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.LocationOn
@@ -48,6 +49,7 @@ import com.example.godeliveryapp.presentation.Dimens.ExtraSmallPadding3
 import com.example.godeliveryapp.presentation.Dimens.LargePadding
 import com.example.godeliveryapp.presentation.Dimens.MediumPadding1
 import com.example.godeliveryapp.presentation.Dimens.NormalPadding
+import com.example.godeliveryapp.presentation.cart.CartViewModel
 import com.example.godeliveryapp.presentation.common.CartCustomisationCardView
 import com.example.godeliveryapp.presentation.navigation.Route
 
@@ -55,12 +57,14 @@ import com.example.godeliveryapp.presentation.navigation.Route
 fun OrderScreenView(
     modifier: Modifier = Modifier,
     navController: NavController,
-    orderScreenViewModel: OrderScreenViewModel = hiltViewModel()
+    orderScreenViewModel: OrderScreenViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel()
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val isLoading = orderScreenViewModel.isLoading.collectAsState(initial = false).value
     val order by orderScreenViewModel.order.collectAsState(initial = null)
+    val cartItems by cartViewModel.cartItems.collectAsState()
 
     LaunchedEffect(Unit) {
         orderScreenViewModel.loadOrders()
@@ -68,136 +72,159 @@ fun OrderScreenView(
 
     if (isLoading) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(NormalPadding),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Spacer(modifier = Modifier.height(screenHeight / 16))
+                item {
+                    Spacer(modifier = Modifier.height(screenHeight / 16))
 
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(screenHeight / 6)
-                        .align(Alignment.CenterHorizontally),
-                    strokeWidth = 10.dp,
-                    color = colorResource(id = R.color.secondaryColor),
-                    trackColor = colorResource(id = R.color.lightestGray)
-
-                )
-
-                Spacer(modifier = Modifier.height(screenHeight / 16))
-
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Text(
-                        text = "Placing your order",
-                        style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                        color = colorResource(
-                            id = R.color.black
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(LargePadding))
-
-                    CartCustomisationCardView(
-                        title = "Delivery Address",
-                        description = "HSR Layout, Bengaluru, Karnataka, India",
-                        imageVector = Icons.Outlined.LocationOn,
-                        showArrow = false
-                    )
-
-                    Spacer(
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = MediumPadding1, bottom = MediumPadding1)
-                            .height(1.dp)
-                            .background(color = colorResource(id = R.color.lightGray))
-                    )
-
-                    CartCustomisationCardView(
-                        title = "Delivery Time",
-                        description = "Standard Delivery: 25-30 Mins",
-                        imageVector = Icons.Outlined.Timer,
-                        showArrow = false
-                    )
-
-                    Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = MediumPadding1, bottom = MediumPadding1)
-                            .height(1.dp)
-                            .background(color = colorResource(id = R.color.lightGray))
-                    )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
+                            .align(Alignment.Center)
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
                     ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(screenHeight / 6),
+                            strokeWidth = 10.dp,
+                            color = colorResource(id = R.color.secondaryColor),
+                            trackColor = colorResource(id = R.color.lightestGray)
 
-                        Icon(
-                            imageVector = Icons.Outlined.Summarize,
-                            contentDescription = null,
-                            modifier = Modifier.scale(1.2f),
-                            tint = colorResource(
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(screenHeight / 16))
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = "Placing your order",
+                            style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
+                            color = colorResource(
                                 id = R.color.black
                             )
                         )
 
-                        Spacer(modifier = Modifier.width(ExtraSmallPadding3))
+                        Spacer(modifier = Modifier.height(LargePadding))
 
-                        Text(
-                            text = "Order summary",
-                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-                            color = colorResource(
-                                id = R.color.black
-                            ),
-                            maxLines = 2,
+                        CartCustomisationCardView(
+                            title = "Delivery Address",
+                            description = "Sector 6, Haryana",
+                            imageVector = Icons.Outlined.LocationOn,
+                            showArrow = false
                         )
+
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = MediumPadding1, bottom = MediumPadding1)
+                                .height(1.dp)
+                                .background(color = colorResource(id = R.color.lightGray))
+                        )
+
+                        CartCustomisationCardView(
+                            title = "Delivery Time",
+                            description = "Standard Delivery: 25-30 Mins",
+                            imageVector = Icons.Outlined.Timer,
+                            showArrow = false
+                        )
+
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = MediumPadding1, bottom = MediumPadding1)
+                                .height(1.dp)
+                                .background(color = colorResource(id = R.color.lightGray))
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Start,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+
+                            Icon(
+                                imageVector = Icons.Outlined.Summarize,
+                                contentDescription = null,
+                                modifier = Modifier.scale(1.2f),
+                                tint = colorResource(
+                                    id = R.color.black
+                                )
+                            )
+
+                            Spacer(modifier = Modifier.width(ExtraSmallPadding3))
+
+                            Text(
+                                text = "Order summary",
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                                color = colorResource(
+                                    id = R.color.black
+                                ),
+                                maxLines = 2,
+                            )
+
+                        }
+
 
                     }
 
                     Spacer(modifier = Modifier.height(ExtraSmallPadding3))
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                }
 
-                        Box(
-                            modifier = Modifier
-                                .width(screenWidth / 2)
-                                .padding(start = LargePadding)
-                                .fillMaxWidth(),
-                            contentAlignment = Alignment.Center,
+                cartItems.let {
+                    items(it.size) { index ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
+
+                            Box(
+                                modifier = Modifier
+                                    .width(screenWidth / 2)
+                                    .padding(start = LargePadding)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(
+                                    text = cartItems[index].menuItemModel.itemName,
+                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Normal),
+                                    color = colorResource(id = R.color.black),
+                                    overflow = TextOverflow.Visible
+                                )
+                            }
+
                             Text(
-                                text = "Lazeez Bhuna Murgh Chicken Dum Biryani",
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Normal),
+                                text = "x${cartItems[index].quantity}",
+                                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
                                 color = colorResource(id = R.color.black),
-                                overflow = TextOverflow.Visible
+                                textAlign = TextAlign.Center,
                             )
+
                         }
-
-                        Text(
-                            text = " x1",
-                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
-                            color = colorResource(id = R.color.black),
-                            textAlign = TextAlign.Center,
-                        )
-
                     }
+                }
 
+                item {
                     Spacer(modifier = Modifier.height(screenHeight / 8))
 
                     TextButton(
-                        onClick = { navController.navigate(Route.OrderSuccessScreen.route) },
+                        onClick = {
+                            navController.navigate(Route.OrderSuccessScreen.route) {
+                                popUpTo(Route.HomeScreen.route) {
+                                    inclusive = false
+                                }
+                            }
+                        },
                         border = BorderStroke(0.5.dp, colorResource(id = R.color.lightGray)),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -215,11 +242,11 @@ fun OrderScreenView(
                         )
 
                     }
-
                 }
 
-
             }
+
+
         }
     } else {
 

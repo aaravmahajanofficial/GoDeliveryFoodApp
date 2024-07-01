@@ -48,6 +48,8 @@ import com.example.godeliveryapp.presentation.common.CustomBackArrowButton
 import com.example.godeliveryapp.presentation.common.CustomLineBreak
 import com.example.godeliveryapp.presentation.common.PaymentDetailsCard
 import com.example.godeliveryapp.presentation.detailsScreen.menuItems.MenuItemModel
+import com.example.godeliveryapp.utils.Constants.DELIVERY_FEE
+import com.example.godeliveryapp.utils.Constants.TAX
 import com.example.godeliveryapp.utils.convertUTCtoIST
 
 @Composable
@@ -59,6 +61,8 @@ fun MyOrderDetailScreenView(
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+
+    val subTotal = myOrderModel.items.sumOf { it.itemPrice }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
@@ -118,8 +122,8 @@ fun MyOrderDetailScreenView(
                 )
                 Spacer(modifier = Modifier.height(MediumPadding1))
                 PaymentDetailsCard(
-                    subTotal = myOrderModel.items.sumOf { it.itemPrice },
-                    total = 1060.0,
+                    subTotal = subTotal,
+                    total = subTotal + DELIVERY_FEE + TAX,
                     totalSavings = 0.0
                 )
             }

@@ -143,15 +143,29 @@ fun LocationScreenView(
             }
         }
     }
-    if(isLoading) {
+
+    LaunchedEffect(Unit) {
+        if (permissions.all {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    it
+                ) == PackageManager.PERMISSION_GRANTED
+            }) {
+            startLocationUpdates(context, fusedLocationClient!!)
+
+        } else {
+            launcherMultiplePermissions.launch(permissions)
+        }
+    }
+
+    if (isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator(color = colorResource(id = R.color.primaryColor))
         }
-    }
-    else{
+    } else {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(
                 modifier = Modifier

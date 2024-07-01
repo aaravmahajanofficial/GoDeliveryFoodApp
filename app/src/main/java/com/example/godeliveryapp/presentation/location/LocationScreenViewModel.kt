@@ -1,7 +1,6 @@
 package com.example.godeliveryapp.presentation.location
 
 import android.util.Log
-import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.godeliveryapp.domain.model.LocationCardModel
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -71,7 +69,7 @@ class LocationScreenViewModel @Inject constructor(
             _locationModel.emit(locationCardModel)
             sharedPreferences.saveUserData(
                 "userCurrentLocation",
-                _locationModel.value?.address?.district.plus(",")
+                _locationModel.value?.address?.district.plus(", ")
                     .plus(_locationModel.value?.address?.state)
             )
         }

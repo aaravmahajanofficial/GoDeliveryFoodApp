@@ -28,6 +28,9 @@ class OrderScreenViewModel @Inject constructor(private val repository: Repositor
     private val _isLoading = MutableStateFlow(false)
     val isLoading: Flow<Boolean> get() = _isLoading
 
+    private val _itemsOrdered = MutableStateFlow<List<CartItemModel>?>(emptyList())
+    val itemsOrdered: StateFlow<List<CartItemModel>?> get() = _itemsOrdered
+
     fun placeOrder(totalAmount: Double, deliveryInstructions: String, items: List<CartItemModel>) {
         viewModelScope.launch {
             try {
@@ -45,6 +48,8 @@ class OrderScreenViewModel @Inject constructor(private val repository: Repositor
                         price = (it.menuItemModel.itemPrice * it.quantity)
                     )
                 })
+
+                _itemsOrdered.emit(items)
 
             } catch (e: Exception) {
                 Log.d("ERROR WHILE PLACING ORDER : ", e.toString())
