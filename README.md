@@ -21,6 +21,18 @@ This comprehensive food delivery mobile application, developed using Kotlin and 
 - Real-time cart updates
 - Order summary and checkout process
 
+### Order History
+- View past orders
+- Reorder from previous orders
+
+### Favourites
+- Mark restaurants and dishes as favourites
+- Easily access favourite items
+
+### Coupons
+- Browse available coupons
+- Apply coupons to orders for discounts
+
 ### Screenshots
 ![Frame 3](https://github.com/aaravmahajanofficial/YumCourier/assets/64666066/220d5392-49b1-41f8-8f32-57e96d219595)
 
