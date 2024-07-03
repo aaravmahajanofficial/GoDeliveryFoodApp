@@ -50,5 +50,10 @@ The application employs the MVVM (Model-View-ViewModel) architecture to ensure m
 1. Sign up or log in to access the app.
 2. Browse restaurants and menus using the search and filter functionalities.
 3. Add desired items to the cart.
-4. Review your cart and proceed to checkout.
+4. Apply the coupon code
+5. Review your cart and proceed to checkout.
+
+### Test Credentials
+1.  Username : test@gmail.com
+2.  Password : test123456
 
