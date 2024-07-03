@@ -1,4 +1,4 @@
-# Food Delivery Mobile Application
+# Food Delivery Application
 
 ## Overview
 
@@ -39,3 +39,13 @@ The application employs the MVVM (Model-View-ViewModel) architecture to ensure m
 1. Clone the repository:
    ```sh
    git clone https://github.com/aaravmahajanofficial/YumCourier.git
+2. Open the project in Android Studio.
+3. Build the project to install necessary dependencies.
+4. Run the application on an emulator or a physical device.
+
+## Usage
+1. Sign up or log in to access the app.
+2. Browse restaurants and menus using the search and filter functionalities.
+3. Add desired items to the cart.
+4. Review your cart and proceed to checkout.
+
