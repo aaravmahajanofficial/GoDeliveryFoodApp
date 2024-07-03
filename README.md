@@ -21,6 +21,9 @@ This comprehensive food delivery mobile application, developed using Kotlin and 
 - Real-time cart updates
 - Order summary and checkout process
 
+### Screenshots
+![Frame 3](https://github.com/aaravmahajanofficial/YumCourier/assets/64666066/220d5392-49b1-41f8-8f32-57e96d219595)
+
 ## Architecture
 The application employs the MVVM (Model-View-ViewModel) architecture to ensure maintainability and scalability. This architectural pattern separates the data layer from the UI layer, making the codebase easier to manage and extend.
 
