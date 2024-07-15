@@ -1,3 +1,7 @@
+### Test Credentials
+1.  Username : test@gmail.com
+2.  Password : test123456
+
 # Food Delivery Application
 
 ## Overview
@@ -64,8 +68,4 @@ The application employs the MVVM (Model-View-ViewModel) architecture to ensure m
 3. Add desired items to the cart.
 4. Apply the coupon code
 5. Review your cart and proceed to checkout.
-
-### Test Credentials
-1.  Username : test@gmail.com
-2.  Password : test123456
 
