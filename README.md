@@ -1,5 +1,9 @@
 # Food Delivery Application
 
+### Test Credentials
+1.  Username : test@gmail.com
+2.  Password : test123456
+
 ## Overview
 
 This comprehensive food delivery mobile application, developed using Kotlin and Jetpack Compose, offers a modern and user-friendly interface. The project emphasizes a smooth and engaging user experience, with robust backend services powered by Supabase. Leveraging Supabase's real-time capabilities and secure authentication, the application ensures seamless data management and enhanced security.
