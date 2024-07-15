@@ -1,7 +1,3 @@
-### Test Credentials
-1.  Username : test@gmail.com
-2.  Password : test123456
-
 # Food Delivery Application
 
 ## Overview
